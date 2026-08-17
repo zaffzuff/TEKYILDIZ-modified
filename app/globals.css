@@ -1,0 +1,229 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* TEKYILDIZ — premium dark, gold + silver accents. Dark-only: tokens defined in
+   both :root and .dark so the palette holds regardless of class ordering. */
+:root {
+  --background: oklch(0.16 0.008 265);
+  --foreground: oklch(0.95 0.004 265);
+  --card: oklch(0.205 0.009 265);
+  --card-foreground: oklch(0.95 0.004 265);
+  --popover: oklch(0.205 0.009 265);
+  --popover-foreground: oklch(0.95 0.004 265);
+  --primary: oklch(0.81 0.11 86);
+  --primary-foreground: oklch(0.18 0.02 86);
+  --secondary: oklch(0.26 0.008 265);
+  --secondary-foreground: oklch(0.93 0.004 265);
+  --muted: oklch(0.24 0.008 265);
+  --muted-foreground: oklch(0.68 0.01 265);
+  --accent: oklch(0.27 0.008 265);
+  --accent-foreground: oklch(0.93 0.004 265);
+  --destructive: oklch(0.55 0.14 25);
+  --destructive-foreground: oklch(0.95 0.01 25);
+  --border: oklch(0.29 0.008 265);
+  --input: oklch(0.29 0.008 265);
+  --ring: oklch(0.81 0.11 86);
+  --radius: 0.85rem;
+
+  /* Brand accents */
+  --ty-gold: oklch(0.81 0.11 86);
+  --ty-gold-soft: oklch(0.28 0.05 86);
+  --ty-silver: oklch(0.84 0.008 265);
+  --ty-silver-soft: oklch(0.3 0.006 265);
+
+  /* Functional status — solid muted pills, one color family per meaning */
+  --ty-active: oklch(0.75 0.1 158);
+  --ty-active-soft: oklch(0.28 0.05 158);
+  --ty-beta: oklch(0.82 0.11 78);
+  --ty-beta-soft: oklch(0.3 0.06 78);
+  --ty-paused: oklch(0.72 0.01 265);
+  --ty-paused-soft: oklch(0.28 0.006 265);
+  --ty-unknown: oklch(0.66 0.01 265);
+  --ty-unknown-soft: oklch(0.26 0.006 265);
+
+  /* Data confidence — bordered tags, a distinct color family that never
+     collides with functional-status colors */
+  --ty-verified: oklch(0.84 0.07 92);
+  --ty-verified-soft: oklch(0.29 0.04 92);
+  --ty-demo: oklch(0.72 0.055 240);
+  --ty-demo-soft: oklch(0.28 0.04 240);
+  --ty-estimated: oklch(0.74 0.1 305);
+  --ty-estimated-soft: oklch(0.29 0.05 305);
+  --ty-unavailable: oklch(0.72 0.008 265);
+  --ty-unavailable-soft: oklch(0.24 0.006 265);
+}
+
+.dark {
+  --background: oklch(0.16 0.008 265);
+  --foreground: oklch(0.95 0.004 265);
+  --card: oklch(0.205 0.009 265);
+  --card-foreground: oklch(0.95 0.004 265);
+  --popover: oklch(0.205 0.009 265);
+  --popover-foreground: oklch(0.95 0.004 265);
+  --primary: oklch(0.81 0.11 86);
+  --primary-foreground: oklch(0.18 0.02 86);
+  --secondary: oklch(0.26 0.008 265);
+  --secondary-foreground: oklch(0.93 0.004 265);
+  --muted: oklch(0.24 0.008 265);
+  --muted-foreground: oklch(0.68 0.01 265);
+  --accent: oklch(0.27 0.008 265);
+  --accent-foreground: oklch(0.93 0.004 265);
+  --destructive: oklch(0.55 0.14 25);
+  --destructive-foreground: oklch(0.95 0.01 25);
+  --border: oklch(0.29 0.008 265);
+  --input: oklch(0.29 0.008 265);
+  --ring: oklch(0.81 0.11 86);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ty-gold: var(--ty-gold);
+  --color-ty-gold-soft: var(--ty-gold-soft);
+  --color-ty-silver: var(--ty-silver);
+  --color-ty-silver-soft: var(--ty-silver-soft);
+
+  --color-ty-active: var(--ty-active);
+  --color-ty-active-soft: var(--ty-active-soft);
+  --color-ty-beta: var(--ty-beta);
+  --color-ty-beta-soft: var(--ty-beta-soft);
+  --color-ty-paused: var(--ty-paused);
+  --color-ty-paused-soft: var(--ty-paused-soft);
+  --color-ty-unknown: var(--ty-unknown);
+  --color-ty-unknown-soft: var(--ty-unknown-soft);
+
+  --color-ty-verified: var(--ty-verified);
+  --color-ty-verified-soft: var(--ty-verified-soft);
+  --color-ty-demo: var(--ty-demo);
+  --color-ty-demo-soft: var(--ty-demo-soft);
+  --color-ty-estimated: var(--ty-estimated);
+  --color-ty-estimated-soft: var(--ty-estimated-soft);
+  --color-ty-unavailable: var(--ty-unavailable);
+  --color-ty-unavailable-soft: var(--ty-unavailable-soft);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Brand text: gold → silver gradient for the wordmark */
+.ty-brand-text {
+  background-image: linear-gradient(
+    100deg,
+    oklch(0.86 0.1 90) 0%,
+    oklch(0.92 0.02 100) 40%,
+    oklch(0.82 0.01 265) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ty-hero-grad {
+  background:
+    radial-gradient(120% 90% at 15% 0%, oklch(0.26 0.05 86 / 0.55), transparent 60%),
+    radial-gradient(120% 90% at 100% 0%, oklch(0.24 0.02 265 / 0.6), transparent 55%);
+}
+
+.ty-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.ty-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ty-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ty-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ty-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.ty-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ty-safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.ty-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@keyframes ty-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes ty-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ty-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ty-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes ty-bar {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.ty-fade-in { animation: ty-fade-in 0.3s ease both; }
+.ty-fade-up { animation: ty-fade-up 0.35s ease both; }
+.ty-slide-up { animation: ty-slide-up 0.3s ease both; }
+.ty-spin { animation: ty-spin 0.8s linear infinite; }
+.ty-bar { transform-origin: bottom; animation: ty-bar 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.ty-press { transition: transform 0.12s ease; }
+.ty-press:active { transform: scale(0.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ty-fade-in, .ty-fade-up, .ty-slide-up, .ty-spin, .ty-bar { animation: none; }
+  .ty-press:active { transform: none; }
+}
