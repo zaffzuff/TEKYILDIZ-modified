@@ -304,15 +304,6 @@ export function ZafTechApp() {
                   detail="Distribution across the latest observed ledger window"
                 />
               </div>
-                  value={data?.metrics.emptyLedgerRatePercent != null ? `${formatNumber(data.metrics.emptyLedgerRatePercent, 2)}%` : "—"}
-                  detail="Ledgers with 0 transactions and 0 operations"
-                />
-                <Metric
-                  label="Ledger activity rate"
-                  value={data?.metrics.ledgerActivityRatePerMinute != null ? `${formatNumber(data.metrics.ledgerActivityRatePerMinute, 2)} / min` : "—"}
-                  detail="Observed ledger closes per minute"
-                />
-              </div>
             </section>
 
             <section className="mt-5">
