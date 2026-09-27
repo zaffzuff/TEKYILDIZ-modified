@@ -313,6 +313,45 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">{tr("ZAF TECH Node Connector", "ZAF TECH Node Connector")}</h3>
+            <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
+              {tr(
+                "Install the Windows companion to connect this browser to your own local Pi Node. It runs on localhost and reads Node diagnostics without exposing Docker remotely.",
+                "Bu tarayıcıyı kendi yerel Pi Node'unuza bağlamak için Windows yardımcı uygulamasını kurun. Yalnızca localhost üzerinde çalışır ve Docker'ı uzaktan açmadan Node teşhislerini okur."
+              )}
+            </p>
+          </div>
+          <a
+            href="https://github.com/zaffzuff/ZAF-TECH/releases/latest"
+            target="_blank"
+            rel="noreferrer"
+            className="shrink-0 rounded-lg border border-border bg-foreground px-4 py-2 text-xs font-medium text-background hover:opacity-90"
+          >
+            {tr("Download for Windows", "Windows için indir")}
+          </a>
+        </div>
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div className="rounded-lg border border-border px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
+            <div className="font-medium text-foreground">{tr("Local-only", "Yalnızca yerel")}</div>
+            <div className="mt-1">{tr("Listens on 127.0.0.1 only.", "Yalnızca 127.0.0.1 üzerinde dinler.")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
+            <div className="font-medium text-foreground">{tr("Read-only diagnostics", "Salt-okunur teşhis")}</div>
+            <div className="mt-1">{tr("Reads Docker and Stellar Core state; it does not control your Node.", "Docker ve Stellar Core durumunu okur; Node'unuzu yönetmez.")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
+            <div className="font-medium text-foreground">{tr("Wallet-safe design", "Cüzdan güvenliği")}</div>
+            <div className="mt-1">{tr("Never asks for a wallet passphrase, seed phrase, or private key.", "Cüzdan parolası, seed phrase veya private key istemez.")}</div>
+          </div>
+        </div>
+        <p className="mt-3 text-[10px] text-muted-foreground">
+          {tr("The download opens the official ZAF TECH GitHub Releases page.", "İndirme bağlantısı resmi ZAF TECH GitHub Releases sayfasını açar.")}
+        </p>
+      </div>
+
+      <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="text-sm font-semibold text-foreground">{tr("Node diagnostics", "Node teşhisi")}</h3>
