@@ -18,6 +18,7 @@ function short(value: string | null, length = 12) {
 
 const TREND_STORAGE_KEY = "zaf-tech-observation-history-v1";
 const MAX_TREND_POINTS = 1440;
+const RECENT_RECORD_PREVIEW = 10;
 
 interface TrendPoint {
   capturedAt: string;
@@ -80,6 +81,8 @@ export function ZafTechApp() {
   const [refreshing, setRefreshing] = useState(false);
   const [trendHistory, setTrendHistory] = useState<TrendPoint[]>([]);
   const [historicalActivity, setHistoricalActivity] = useState<ZafHistoricalActivity | null>(null);
+  const [showAllTransactions, setShowAllTransactions] = useState(false);
+  const [showAllOperations, setShowAllOperations] = useState(false);
 
   useEffect(() => {
     setTrendHistory(loadTrendHistory());
@@ -187,8 +190,8 @@ export function ZafTechApp() {
             )}
 
             <section className="mt-5">
-              <h1 className="mb-3 text-sm font-semibold text-foreground">Network snapshot</h1>
-              <div className="grid grid-cols-2 gap-3">
+              <h1 className="mb-3 text-sm font-semibold text-foreground">Network Snapshot</h1>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric label="Latest ledger" value={data?.latestLedger?.sequence ?? "—"} detail={data?.latestLedger ? short(data.latestLedger.hash, 16) : undefined} />
                 <Metric label="Protocol version" value={data?.metrics.latestProtocolVersion != null ? String(data.metrics.latestProtocolVersion) : "—"} />
                 <Metric label="Recent transactions" value={formatNumber(data?.metrics.recentTransactions ?? null)} detail="Latest 100 from Pi Mainnet Horizon" />
@@ -199,8 +202,8 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity signals</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity Signals</h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric label="Transaction success rate" value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail="Latest 100-ledger window" />
                 <Metric label="Average fee" value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"} detail="Latest transaction sample" />
                 <Metric label="Operations / transaction" value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)} detail="Latest transaction sample" />
@@ -211,9 +214,9 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity intelligence</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity Intelligence</h2>
               <div className="rounded-xl border border-border bg-card p-4">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Metric label="Activity state" value={data?.intelligence.activityState ?? "—"} detail="Descriptive state from observed chain data" />
                   <Metric label="Dominant operation share" value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail="Share of latest operation sample" />
                   <Metric label="Unique tx sources" value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail="Distinct source accounts" />
@@ -226,7 +229,7 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Operation distribution</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Operation Distribution</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
                   <span>Latest 100 operations</span>
@@ -257,8 +260,8 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Observed activity rate</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Observed Activity Rate</h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
                   label="Transactions / hour"
                   value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"}
@@ -278,7 +281,7 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Recent chain activity</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Recent Chain Activity</h2>
                   <p className="text-[11px] text-muted-foreground">
                     Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? "—"}h of real Pi Mainnet ledger data
                   </p>
@@ -316,7 +319,7 @@ export function ZafTechApp() {
                         </div>
                       );
                     })}
-                    <div className="grid grid-cols-2 gap-3 text-[11px]">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-[11px]">
                       <div className="rounded-lg border border-border px-3 py-2">
                         <div className="text-muted-foreground">Transactions change</div>
                         <div className="mt-1 font-medium text-foreground">
@@ -353,7 +356,7 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Observation history</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Observation History</h2>
                   <p className="text-[11px] text-muted-foreground">
                     Local history collected from real Pi Mainnet snapshots on this device
                   </p>
@@ -451,6 +454,15 @@ export function ZafTechApp() {
                   </div>
                 )) : <div className="p-4 text-xs text-muted-foreground">No transaction records available.</div>}
               </div>
+              {data?.transactions.length && data.transactions.length > RECENT_RECORD_PREVIEW ? (
+                <button
+                  type="button"
+                  onClick={() => setShowAllTransactions((current) => !current)}
+                  className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+                >
+                  {showAllTransactions ? "Show less" : "Show all " + data.transactions.length + " transactions"}
+                </button>
+              ) : null}
             </section>
 
             <section className="mt-7">
@@ -468,6 +480,15 @@ export function ZafTechApp() {
                   </div>
                 )) : <div className="p-4 text-xs text-muted-foreground">No operation records available.</div>}
               </div>
+              {data?.operations.length && data.operations.length > RECENT_RECORD_PREVIEW ? (
+                <button
+                  type="button"
+                  onClick={() => setShowAllOperations((current) => !current)}
+                  className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+                >
+                  {showAllOperations ? "Show less" : "Show all " + data.operations.length + " operations"}
+                </button>
+              ) : null}
             </section>
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
