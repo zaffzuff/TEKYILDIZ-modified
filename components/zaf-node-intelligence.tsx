@@ -23,6 +23,25 @@ function isPiPublicKey(value: string) {
   return /^G[A-Z2-7]{55}$/.test(value);
 }
 
+type LocalNodeData = {
+  connector?: { connected?: boolean; docker?: boolean };
+  node?: {
+    containerName?: string;
+    containerId?: string;
+    state?: string;
+    image?: string;
+    protocol?: string | null;
+    sync?: string;
+    startedAt?: string | null;
+    restartCount?: number;
+    health?: string | null;
+    publishedPorts?: string;
+  } | null;
+  ports?: Array<{ port: number; listeningLocally: boolean }>;
+  observedAt?: string;
+  error?: string;
+};
+
 function NodeMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -63,6 +82,37 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
   const [publicKey, setPublicKey] = useState("");
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [localNode, setLocalNode] = useState<LocalNodeData | null>(null);
+  const [localNodeLoading, setLocalNodeLoading] = useState(true);
+  const [localNodeError, setLocalNodeError] = useState(false);
+
+  async function refreshLocalNode() {
+    setLocalNodeLoading(true);
+    try {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 3000);
+      const response = await fetch("http://127.0.0.1:39100/node", {
+        cache: "no-store",
+        signal: controller.signal,
+      });
+      window.clearTimeout(timeout);
+      if (!response.ok) throw new Error("Local connector unavailable");
+      const payload = (await response.json()) as LocalNodeData;
+      setLocalNode(payload);
+      setLocalNodeError(false);
+    } catch {
+      setLocalNode(null);
+      setLocalNodeError(true);
+    } finally {
+      setLocalNodeLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshLocalNode();
+    const interval = window.setInterval(() => void refreshLocalNode(), 15000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(NODE_KEY_STORAGE);
@@ -260,24 +310,91 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <h3 className="text-sm font-semibold text-foreground">{tr("Node diagnostics", "Node teşhisi")}</h3>
-        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">{tr("Node diagnostics", "Node teşhisi")}</h3>
+            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+              {tr(
+                "Live local diagnostics from this computer. The connector is localhost-only and reads Docker state without exposing Docker remotely.",
+                "Bu bilgisayardan canlı yerel teşhis verileri. Bağlantı yalnızca localhost üzerinde çalışır ve Docker durumunu uzaktan açmadan okur."
+              )}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void refreshLocalNode()}
+            disabled={localNodeLoading}
+            className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50"
+          >
+            {localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : tr("Refresh local Node", "Yerel Node'u yenile")}
+          </button>
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            ["Local Node connection", "Yerel Node bağlantısı"],
-            ["Port reachability", "Port erişilebilirliği"],
-            ["Sync status", "Senkronizasyon durumu"],
-            ["Node uptime history", "Node çalışma geçmişi"],
-          ].map(([en, trText]) => (
-            <div key={en} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-[11px]">
-              <span className="text-foreground">{tr(en, trText)}</span>
-              <span className="text-muted-foreground">{tr("Local connector required", "Yerel bağlantı gerekli")}</span>
+            [
+              tr("Local connector", "Yerel bağlantı"),
+              localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : localNodeError ? tr("Offline", "Çevrimdışı") : tr("Connected", "Bağlı"),
+            ],
+            [
+              tr("Docker", "Docker"),
+              localNode?.connector?.docker ? tr("Available", "Hazır") : tr("Unavailable", "Kullanılamıyor"),
+            ],
+            [
+              tr("Node container", "Node container"),
+              localNode?.node?.containerName || "—",
+            ],
+            [
+              tr("Sync", "Senkronizasyon"),
+              localNode?.node?.sync === "synced"
+                ? tr("Synced", "Senkronize")
+                : localNode?.node?.sync === "catching_up"
+                  ? tr("Catching up", "Yetişiyor")
+                  : localNode?.node?.sync === "joining_scp"
+                    ? "Joining SCP"
+                    : localNode?.node?.sync === "error"
+                      ? tr("Error", "Hata")
+                      : "—",
+            ],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{label}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{value}</div>
             </div>
           ))}
         </div>
+
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Protocol", "Protokol")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.protocol || "—"}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Local ports", "Yerel portlar")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">
+              {localNode?.ports ? localNode.ports.filter((item) => item.listeningLocally).length : 0}/10
+            </div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Listening on this computer; not an Internet reachability test", "Bu bilgisayarda dinleyen portlar; Internet erişilebilirlik testi değildir")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Started", "Başlangıç")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">
+              {localNode?.node?.startedAt ? new Date(localNode.node.startedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}
+            </div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Container start timestamp", "Container başlangıç zamanı")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Restarts", "Yeniden başlatma")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.restartCount ?? "—"}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Docker restart count", "Docker yeniden başlatma sayısı")}</div>
+          </div>
+        </div>
+
         <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
           {tr(
-            "The next layer can read Pi Desktop/Docker state only through an explicit local connector. That keeps ZAF TECH honest about what a normal web browser can and cannot access.",
-            "Sonraki katman Pi Desktop/Docker durumunu yalnızca açık bir yerel bağlantı üzerinden okuyabilir. Böylece ZAF TECH normal bir web tarayıcısının erişebileceği ve erişemeyeceği sınırları doğru şekilde korur."
+            "This first connector layer reports local Docker/container state and local port listeners. It deliberately does not label local port listeners as Internet-open ports and does not fabricate Pi ranking values.",
+            "Bu ilk bağlantı katmanı yerel Docker/container durumunu ve yerel port dinleyicilerini raporlar. Yerel portları kasıtlı olarak Internet'e açık port diye etiketlemez ve Pi sıralama değerleri uydurmaz."
           )}
         </p>
       </div>
