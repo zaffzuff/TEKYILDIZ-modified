@@ -84,6 +84,11 @@ function average(values: number[]): number | null {
   return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
 }
 
+function standardDeviation(values: number[], mean: number | null): number | null {
+  if (!values.length || mean == null) return null;
+  return Math.sqrt(values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length);
+}
+
 function uniqueCount(values: Array<string | null>): number {
   return new Set(values.filter((value): value is string => Boolean(value))).size;
 }
@@ -137,6 +142,21 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
     const successfulTransactions = transactions.filter((t) => t.successful === true).length;
     const fees = transactions.flatMap((t) => t.feePi == null ? [] : [t.feePi]);
     const operationCounts = transactions.flatMap((t) => t.operationCount == null ? [] : [t.operationCount]);
+    const avgLedgerCloseSeconds = average(intervals);
+    const ledgerIntervalStdDevSeconds = standardDeviation(intervals, avgLedgerCloseSeconds);
+    const ledgerIntervalCoefficientVariationPercent = avgLedgerCloseSeconds && ledgerIntervalStdDevSeconds != null
+      ? (ledgerIntervalStdDevSeconds / avgLedgerCloseSeconds) * 100
+      : null;
+    const protocolCounts = recentLedgers.reduce<Record<string, number>>((m, ledger) => {
+      if (ledger.protocolVersion != null) {
+        const key = String(ledger.protocolVersion);
+        m[key] = (m[key] ?? 0) + 1;
+      }
+      return m;
+    }, {});
+    const protocolVersionDistribution = Object.entries(protocolCounts)
+      .map(([version, count]) => ({ version: Number(version), count, percentage: recentLedgers.length ? (count / recentLedgers.length) * 100 : 0 }))
+      .sort((a, b) => b.count - a.count);
     const ledgerWindowSeconds = closeTimes.length >= 2 ? (closeTimes[closeTimes.length - 1] - closeTimes[0]) / 1000 : null;
     const emptyLedgerCount = recentLedgers.filter((ledger) => ledgerTransactionCount(ledger) === 0 && ledger.operationCount === 0).length;
     const emptyLedgerRatePercent = recentLedgers.length ? (emptyLedgerCount / recentLedgers.length) * 100 : null;
@@ -220,9 +240,13 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         recentOperations: operations.length,
         avgTransactionsPerLedger: transactionLedgers.size ? transactions.length / transactionLedgers.size : null,
         avgOperationsPerLedger: operationLedgers.size ? operations.length / operationLedgers.size : null,
-        avgLedgerCloseSeconds: average(intervals),
+        avgLedgerCloseSeconds,
+        ledgerIntervalStdDevSeconds,
+        ledgerIntervalCoefficientVariationPercent,
         latestProtocolVersion: recentLedgers[0]?.protocolVersion ?? null,
+        protocolVersionDistribution,
         transactionSuccessRate: ledgerTransactionTotal ? (ledgerSuccessfulTransactions / ledgerTransactionTotal) * 100 : (transactions.length ? (successfulTransactions / transactions.length) * 100 : null),
+        failedTransactionRatePercent: ledgerTransactionTotal ? (ledgerFailedTransactions / ledgerTransactionTotal) * 100 : (transactions.length ? ((transactions.length - successfulTransactions) / transactions.length) * 100 : null),
         averageTransactionFeePi: average(fees),
         averageOperationsPerTransaction: average(operationCounts),
         uniqueTransactionSources: uniqueCount(transactions.map((t) => t.sourceAccount)),
@@ -255,8 +279,9 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       metrics: {
         recentLedgerCount: 0, recentTransactions: 0, recentOperations: 0,
         avgTransactionsPerLedger: null, avgOperationsPerLedger: null,
-        avgLedgerCloseSeconds: null, latestProtocolVersion: null,
-        transactionSuccessRate: null, averageTransactionFeePi: null,
+        avgLedgerCloseSeconds: null, ledgerIntervalStdDevSeconds: null, ledgerIntervalCoefficientVariationPercent: null, latestProtocolVersion: null,
+        protocolVersionDistribution: [],
+        transactionSuccessRate: null, failedTransactionRatePercent: null, averageTransactionFeePi: null,
         averageOperationsPerTransaction: null, uniqueTransactionSources: 0,
         uniqueOperationSources: 0, topOperationType: null, topOperationTypeCount: 0,
         operationTypeDistribution: [],
