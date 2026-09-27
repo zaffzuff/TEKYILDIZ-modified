@@ -113,6 +113,22 @@ function operationsPerTransaction(transactions: number, operations: number) {
   if (transactions <= 0) return null;
   return operations / transactions;
 }
+function InfoBadge({ label, description }: { label: string; description: string }) {
+  return (
+    <span
+      tabIndex={0}
+      title={description}
+      aria-label={`${label}: ${description}`}
+      className="group relative cursor-help rounded-full border border-border px-2.5 py-1 text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+    >
+      {label}
+      <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 hidden w-64 rounded-lg border border-border bg-card p-2.5 text-[11px] leading-relaxed text-foreground shadow-lg group-hover:block group-focus:block">
+        {description}
+      </span>
+    </span>
+  );
+}
+
 function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -235,7 +251,7 @@ export function ZafTechApp() {
             <div>
               <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Pi Ecosystem Activity Intelligence
+                {tr("Pi Ecosystem Activity Intelligence")}
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
@@ -271,9 +287,18 @@ export function ZafTechApp() {
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Pi Network")}</span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Mainnet")}</span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Read-only")}</span>
+            <InfoBadge
+              label={tr("Pi Network")}
+              description={tr("Pi Network badge description")}
+            />
+            <InfoBadge
+              label={tr("Mainnet")}
+              description={tr("Mainnet badge description")}
+            />
+            <InfoBadge
+              label={tr("Read-only")}
+              description={tr("Read-only badge description")}
+            />
           </div>
           <div className="mt-3 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
             <div className="rounded-lg border border-border bg-card px-3 py-2">
