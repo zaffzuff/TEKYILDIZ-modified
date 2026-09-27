@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
+
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -182,6 +184,9 @@
 
 /* Brand text: gold → silver gradient for the wordmark */
 .ty-brand-text {
+  font-family: "Michroma", var(--font-sans), sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.035em;
   background-image: linear-gradient(
     100deg,
     oklch(0.86 0.1 90) 0%,
