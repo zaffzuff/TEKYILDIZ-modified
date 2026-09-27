@@ -120,6 +120,7 @@ export function ZafTechApp() {
           uniqueOperationSources: 0,
           topOperationType: null,
           topOperationTypeCount: 0,
+          operationTypeDistribution: [],
           transactionSampleWindowMinutes: null,
           operationSampleWindowMinutes: null,
           observedTransactionsPerHour: null,
@@ -197,6 +198,37 @@ export function ZafTechApp() {
                 <Metric label="Unique tx sources" value={formatNumber(data?.metrics.uniqueTransactionSources ?? null)} detail="Distinct source accounts in sample" />
                 <Metric label="Unique operation sources" value={formatNumber(data?.metrics.uniqueOperationSources ?? null)} detail="Distinct source accounts in sample" />
                 <Metric label="Top operation type" value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} of latest 100 operations` : undefined} />
+              </div>
+            </section>
+
+            <section className="mt-7">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Operation distribution</h2>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>Latest 100 operations</span>
+                  <span>{data?.metrics.recentOperations ?? 0} records</span>
+                </div>
+                <div className="space-y-2.5">
+                  {data?.metrics.operationTypeDistribution.length ? data.metrics.operationTypeDistribution.map((item) => (
+                    <div key={item.type}>
+                      <div className="mb-1 flex items-center justify-between text-[11px]">
+                        <span className="font-medium text-foreground">{item.type}</span>
+                        <span className="text-muted-foreground">{item.count} · {formatNumber(item.percentage, 1)}%</span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-foreground"
+                          style={{ width: `${Math.min(100, item.percentage)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="py-4 text-center text-xs text-muted-foreground">No operation distribution available.</div>
+                  )}
+                </div>
+                <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                  Distribution is calculated from the latest real Pi Mainnet operation sample. It describes observed operation mix, not application or user activity outside the blockchain.
+                </p>
               </div>
             </section>
 
