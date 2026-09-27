@@ -62,6 +62,16 @@ export interface ZafOperationTypeShare {
   percentage: number;
 }
 
+export interface ZafIntelligence {
+  activityState: "rising" | "falling" | "stable" | "insufficient-data";
+  transactionChangePercent: number | null;
+  operationChangePercent: number | null;
+  dominantOperationShare: number | null;
+  uniqueTransactionSources: number;
+  uniqueOperationSources: number;
+  notes: string[];
+}
+
 export interface ZafSnapshot {
   network: "Pi Network";
   source: "Pi Mainnet Horizon";
@@ -70,6 +80,7 @@ export interface ZafSnapshot {
   recentLedgers: ZafLedger[];
   transactions: ZafTransaction[];
   operations: ZafOperation[];
+  intelligence: ZafIntelligence;
   metrics: {
     recentLedgerCount: number;
     recentTransactions: number;
