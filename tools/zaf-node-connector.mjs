@@ -72,6 +72,27 @@ function inferSync(logs) {
   return "unknown";
 }
 
+async function readCoreInfo(containerId) {
+  const result = await docker([
+    "exec",
+    containerId,
+    "sh",
+    "-lc",
+    "stellar-core http-command info 2>/dev/null",
+  ]);
+
+  if (!result.ok) return null;
+
+  const start = result.stdout.indexOf("{");
+  if (start < 0) return null;
+
+  try {
+    return JSON.parse(result.stdout.slice(start));
+  } catch {
+    return null;
+  }
+}
+
 async function readNode() {
   const list = await docker([
     "ps",
@@ -143,20 +164,43 @@ async function readNode() {
 
   const logsResult = await docker(["logs", "--tail", "120", candidate.ID || candidate.Names]);
   const logs = logsResult.ok ? logsResult.stdout : "";
+  const coreInfo = running ? await readCoreInfo(candidate.ID || candidate.Names) : null;
 
   const image = String(candidate.Image || detail?.Config?.Image || "");
   const startedAt = detail?.State?.StartedAt || null;
   const running = Boolean(detail?.State?.Running);
 
   return {
-    connector: { connected: true, docker: true },
+    connector: { connected: true, docker: true, core: Boolean(coreInfo) },
     node: {
       containerName: String(candidate.Names || "").replace(/^\//, ""),
       containerId: String(candidate.ID || "").slice(0, 12),
       state: running ? "running" : String(detail?.State?.Status || candidate.State || "unknown"),
       image,
-      protocol: parseProtocol(image),
-      sync: inferSync(logs),
+      protocol: coreInfo?.protocol_version ?? coreInfo?.ledger?.version ?? parseProtocol(image),
+      sync: coreInfo?.state ? String(coreInfo.state).toLowerCase() : inferSync(logs),
+      coreBuild: coreInfo?.build ?? null,
+      network: coreInfo?.network ?? null,
+      ledger: coreInfo?.ledger ? {
+        number: Number(coreInfo.ledger.num ?? 0) || null,
+        age: Number(coreInfo.ledger.age ?? 0) || null,
+        hash: coreInfo.ledger.hash ?? null,
+        version: Number(coreInfo.ledger.version ?? 0) || null,
+      } : null,
+      peers: coreInfo?.peers ? {
+        authenticated: Number(coreInfo.peers.authenticated ?? 0),
+        pending: Number(coreInfo.peers.pending ?? 0),
+      } : null,
+      quorum: coreInfo?.quorum ? {
+        node: coreInfo.quorum.node ?? null,
+        phase: coreInfo.quorum.qset?.phase ?? coreInfo.quorum.phase ?? null,
+        agree: Number(coreInfo.quorum.qset?.agree ?? coreInfo.quorum.agree ?? 0),
+        disagree: Number(coreInfo.quorum.qset?.disagree ?? coreInfo.quorum.disagree ?? 0),
+        missing: Number(coreInfo.quorum.qset?.missing ?? coreInfo.quorum.missing ?? 0),
+        lagMs: Number(coreInfo.quorum.qset?.lagMs ?? coreInfo.quorum.lagMs ?? 0),
+        intersection: coreInfo.quorum.qset?.intersection ?? coreInfo.quorum.intersection ?? null,
+        nodeCount: Number(coreInfo.quorum.qset?.nodeCount ?? coreInfo.quorum.nodeCount ?? 0) || null,
+      } : null,
       startedAt,
       restartCount: Number(detail?.RestartCount ?? 0),
       health: detail?.State?.Health?.Status || null,
