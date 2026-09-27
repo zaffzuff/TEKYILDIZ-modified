@@ -435,12 +435,12 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Recent transactions</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Recent Transactions</h2>
                   <p className="text-[11px] text-muted-foreground">Latest 100 from Pi Mainnet Horizon</p>
                 </div>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
-                {data?.transactions.length ? data.transactions.map((tx) => (
+                {data?.transactions.length ? (showAllTransactions ? data.transactions : data.transactions.slice(0, RECENT_RECORD_PREVIEW)).map((tx) => (
                   <div key={tx.hash} className="border-b border-border p-3 last:border-b-0">
                     <div className="flex items-center justify-between gap-3">
                       <span className="font-mono text-xs text-foreground">{short(tx.hash, 18)}</span>
@@ -466,9 +466,9 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Recent operations</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Recent Operations</h2>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
-                {data?.operations.length ? data.operations.map((op) => (
+                {data?.operations.length ? (showAllOperations ? data.operations : data.operations.slice(0, RECENT_RECORD_PREVIEW)).map((op) => (
                   <div key={op.id} className="border-b border-border p-3 last:border-b-0">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-xs font-medium text-foreground">{op.type}</span>
