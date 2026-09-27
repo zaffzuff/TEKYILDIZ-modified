@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ZafSnapshot } from "@/lib/zaf/types";
+import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -79,9 +79,14 @@ export function ZafTechApp() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [trendHistory, setTrendHistory] = useState<TrendPoint[]>([]);
+  const [historicalActivity, setHistoricalActivity] = useState<ZafHistoricalActivity | null>(null);
 
   useEffect(() => {
     setTrendHistory(loadTrendHistory());
+    void fetch("/api/zaf/history", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((history) => setHistoricalActivity(history as ZafHistoricalActivity))
+      .catch(() => setHistoricalActivity({ windowHours: 24, points: [], error: "Unable to load historical activity" }));
   }, []);
 
   const load = useCallback(async () => {
@@ -212,6 +217,63 @@ export function ZafTechApp() {
               <p className="mt-2 text-[11px] text-muted-foreground">
                 Rates are calculated from the transaction and operation counts recorded in the latest 100 ledgers; they are a rolling network activity measure, not a historical average.
               </p>
+            </section>
+
+            <section className="mt-7">
+              <div className="mb-3 flex items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-foreground">24-hour chain history</h2>
+                  <p className="text-[11px] text-muted-foreground">
+                    Real Pi Mainnet ledger samples at approximately 2-hour intervals
+                  </p>
+                </div>
+                <div className="text-right text-[11px] text-muted-foreground">
+                  {historicalActivity?.points.length ?? 0} points
+                </div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4">
+                {historicalActivity?.points.length ? (
+                  <div className="space-y-4">
+                    {([
+                      ["Transactions / ledger", historicalActivity.points.map((point) => point.transactions)],
+                      ["Operations / ledger", historicalActivity.points.map((point) => point.operations)],
+                    ] as const).map(([label, values]) => {
+                      const min = Math.min(...values);
+                      const max = Math.max(...values);
+                      const span = max - min || 1;
+                      const points = values.map((value, index) => {
+                        const x = (index / Math.max(values.length - 1, 1)) * 600;
+                        const y = 58 - ((value - min) / span) * 52;
+                        return `${x.toFixed(1)},${y.toFixed(1)}`;
+                      }).join(" ");
+                      return (
+                        <div key={label}>
+                          <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                            <span>{label}</span>
+                            <span>{formatNumber(values[values.length - 1])}</span>
+                          </div>
+                          <div className="h-16 w-full">
+                            <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" aria-label={label}>
+                              <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />
+                            </svg>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span>Latest sampled success rate</span>
+                      <span>{formatNumber(historicalActivity.points[historicalActivity.points.length - 1].successRate, 1)}%</span>
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-muted-foreground">
+                      Each point is an actual Pi Mainnet ledger. This view samples the chain directly; it does not use prefilled or simulated historical data.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-xs text-muted-foreground">
+                    Historical ledger data is not available right now.
+                  </div>
+                )}
+              </div>
             </section>
 
             <section className="mt-7">
