@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
+import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -131,6 +132,26 @@ export function ZafTechApp() {
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [showAllOperations, setShowAllOperations] = useState(false);
   const [showAllLedgers, setShowAllLedgers] = useState(false);
+  const [locale, setLocale] = useState<Locale>("en");
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const tr = (key: string) => t(locale, key);
+
+  useEffect(() => {
+    const savedLocale = window.localStorage.getItem("zaf-tech-locale-v1");
+    if (savedLocale === "en" || savedLocale === "tr") setLocale(savedLocale);
+    const savedTheme = window.localStorage.getItem("zaf-tech-theme-v1");
+    if (savedTheme === "light" || savedTheme === "dark") setTheme(savedTheme);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.classList.toggle("light", theme === "light");
+    window.localStorage.setItem("zaf-tech-theme-v1", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    window.localStorage.setItem("zaf-tech-locale-v1", locale);
+  }, [locale]);
 
   useEffect(() => {
     setTrendHistory(loadTrendHistory());
@@ -217,7 +238,29 @@ export function ZafTechApp() {
                 Pi Ecosystem Activity Intelligence
               </p>
             </div>
-            <button
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label="Language">
+                {(Object.keys(localeLabels) as Locale[]).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setLocale(option)}
+                    className={`rounded-md px-2 py-1.5 font-medium ${locale === option ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+                  >
+                    {localeLabels[option]}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")}
+                className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground"
+                aria-label="Toggle theme"
+                title={theme === "dark" ? "Light theme" : "Dark theme"}
+              >
+                {theme === "dark" ? "☀ Light" : "☾ Dark"}
+              </button>
+                          <button
               type="button"
               onClick={() => void load()}
               disabled={refreshing}
@@ -225,20 +268,21 @@ export function ZafTechApp() {
             >
               {refreshing ? "Refreshing…" : "Refresh"}
             </button>
+            </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Pi Network</span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Mainnet</span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Read-only</span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Pi Network")}</span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Mainnet")}</span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Read-only")}</span>
           </div>
           <div className="mt-3 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
             <div className="rounded-lg border border-border bg-card px-3 py-2">
-              <div className="text-muted-foreground">Data fetched</div>
+              <div className="text-muted-foreground">{tr("Data fetched")}</div>
               <div className="mt-0.5 font-medium text-foreground">{data ? formatAge(data.generatedAt) : "—"}</div>
               <div className="mt-0.5 text-muted-foreground">{data ? formatDateTime(data.generatedAt) : "Waiting for data"}</div>
             </div>
             <div className="rounded-lg border border-border bg-card px-3 py-2">
-              <div className="text-muted-foreground">Latest ledger closed</div>
+              <div className="text-muted-foreground">{tr("Latest ledger closed")}</div>
               <div className="mt-0.5 font-medium text-foreground">{data?.latestLedger ? formatAge(data.latestLedger.closedAt) : "—"}</div>
               <div className="mt-0.5 text-muted-foreground">{data?.latestLedger ? formatDateTime(data.latestLedger.closedAt) : "Waiting for ledger"}</div>
             </div>
@@ -246,7 +290,7 @@ export function ZafTechApp() {
         </header>
 
         {loading && !data ? (
-          <div className="py-12 text-center text-sm text-muted-foreground">Loading Pi Mainnet data…</div>
+          <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading Pi Mainnet data…")}</div>
         ) : (
           <>
             {data?.error && (
@@ -257,77 +301,77 @@ export function ZafTechApp() {
 
             <section className="mt-7">
               <div className="mb-3">
-                <h2 className="text-sm font-semibold text-foreground">Network Health</h2>
+                <h2 className="text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
                   Health indicators derived from the latest observed Pi Mainnet ledger window
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
-                  label="Transaction success rate"
+                  label={tr("Transaction success rate")}
                   value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 2)}%` : "—"}
-                  detail="Successful transactions / observed transaction total"
+                  detail={tr("Successful transactions / observed transaction total")}
                 />
                 <Metric
-                  label="Failed transaction rate"
+                  label={tr("Failed transaction rate")}
                   value={data?.metrics.failedTransactionRatePercent != null ? `${formatNumber(data.metrics.failedTransactionRatePercent, 2)}%` : "—"}
-                  detail="Failed transactions / observed transaction total"
+                  detail={tr("Failed transactions / observed transaction total")}
                 />
                 <Metric
-                  label="Average operations / transaction"
+                  label={tr("Average operations / transaction")}
                   value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)}
-                  detail="From transactions where operation count is reported"
+                  detail={tr("From transactions where operation count is reported")}
                 />
                 <Metric
-                  label="Average transaction fee"
+                  label={tr("Average transaction fee")}
                   value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"}
-                  detail="Average fee across the transaction sample"
+                  detail={tr("Average fee across the transaction sample")}
                 />
                 <Metric
-                  label="Ledger interval variability"
+                  label={tr("Ledger interval variability")}
                   value={data?.metrics.ledgerIntervalStdDevSeconds != null ? `${formatNumber(data.metrics.ledgerIntervalStdDevSeconds, 2)}s` : "—"}
-                  detail={data?.metrics.ledgerIntervalCoefficientVariationPercent != null ? `Coefficient of variation: ${formatNumber(data.metrics.ledgerIntervalCoefficientVariationPercent, 2)}%` : "Standard deviation of ledger close intervals"}
+                  detail={data?.metrics.ledgerIntervalCoefficientVariationPercent != null ? `${tr("Coefficient of variation:")} ${formatNumber(data.metrics.ledgerIntervalCoefficientVariationPercent, 2)}%` : tr("Standard deviation of ledger close intervals")}
                 />
                 <Metric
-                  label="Empty ledger rate"
+                  label={tr("Empty ledger rate")}
                   value={data?.metrics.emptyLedgerRatePercent != null ? `${formatNumber(data.metrics.emptyLedgerRatePercent, 2)}%` : "—"}
-                  detail="Ledgers with 0 transactions and 0 operations"
+                  detail={tr("Ledgers with 0 transactions and 0 operations")}
                 />
                 <Metric
-                  label="Ledger activity rate"
+                  label={tr("Ledger activity rate")}
                   value={data?.metrics.ledgerActivityRatePerMinute != null ? `${formatNumber(data.metrics.ledgerActivityRatePerMinute, 2)} / min` : "—"}
-                  detail="Observed ledger closes per minute"
+                  detail={tr("Observed ledger closes per minute")}
                 />
                 <Metric
-                  label="Protocol distribution"
+                  label={tr("Protocol distribution")}
                   value={data?.metrics.protocolVersionDistribution?.length ? data.metrics.protocolVersionDistribution.map((item) => `v${item.version}: ${formatNumber(item.percentage, 1)}%`).join(" · ") : "—"}
-                  detail="Distribution across the latest observed ledger window"
+                  detail={tr("Distribution across the latest observed ledger window")}
                 />
               </div>
             </section>
 
             <section className="mt-5">
-              <h1 className="mb-3 text-sm font-semibold text-foreground">Network Snapshot</h1>
+              <h1 className="mb-3 text-sm font-semibold text-foreground">{tr("Network Snapshot")}</h1>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Metric label="Latest ledger" value={data?.latestLedger?.sequence ?? "—"} detail={data?.latestLedger ? short(data.latestLedger.hash, 16) : undefined} />
-                <Metric label="Protocol version" value={data?.metrics.latestProtocolVersion != null ? String(data.metrics.latestProtocolVersion) : "—"} />
-                <Metric label="Recent transactions" value={formatNumber(data?.metrics.recentTransactions ?? null)} detail="Latest 100 from Pi Mainnet Horizon" />
-                <Metric label="Recent operations" value={formatNumber(data?.metrics.recentOperations ?? null)} detail="Latest 100 from Pi Mainnet Horizon" />
-                <Metric label="Tx / ledger (sample)" value={formatNumber(data?.metrics.avgTransactionsPerLedger ?? null, 2)} detail="Based on ledgers represented in the transaction sample" />
-                <Metric label="Ledger interval" value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail="Average across the latest 100 ledgers" />
+                <Metric label={tr("Latest ledger")} value={data?.latestLedger?.sequence ?? "—"} detail={data?.latestLedger ? short(data.latestLedger.hash, 16) : undefined} />
+                <Metric label={tr("Protocol version")} value={data?.metrics.latestProtocolVersion != null ? String(data.metrics.latestProtocolVersion) : "—"} />
+                <Metric label={tr("Recent transactions")} value={formatNumber(data?.metrics.recentTransactions ?? null)} detail={tr("Latest 100 from Pi Mainnet Horizon")} />
+                <Metric label={tr("Recent operations")} value={formatNumber(data?.metrics.recentOperations ?? null)} detail={tr("Latest 100 from Pi Mainnet Horizon")} />
+                <Metric label={tr("Tx / ledger (sample)")} value={formatNumber(data?.metrics.avgTransactionsPerLedger ?? null, 2)} detail={tr("Based on ledgers represented in the transaction sample")} />
+                <Metric label="Ledger interval" value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail={tr("Average across the latest 100 ledgers")} />
               </div>
             </section>
 
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Ledger Activity Timeline</h2>
+                  <h2 className="text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
                   <p className="text-[11px] text-muted-foreground">
                     Latest real Pi Mainnet ledgers, newest first
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
-                  {data?.recentLedgers.length ?? 0} ledgers
+                  {data?.recentLedgers.length ?? 0} {locale === "tr" ? "ledger" : "ledgers"}
                 </div>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -350,25 +394,25 @@ export function ZafTechApp() {
                           </div>
                           <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-5">
                             <div>
-                              <div className="text-muted-foreground">Transactions</div>
+                              <div className="text-muted-foreground">{tr("Transactions")}</div>
                               <div className="mt-0.5 font-medium text-foreground">{formatNumber(transactions)}</div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Operations</div>
+                              <div className="text-muted-foreground">{tr("Operations")}</div>
                               <div className="mt-0.5 font-medium text-foreground">{formatNumber(ledger.operationCount)}</div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Ops / tx</div>
+                              <div className="text-muted-foreground">{tr("Ops / tx")}</div>
                               <div className="mt-0.5 font-medium text-foreground">{formatNumber(opsPerTx, 2)}</div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Ledger interval</div>
+                              <div className="text-muted-foreground">{tr("Ledger interval")}</div>
                               <div className="mt-0.5 font-medium text-foreground">
                                 {intervalSeconds != null ? formatNumber(intervalSeconds, 1) + "s" : "—"}
                               </div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Protocol / fee</div>
+                              <div className="text-muted-foreground">{tr("Protocol / fee")}</div>
                               <div className="mt-0.5 font-medium text-foreground">
                                 {ledger.protocolVersion ?? "—"} · {ledger.baseFeePi != null ? formatNumber(ledger.baseFeePi, 7) + " Pi" : "—"}
                               </div>
@@ -383,12 +427,12 @@ export function ZafTechApp() {
                         onClick={() => setShowAllLedgers((current) => !current)}
                         className="w-full border-t border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                       >
-                        {showAllLedgers ? "Show less" : "Show all " + data.recentLedgers.length + " ledgers"}
+                        {showAllLedgers ? tr("Show less") : `${tr("Show all")} ${data.recentLedgers.length} ${locale === "tr" ? "ledger" : "ledgers"}`}
                       </button>
                     ) : null}
                   </>
                 ) : (
-                  <div className="p-4 text-xs text-muted-foreground">No ledger records available.</div>
+                  <div className="p-4 text-xs text-muted-foreground">{tr("No ledger records available.")}</div>
                 )}
               </div>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
@@ -397,30 +441,30 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity Signals</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Signals")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Metric label="Transaction success rate" value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail="Latest 100-ledger window" />
-                <Metric label="Average fee" value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"} detail="Latest transaction sample" />
-                <Metric label="Operations / transaction" value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)} detail="Latest transaction sample" />
-                <Metric label="Unique tx sources" value={formatNumber(data?.metrics.uniqueTransactionSources ?? null)} detail="Distinct source accounts in sample" />
-                <Metric label="Unique operation sources" value={formatNumber(data?.metrics.uniqueOperationSources ?? null)} detail="Distinct source accounts in sample" />
-                <Metric label="Top operation type" value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} of latest 100 operations` : undefined} />
+                <Metric label={tr("Transaction success rate")} value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail={tr("Latest 100-ledger window")} />
+                <Metric label={tr("Average fee")} value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"} detail={tr("Latest transaction sample")} />
+                <Metric label={tr("Operations / transaction")} value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)} detail={tr("Latest transaction sample")} />
+                <Metric label={tr("Unique tx sources")} value={formatNumber(data?.metrics.uniqueTransactionSources ?? null)} detail={tr("Distinct source accounts in sample")} />
+                <Metric label={tr("Unique operation sources")} value={formatNumber(data?.metrics.uniqueOperationSources ?? null)} detail={tr("Distinct source accounts in sample")} />
+                <Metric label={tr("Top operation type")} value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} of latest 100 operations` : undefined} />
               </div>
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity Intelligence</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Metric label="Activity state" value={data?.intelligence.activityState ?? "—"} detail="Descriptive state from observed chain data" />
-                  <Metric label="Transaction rate change" value={data?.intelligence.transactionChangePercent != null ? `${data.intelligence.transactionChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.transactionChangePercent, 1)}%` : "—"} detail="Newer vs older half of the latest 100-ledger window" />
-                  <Metric label="Operation rate change" value={data?.intelligence.operationChangePercent != null ? `${data.intelligence.operationChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.operationChangePercent, 1)}%` : "—"} detail="Newer vs older half of the latest 100-ledger window" />
-                  <Metric label="Dominant operation share" value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail="Share of latest operation sample" />
-                  <Metric label="Unique tx sources" value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail="Distinct source accounts" />
-                  <Metric label="Unique operation sources" value={formatNumber(data?.intelligence.uniqueOperationSources ?? null)} detail="Distinct source accounts" />
+                  <Metric label="Activity state" value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"} detail={tr("Descriptive state from observed chain data")} />
+                  <Metric label={tr("Transaction rate change")} value={data?.intelligence.transactionChangePercent != null ? `${data.intelligence.transactionChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.transactionChangePercent, 1)}%` : "—"} detail={tr("Newer vs older half of the latest 100-ledger window")} />
+                  <Metric label={tr("Operation rate change")} value={data?.intelligence.operationChangePercent != null ? `${data.intelligence.operationChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.operationChangePercent, 1)}%` : "—"} detail={tr("Newer vs older half of the latest 100-ledger window")} />
+                  <Metric label={tr("Dominant operation share")} value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail={tr("Share of latest operation sample")} />
+                  <Metric label={tr("Unique tx sources")} value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail={tr("Distinct source accounts")} />
+                  <Metric label={tr("Unique operation sources")} value={formatNumber(data?.intelligence.uniqueOperationSources ?? null)} detail={tr("Distinct source accounts")} />
                 </div>
                 <div className="mt-3 rounded-lg border border-border px-3 py-2 text-[11px] text-muted-foreground">
-                  <div className="font-medium text-foreground">Measurement basis</div>
+                  <div className="font-medium text-foreground">{tr("Measurement basis")}</div>
                   <div className="mt-1 leading-relaxed">
                     Rate changes compare the newer and older halves of the latest {data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.
                   </div>
@@ -432,10 +476,10 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Operation Distribution</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span>Latest 100 operations</span>
+                  <span>{tr("Latest 100 operations")}</span>
                   <span>{data?.metrics.recentOperations ?? 0} records</span>
                 </div>
                 <div className="space-y-2.5">
@@ -453,7 +497,7 @@ export function ZafTechApp() {
                       </div>
                     </div>
                   )) : (
-                    <div className="py-4 text-center text-xs text-muted-foreground">No operation distribution available.</div>
+                    <div className="py-4 text-center text-xs text-muted-foreground">{tr("No operation distribution available.")}</div>
                   )}
                 </div>
                 <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
@@ -463,17 +507,17 @@ export function ZafTechApp() {
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Observed Activity Rate</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
                   label="Transactions / hour"
                   value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"}
-                  detail="Calculated across the latest 100-ledger window"
+                  detail={tr("Calculated across the latest 100-ledger window")}
                 />
                 <Metric
                   label="Operations / hour"
                   value={data?.metrics.observedOperationsPerHour != null ? formatNumber(data.metrics.observedOperationsPerHour, 1) : "—"}
-                  detail="Calculated across the latest 100-ledger window"
+                  detail={tr("Calculated across the latest 100-ledger window")}
                 />
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
@@ -484,13 +528,13 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Recent Chain Activity</h2>
+                  <h2 className="text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
                   <p className="text-[11px] text-muted-foreground">
                     Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? "—"}h of real Pi Mainnet ledger data
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
-                  {historicalActivity?.points.length ?? 0} points
+                  {historicalActivity?.points.length ?? 0} {tr("points")}
                 </div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
@@ -524,7 +568,7 @@ export function ZafTechApp() {
                     })}
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-[11px]">
                       <div className="rounded-lg border border-border px-3 py-2">
-                        <div className="text-muted-foreground">Transactions change</div>
+                        <div className="text-muted-foreground">{tr("Transactions change")}</div>
                         <div className="mt-1 font-medium text-foreground">
                           {historicalActivity.change.transactionsPerHourPercent == null
                             ? "—"
@@ -532,7 +576,7 @@ export function ZafTechApp() {
                         </div>
                       </div>
                       <div className="rounded-lg border border-border px-3 py-2">
-                        <div className="text-muted-foreground">Operations change</div>
+                        <div className="text-muted-foreground">{tr("Operations change")}</div>
                         <div className="mt-1 font-medium text-foreground">
                           {historicalActivity.change.operationsPerHourPercent == null
                             ? "—"
@@ -541,7 +585,7 @@ export function ZafTechApp() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                      <span>Latest sampled success rate</span>
+                      <span>{tr("Latest sampled success rate")}</span>
                       <span>{formatNumber(historicalActivity.points[historicalActivity.points.length - 1].successRate, 1)}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
@@ -559,13 +603,13 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Observation History</h2>
+                  <h2 className="text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
                   <p className="text-[11px] text-muted-foreground">
                     Local history collected from real Pi Mainnet snapshots on this device
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
-                  {trendHistory.length} samples
+                  {trendHistory.length} {tr("samples")}
                 </div>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
@@ -577,7 +621,7 @@ export function ZafTechApp() {
                   <div className="space-y-4">
                     <div>
                       <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                        <span>Transactions / hour</span>
+                        <span>{tr("Transactions / hour")}</span>
                         <span>{formatNumber(trendHistory[trendHistory.length - 1].transactionsPerHour, 1)}</span>
                       </div>
                       <div className="h-16 w-full">
@@ -601,7 +645,7 @@ export function ZafTechApp() {
                     </div>
                     <div>
                       <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                        <span>Operations / hour</span>
+                        <span>{tr("Operations / hour")}</span>
                         <span>{formatNumber(trendHistory[trendHistory.length - 1].operationsPerHour, 1)}</span>
                       </div>
                       <div className="h-16 w-full">
@@ -624,7 +668,7 @@ export function ZafTechApp() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                      <span>Success rate</span>
+                      <span>{tr("Success rate")}</span>
                       <span>{formatNumber(trendHistory[trendHistory.length - 1].successRate, 1)}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
@@ -638,7 +682,7 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Recent Transactions</h2>
+                  <h2 className="text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
                   <p className="text-[11px] text-muted-foreground">Latest 100 from Pi Mainnet Horizon</p>
                 </div>
               </div>
@@ -655,7 +699,7 @@ export function ZafTechApp() {
                       Ledger {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} operations · fee {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
                     </div>
                   </div>
-                )) : <div className="p-4 text-xs text-muted-foreground">No transaction records available.</div>}
+                )) : <div className="p-4 text-xs text-muted-foreground">{tr("No transaction records available.")}</div>}
               </div>
               {data?.transactions.length && data.transactions.length > RECENT_RECORD_PREVIEW ? (
                 <button
@@ -663,13 +707,13 @@ export function ZafTechApp() {
                   onClick={() => setShowAllTransactions((current) => !current)}
                   className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                 >
-                  {showAllTransactions ? "Show less" : "Show all " + data.transactions.length + " transactions"}
+                  {showAllTransactions ? tr("Show less") : `${tr("Show all")} ${data.transactions.length} ${locale === "tr" ? "işlem" : "transactions"}`}
                 </button>
               ) : null}
             </section>
 
             <section className="mt-7">
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Recent Operations</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Recent Operations")}</h2>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
                 {data?.operations.length ? (showAllOperations ? data.operations : data.operations.slice(0, RECENT_RECORD_PREVIEW)).map((op) => (
                   <div key={op.id} className="border-b border-border p-3 last:border-b-0">
@@ -681,7 +725,7 @@ export function ZafTechApp() {
                       Ledger {op.ledger ?? "—"} · {op.amountPi != null ? `${formatNumber(op.amountPi, 7)} Pi` : "No amount field"}
                     </div>
                   </div>
-                )) : <div className="p-4 text-xs text-muted-foreground">No operation records available.</div>}
+                )) : <div className="p-4 text-xs text-muted-foreground">{tr("No operation records available.")}</div>}
               </div>
               {data?.operations.length && data.operations.length > RECENT_RECORD_PREVIEW ? (
                 <button
@@ -689,14 +733,14 @@ export function ZafTechApp() {
                   onClick={() => setShowAllOperations((current) => !current)}
                   className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                 >
-                  {showAllOperations ? "Show less" : "Show all " + data.operations.length + " operations"}
+                  {showAllOperations ? tr("Show less") : `${tr("Show all")} ${data.operations.length} ${locale === "tr" ? "operation" : "operations"}`}
                 </button>
               ) : null}
             </section>
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
-              Source: Pi Mainnet Horizon. Generated {data ? new Date(data.generatedAt).toLocaleString() : "—"}.
-              ZAF TECH displays public blockchain activity and does not claim to measure Pi app traffic or ecosystem usage outside observable chain data.
+              {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
+              {tr("ZAF TECH displays public blockchain activity and does not claim to measure Pi app traffic or ecosystem usage outside observable chain data.")}
             </footer>
           </>
         )}
