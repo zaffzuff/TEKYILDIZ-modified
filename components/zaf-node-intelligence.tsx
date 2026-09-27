@@ -24,18 +24,21 @@ function isPiPublicKey(value: string) {
 }
 
 type LocalNodeData = {
-  connector?: { connected?: boolean; docker?: boolean };
+  connector?: { connected?: boolean; docker?: boolean; core?: boolean };
   node?: {
     containerName?: string;
     containerId?: string;
     state?: string;
     image?: string;
-    protocol?: string | null;
+    protocol?: number | string | null;
     sync?: string;
     startedAt?: string | null;
     restartCount?: number;
     health?: string | null;
     publishedPorts?: string;
+    ledger?: { number?: number; age?: number; hash?: string; version?: number };
+    peers?: { authenticated?: number; pending?: number };
+    quorum?: { node?: string; phase?: string; agree?: number; disagree?: number; missing?: number; lagMs?: number; intersection?: boolean; nodeCount?: number };
   } | null;
   ports?: Array<{ port: number; listeningLocally: boolean }>;
   observedAt?: string;
@@ -346,7 +349,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             ],
             [
               tr("Sync", "Senkronizasyon"),
-              localNode?.node?.sync === "synced"
+              ["synced", "synced!"].includes(String(localNode?.node?.sync || "").toLowerCase())
                 ? tr("Synced", "Senkronize")
                 : localNode?.node?.sync === "catching_up"
                   ? tr("Catching up", "Yetişiyor")
@@ -388,6 +391,49 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="text-[10px] text-muted-foreground">{tr("Restarts", "Yeniden başlatma")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.restartCount ?? "—"}</div>
             <div className="mt-1 text-[10px] text-muted-foreground">{tr("Docker restart count", "Docker yeniden başlatma sayısı")}</div>
+          </div>
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Ledger", "Ledger")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">
+              {localNode?.node?.ledger?.number?.toLocaleString() || "—"}
+            </div>
+            <div className="mt-1 text-[10px] text-muted-foreground">
+              {localNode?.node?.ledger?.age != null
+                ? tr(`${localNode.node.ledger.age}s old`, `${localNode.node.ledger.age}s yaşında`)
+                : "—"}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Peers", "Peerler")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.peers?.authenticated ?? "—"}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">
+              {localNode?.node?.peers?.pending != null
+                ? tr(`${localNode.node.peers.pending} pending`, `${localNode.node.peers.pending} beklemede`)
+                : "—"}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("SCP quorum", "SCP quorum")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.quorum?.phase || "—"}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">
+              {localNode?.node?.quorum
+                ? `${localNode.node.quorum.agree ?? 0} agree / ${localNode.node.quorum.missing ?? 0} missing`
+                : "—"}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("SCP lag", "SCP gecikmesi")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">
+              {localNode?.node?.quorum?.lagMs != null ? `${localNode.node.quorum.lagMs} ms` : "—"}
+            </div>
+            <div className="mt-1 text-[10px] text-muted-foreground">
+              {localNode?.node?.quorum?.intersection === true
+                ? tr("Intersection: true", "Intersection: true")
+                : tr("Intersection: —", "Intersection: —")}
+            </div>
           </div>
         </div>
 
