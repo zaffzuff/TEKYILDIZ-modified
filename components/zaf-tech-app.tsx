@@ -84,6 +84,22 @@ function ledgerTransactionCount(ledger: ZafSnapshot["recentLedgers"][number]) {
   }
   return ledger.transactionCount;
 }
+
+function ledgerIntervalSeconds(
+  current: ZafSnapshot["recentLedgers"][number],
+  older: ZafSnapshot["recentLedgers"][number] | undefined
+) {
+  if (!older) return null;
+  const currentTime = Date.parse(current.closedAt);
+  const olderTime = Date.parse(older.closedAt);
+  if (!Number.isFinite(currentTime) || !Number.isFinite(olderTime) || olderTime <= currentTime) return null;
+  return (olderTime - currentTime) / 1000;
+}
+
+function operationsPerTransaction(transactions: number, operations: number) {
+  if (transactions <= 0) return null;
+  return operations / transactions;
+}
 function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -236,8 +252,11 @@ export function ZafTechApp() {
               <div className="overflow-hidden rounded-xl border border-border bg-card">
                 {data?.recentLedgers.length ? (
                   <>
-                    {(showAllLedgers ? data.recentLedgers : data.recentLedgers.slice(0, 12)).map((ledger) => {
+                    {(showAllLedgers ? data.recentLedgers : data.recentLedgers.slice(0, 12)).map((ledger, index) => {
                       const transactions = ledgerTransactionCount(ledger);
+                      const olderLedger = data.recentLedgers[index + 1];
+                      const intervalSeconds = ledgerIntervalSeconds(ledger, olderLedger);
+                      const opsPerTx = operationsPerTransaction(transactions, ledger.operationCount);
                       return (
                         <div key={ledger.sequence} className="border-b border-border p-3 last:border-b-0">
                           <div className="flex items-center justify-between gap-3">
@@ -248,7 +267,7 @@ export function ZafTechApp() {
                               {formatDateTime(ledger.closedAt)}
                             </span>
                           </div>
-                          <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-4">
+                          <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-5">
                             <div>
                               <div className="text-muted-foreground">Transactions</div>
                               <div className="mt-0.5 font-medium text-foreground">{formatNumber(transactions)}</div>
@@ -258,13 +277,19 @@ export function ZafTechApp() {
                               <div className="mt-0.5 font-medium text-foreground">{formatNumber(ledger.operationCount)}</div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Protocol</div>
-                              <div className="mt-0.5 font-medium text-foreground">{ledger.protocolVersion ?? "—"}</div>
+                              <div className="text-muted-foreground">Ops / tx</div>
+                              <div className="mt-0.5 font-medium text-foreground">{formatNumber(opsPerTx, 2)}</div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Base fee</div>
+                              <div className="text-muted-foreground">Ledger interval</div>
                               <div className="mt-0.5 font-medium text-foreground">
-                                {ledger.baseFeePi != null ? formatNumber(ledger.baseFeePi, 7) + " Pi" : "—"}
+                                {intervalSeconds != null ? formatNumber(intervalSeconds, 1) + "s" : "—"}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Protocol / fee</div>
+                              <div className="mt-0.5 font-medium text-foreground">
+                                {ledger.protocolVersion ?? "—"} · {ledger.baseFeePi != null ? formatNumber(ledger.baseFeePi, 7) + " Pi" : "—"}
                               </div>
                             </div>
                           </div>
