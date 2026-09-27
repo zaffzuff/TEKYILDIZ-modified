@@ -6,7 +6,8 @@ import { Socket } from "node:net";
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
+const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const ALLOWED_ORIGINS = new Set(
   [
@@ -186,9 +187,22 @@ async function readNode() {
       state: running ? "running" : String(detail?.State?.Status || candidate.State || "unknown"),
       image,
       protocol: coreInfo?.protocol_version ?? coreInfo?.ledger?.version ?? parseProtocol(image),
+      protocolSupport: (() => {
+        const protocol = Number(coreInfo?.protocol_version ?? coreInfo?.ledger?.version ?? parseProtocol(image));
+        if (!Number.isFinite(protocol)) return "unknown";
+        return SUPPORTED_PROTOCOLS.has(protocol) ? "supported" : "newer_or_unsupported";
+      })(),
       sync: coreInfo?.state ? String(coreInfo.state).toLowerCase() : inferSync(logs),
       coreBuild: coreInfo?.build ?? null,
       network: coreInfo?.network ?? null,
+      compatibility: {
+        supportedProtocols: [...SUPPORTED_PROTOCOLS],
+        status: (() => {
+          const protocol = Number(coreInfo?.protocol_version ?? coreInfo?.ledger?.version ?? parseProtocol(image));
+          if (!Number.isFinite(protocol)) return "unknown";
+          return SUPPORTED_PROTOCOLS.has(protocol) ? "supported" : "newer_or_unsupported";
+        })(),
+      },
       ledger: coreInfo?.ledger ? {
         number: Number(coreInfo.ledger.num ?? 0) || null,
         age: Number(coreInfo.ledger.age ?? 0) || null,
@@ -247,6 +261,7 @@ const server = createServer(async (req, res) => {
     json(res, 200, {
       connector: "zaf-node-connector",
       version: VERSION,
+      supportedProtocols: [...SUPPORTED_PROTOCOLS],
       ok: true,
       host: HOST,
       port: PORT,
