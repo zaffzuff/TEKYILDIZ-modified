@@ -260,12 +260,30 @@ export function ZafTechApp() {
                         </div>
                       );
                     })}
+                    <div className="grid grid-cols-2 gap-3 text-[11px]">
+                      <div className="rounded-lg border border-border px-3 py-2">
+                        <div className="text-muted-foreground">Transactions change</div>
+                        <div className="mt-1 font-medium text-foreground">
+                          {historicalActivity.change.transactionsPerHourPercent == null
+                            ? "—"
+                            : (historicalActivity.change.transactionsPerHourPercent >= 0 ? "+" : "") + formatNumber(historicalActivity.change.transactionsPerHourPercent, 1) + "%"}
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-border px-3 py-2">
+                        <div className="text-muted-foreground">Operations change</div>
+                        <div className="mt-1 font-medium text-foreground">
+                          {historicalActivity.change.operationsPerHourPercent == null
+                            ? "—"
+                            : (historicalActivity.change.operationsPerHourPercent >= 0 ? "+" : "") + formatNumber(historicalActivity.change.operationsPerHourPercent, 1) + "%"}
+                        </div>
+                      </div>
+                    </div>
                     <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                       <span>Latest sampled success rate</span>
                       <span>{formatNumber(historicalActivity.points[historicalActivity.points.length - 1].successRate, 1)}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
-                      Each point aggregates actual Pi Mainnet ledgers. Rates are normalized to an hourly equivalent using each bucket's real elapsed time; no simulated history is used.
+                      Change compares the first and latest buckets in the current real ledger window. It describes observed blockchain activity; it is not a prediction or an ecosystem-wide usage score.
                     </p>
                   </div>
                 ) : (
