@@ -6,7 +6,7 @@ import { Socket } from "node:net";
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
-const VERSION = "0.2.3";
+const VERSION = "0.2.4";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const ALLOWED_ORIGINS = new Set(
@@ -81,7 +81,29 @@ function inferSync(logs) {
   return "unknown";
 }
 
-async function readCoreInfo(containerId) {
+async async function readCorePeers(containerId) {
+  const result = await docker([
+    "exec",
+    containerId,
+    "sh",
+    "-lc",
+    "stellar-core http-command peers 2>/dev/null",
+  ]);
+
+  if (!result.ok) return null;
+
+  const start = result.stdout.indexOf("{");
+  if (start < 0) return null;
+
+  try {
+    const parsed = JSON.parse(result.stdout.slice(start));
+    return parsed?.peers ?? parsed;
+  } catch {
+    return null;
+  }
+}
+
+function readCoreInfo(containerId) {
   const result = await docker([
     "exec",
     containerId,
@@ -179,6 +201,7 @@ async function readNode() {
   const startedAt = detail?.State?.StartedAt || null;
   const running = Boolean(detail?.State?.Running);
   const coreInfo = running ? await readCoreInfo(candidate.ID || candidate.Names) : null;
+  const corePeers = running ? await readCorePeers(candidate.ID || candidate.Names) : null;
 
   return {
     connector: { connected: true, docker: true, core: Boolean(coreInfo) },
@@ -213,6 +236,10 @@ async function readNode() {
       peers: coreInfo?.peers ? {
         authenticated: Number(coreInfo.peers.authenticated_count ?? coreInfo.peers.authenticated ?? 0),
         pending: Number(coreInfo.peers.pending_count ?? coreInfo.peers.pending ?? 0),
+        inbound: corePeers?.authenticated_peers?.inbound ? corePeers.authenticated_peers.inbound.length : null,
+        outbound: corePeers?.authenticated_peers?.outbound ? corePeers.authenticated_peers.outbound.length : null,
+        pendingInbound: corePeers?.pending_peers?.inbound ? corePeers.pending_peers.inbound.length : null,
+        pendingOutbound: corePeers?.pending_peers?.outbound ? corePeers.pending_peers.outbound.length : null,
       } : null,
       quorum: coreInfo?.quorum ? {
         node: coreInfo.quorum.node ?? null,
