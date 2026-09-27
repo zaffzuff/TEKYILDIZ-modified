@@ -7,9 +7,7 @@ async function horizon(path: string): Promise<any> {
     cache: "no-store",
     headers: { Accept: "application/json" },
   });
-  if (!response.ok) {
-    throw new Error(`Pi Horizon request failed: ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`Pi Horizon request failed: ${response.status}`);
   return response.json();
 }
 
@@ -67,13 +65,15 @@ function mapOperation(raw: any): ZafOperation {
 }
 
 function average(values: number[]): number | null {
-  if (!values.length) return null;
-  return values.reduce((a, b) => a + b, 0) / values.length;
+  return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
+}
+
+function uniqueCount(values: Array<string | null>): number {
+  return new Set(values.filter((value): value is string => Boolean(value))).size;
 }
 
 export async function getZafSnapshot(): Promise<ZafSnapshot> {
   const generatedAt = new Date().toISOString();
-
   try {
     const [ledgerPage, transactionPage, operationPage] = await Promise.all([
       horizon("/ledgers?order=desc&limit=100"),
@@ -85,21 +85,20 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
     const transactions = (transactionPage?._embedded?.records ?? []).map(mapTransaction);
     const operations = (operationPage?._embedded?.records ?? []).map(mapOperation);
 
-    const closeTimes = recentLedgers
-      .map((ledger) => Date.parse(ledger.closedAt))
-      .filter(Number.isFinite)
-      .sort((a, b) => a - b);
-
+    const closeTimes = recentLedgers.map((l) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a,b) => a-b);
     const intervals: number[] = [];
-    for (let i = 1; i < closeTimes.length; i++) {
-      intervals.push((closeTimes[i] - closeTimes[i - 1]) / 1000);
-    }
+    for (let i = 1; i < closeTimes.length; i++) intervals.push((closeTimes[i] - closeTimes[i-1]) / 1000);
 
-    const recentTransactions = transactions.length;
-    const recentOperations = operations.length;
-    const transactionLedgers = new Set(
-      transactions.map((transaction) => transaction.ledger).filter(Boolean),
-    );
+    const transactionLedgers = new Set(transactions.map((t) => t.ledger).filter(Boolean));
+    const operationLedgers = new Set(operations.map((o) => o.ledger).filter(Boolean));
+    const successfulTransactions = transactions.filter((t) => t.successful === true).length;
+    const fees = transactions.flatMap((t) => t.feePi == null ? [] : [t.feePi]);
+    const operationCounts = transactions.flatMap((t) => t.operationCount == null ? [] : [t.operationCount]);
+    const typeCounts = operations.reduce<Record<string, number>>((m, o) => {
+      m[o.type] = (m[o.type] ?? 0) + 1;
+      return m;
+    }, {});
+    const topOperation = Object.entries(typeCounts).sort((a,b) => b[1] - a[1])[0];
 
     return {
       network: "Pi Network",
@@ -111,37 +110,33 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       operations,
       metrics: {
         recentLedgerCount: recentLedgers.length,
-        recentTransactions,
-        recentOperations,
-        avgTransactionsPerLedger:
-          transactionLedgers.size > 0 ? recentTransactions / transactionLedgers.size : null,
-        avgOperationsPerLedger:
-          new Set(operations.map((operation) => operation.ledger).filter(Boolean)).size > 0
-            ? recentOperations /
-              new Set(operations.map((operation) => operation.ledger).filter(Boolean)).size
-            : null,
+        recentTransactions: transactions.length,
+        recentOperations: operations.length,
+        avgTransactionsPerLedger: transactionLedgers.size ? transactions.length / transactionLedgers.size : null,
+        avgOperationsPerLedger: operationLedgers.size ? operations.length / operationLedgers.size : null,
         avgLedgerCloseSeconds: average(intervals),
         latestProtocolVersion: recentLedgers[0]?.protocolVersion ?? null,
+        transactionSuccessRate: transactions.length ? (successfulTransactions / transactions.length) * 100 : null,
+        averageTransactionFeePi: average(fees),
+        averageOperationsPerTransaction: average(operationCounts),
+        uniqueTransactionSources: uniqueCount(transactions.map((t) => t.sourceAccount)),
+        uniqueOperationSources: uniqueCount(operations.map((o) => o.sourceAccount)),
+        topOperationType: topOperation?.[0] ?? null,
+        topOperationTypeCount: topOperation?.[1] ?? 0,
       },
       error: null,
     };
   } catch (error) {
     return {
-      network: "Pi Network",
-      source: "Pi Mainnet Horizon",
-      generatedAt,
-      latestLedger: null,
-      recentLedgers: [],
-      transactions: [],
-      operations: [],
+      network: "Pi Network", source: "Pi Mainnet Horizon", generatedAt,
+      latestLedger: null, recentLedgers: [], transactions: [], operations: [],
       metrics: {
-        recentLedgerCount: 0,
-        recentTransactions: 0,
-        recentOperations: 0,
-        avgTransactionsPerLedger: null,
-        avgOperationsPerLedger: null,
-        avgLedgerCloseSeconds: null,
-        latestProtocolVersion: null,
+        recentLedgerCount: 0, recentTransactions: 0, recentOperations: 0,
+        avgTransactionsPerLedger: null, avgOperationsPerLedger: null,
+        avgLedgerCloseSeconds: null, latestProtocolVersion: null,
+        transactionSuccessRate: null, averageTransactionFeePi: null,
+        averageOperationsPerTransaction: null, uniqueTransactionSources: 0,
+        uniqueOperationSources: 0, topOperationType: null, topOperationTypeCount: 0,
       },
       error: error instanceof Error ? error.message : "Unknown Pi Mainnet error",
     };
