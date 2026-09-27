@@ -22,6 +22,8 @@ const TREND_STORAGE_KEY = "zaf-tech-observation-history-v1";
 const MAX_TREND_POINTS = 1440;
 const RECENT_RECORD_PREVIEW = 10;
 
+type ZafTab = "overview" | "activity" | "transactions" | "operations" | "history" | "wallet" | "network";
+
 interface TrendPoint {
   capturedAt: string;
   ledger: string | null;
@@ -151,7 +153,9 @@ export function ZafTechApp() {
   const [showAllLedgers, setShowAllLedgers] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [activeTab, setActiveTab] = useState<ZafTab>("overview");
   const tr = (key: string) => t(locale, key);
+  const tabClass = (tab: ZafTab) => activeTab === tab ? "" : "hidden";
 
   useEffect(() => {
     const savedLocale = window.localStorage.getItem("zaf-tech-locale-v1");
@@ -313,6 +317,29 @@ export function ZafTechApp() {
               <div className="mt-0.5 text-muted-foreground">{data?.latestLedger ? formatDateTime(data.latestLedger.closedAt, locale) : tr("Waiting for ledger")}</div>
             </div>
           </div>
+          <nav className="mt-4 overflow-x-auto border-t border-border pt-3" aria-label={tr("Dashboard sections")}>
+            <div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1">
+              {([
+                ["overview", "Overview", "Genel Bakış"],
+                ["activity", "Activity", "Aktivite"],
+                ["transactions", "Transactions", "İşlemler"],
+                ["operations", "Operations", "Operasyonlar"],
+                ["history", "History", "Geçmiş"],
+                ["wallet", "Wallet", "Cüzdan"],
+                ["network", "Network", "Ağ"],
+              ] as const).map(([id, en, trLabel]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setActiveTab(id)}
+                  aria-current={activeTab === id ? "page" : undefined}
+                  className={`rounded-lg px-3 py-2 text-[11px] font-medium transition-colors ${activeTab === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  {locale === "tr" ? trLabel : en}
+                </button>
+              ))}
+            </div>
+          </nav>
         </header>
 
         {loading && !data ? (
@@ -325,7 +352,7 @@ export function ZafTechApp() {
               </div>
             )}
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("network")}">
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
@@ -376,7 +403,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-5">
+            <section className="mt-5 {tabClass("overview")}">
               <h1 className="mb-3 text-sm font-semibold text-foreground">{tr("Network Snapshot")}</h1>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric label={tr("Latest ledger")} value={data?.latestLedger?.sequence ?? "—"} detail={data?.latestLedger ? short(data.latestLedger.hash, 16) : undefined} />
@@ -388,7 +415,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("activity")}">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
@@ -466,7 +493,7 @@ export function ZafTechApp() {
               </p>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("activity")}">
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Signals")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric label={tr("Transaction success rate")} value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail={tr("Latest 100-ledger window")} />
@@ -478,7 +505,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("activity")}">
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -501,7 +528,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("operations")}">
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
@@ -532,7 +559,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("activity")}">
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
@@ -551,7 +578,7 @@ export function ZafTechApp() {
               </p>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("overview")}">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
@@ -626,7 +653,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("history")}">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
@@ -705,7 +732,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("transactions")}">
               <div className="mb-3 flex items-end justify-between">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
@@ -738,7 +765,7 @@ export function ZafTechApp() {
               ) : null}
             </section>
 
-            <section className="mt-7">
+            <section className="mt-7 {tabClass("operations")}">
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Recent Operations")}</h2>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
                 {data?.operations.length ? (showAllOperations ? data.operations : data.operations.slice(0, RECENT_RECORD_PREVIEW)).map((op) => (
@@ -764,8 +791,8 @@ export function ZafTechApp() {
               ) : null}
             </section>
 
-            <ZafHistoricalExplorer locale={locale} />
-            <ZafWalletIntelligence locale={locale} />
+            {activeTab === "history" ? <ZafHistoricalExplorer locale={locale} /> : null}
+            {activeTab === "wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
