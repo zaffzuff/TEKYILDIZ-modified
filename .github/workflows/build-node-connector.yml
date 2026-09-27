@@ -42,15 +42,27 @@ jobs:
         run: |
           $input = "dist/ZAF-TECH-Node-Connector.exe"
           $output = "dist/ZAF-TECH-Node-Connector-branded.exe"
-          npx resedit-cli "$input" "$output" `
-            --icon "1,installer/zaf-tech-logo.ico" `
-            --product-name "ZAF TECH Node Connector" `
-            --file-description "Local read-only Pi Node diagnostics for ZAF TECH" `
-            --company-name "ZAF TECH — zaffzuff" `
-            --file-version "0.2.0.0" `
-            --product-version "0.2.0.0" `
-            --internal-name "ZAF-TECH-Node-Connector.exe"
-          Move-Item -Force "$output" "$input"
+          $args = @(
+            $input
+            $output
+            "--icon"
+            "1,installer/zaf-tech-logo.ico"
+            "--product-name"
+            "ZAF TECH Node Connector"
+            "--file-description"
+            "Local read-only Pi Node diagnostics for ZAF TECH"
+            "--company-name"
+            "ZAF TECH - zaffzuff"
+            "--file-version"
+            "0.2.1.0"
+            "--product-version"
+            "0.2.1.0"
+            "--internal-name"
+            "ZAF-TECH-Node-Connector.exe"
+          )
+          & npx resedit-cli @args
+          if ($LASTEXITCODE -ne 0) { throw "resedit-cli failed with exit code $LASTEXITCODE" }
+          Move-Item -Force $output $input
 
       - name: Install Inno Setup
         shell: powershell
