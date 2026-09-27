@@ -20,16 +20,19 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
-UninstallDisplayIcon={app}\{#MyAppExeName}
+SetupIconFile=installer\zaf-tech-logo.ico
+UninstallDisplayIcon={app}\zaf-tech-logo.ico
 
 [Files]
 Source="..\dist\{#MyAppExeName}"; DestDir="{app}"; Flags=ignoreversion
+Source="installer\zaf-tech-logo.ico"; DestDir="{app}"; Flags=ignoreversion
+Source="installer\zaf-tech-logo.png"; DestDir="{app}"; Flags=ignoreversion
 
 [Tasks]
 Name: "startup"; Description: "Start ZAF TECH Node Connector automatically with Windows"; GroupDescription: "Startup options:"; Flags: checkedonce
 
 [Icons]
-Name: "{group}\ZAF TECH Node Connector"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\ZAF TECH Node Connector"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\zaf-tech-logo.ico"
 Name: "{group}\Uninstall ZAF TECH Node Connector"; Filename: "{uninstallexe}"
 Name: "{userstartup}\ZAF TECH Node Connector"; Filename: "{app}\{#MyAppExeName}"; Tasks: startup
 
