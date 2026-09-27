@@ -66,11 +66,11 @@ function saveTrendPoint(snapshot: ZafSnapshot) {
   }
 }
 
-function formatDateTime(value: string | null) {
+function formatDateTime(value: string | null, locale: Locale = "en") {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleString("en-US", {
+  return date.toLocaleString(locale === "tr" ? "tr-TR" : "en-US", {
     month: "short",
     day: "2-digit",
     hour: "2-digit",
@@ -79,16 +79,16 @@ function formatDateTime(value: string | null) {
   });
 }
 
-function formatAge(value: string | null, nowMs = Date.now()) {
+function formatAge(value: string | null, nowMs = Date.now(), locale: Locale = "en") {
   if (!value) return "—";
   const time = Date.parse(value);
   if (!Number.isFinite(time)) return "—";
   const seconds = Math.max(0, Math.floor((nowMs - time) / 1000));
-  if (seconds < 60) return `${seconds}s ago`;
+  if (seconds < 60) return locale === "tr" ? `${seconds} sn önce` : `${seconds}s ago`;
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ${seconds % 60}s ago`;
+  if (minutes < 60) return locale === "tr" ? `${minutes} dk ${seconds % 60} sn önce` : `${minutes}m ${seconds % 60}s ago`;
   const hours = Math.floor(minutes / 60);
-  return `${hours}h ${minutes % 60}m ago`;
+  return locale === "tr" ? `${hours} sa ${minutes % 60} dk önce` : `${hours}h ${minutes % 60}m ago`;
 }
 
 function ledgerTransactionCount(ledger: ZafSnapshot["recentLedgers"][number]) {
@@ -308,8 +308,8 @@ export function ZafTechApp() {
             </div>
             <div className="rounded-lg border border-border bg-card px-3 py-2">
               <div className="text-muted-foreground">{tr("Latest ledger closed")}</div>
-              <div className="mt-0.5 font-medium text-foreground">{data?.latestLedger ? formatAge(data.latestLedger.closedAt) : "—"}</div>
-              <div className="mt-0.5 text-muted-foreground">{data?.latestLedger ? formatDateTime(data.latestLedger.closedAt) : "Waiting for ledger"}</div>
+              <div className="mt-0.5 font-medium text-foreground">{data?.latestLedger ? formatAge(data.latestLedger.closedAt, Date.now(), locale) : "—"}</div>
+              <div className="mt-0.5 text-muted-foreground">{data?.latestLedger ? formatDateTime(data.latestLedger.closedAt, locale) : tr("Waiting for ledger")}</div>
             </div>
           </div>
         </header>
@@ -383,7 +383,7 @@ export function ZafTechApp() {
                 <Metric label={tr("Recent transactions")} value={formatNumber(data?.metrics.recentTransactions ?? null)} detail={tr("Latest 100 from Pi Mainnet Horizon")} />
                 <Metric label={tr("Recent operations")} value={formatNumber(data?.metrics.recentOperations ?? null)} detail={tr("Latest 100 from Pi Mainnet Horizon")} />
                 <Metric label={tr("Tx / ledger (sample)")} value={formatNumber(data?.metrics.avgTransactionsPerLedger ?? null, 2)} detail={tr("Based on ledgers represented in the transaction sample")} />
-                <Metric label="Ledger interval" value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail={tr("Average across the latest 100 ledgers")} />
+                <Metric label={tr("Ledger interval")} value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail={tr("Average across the latest 100 ledgers")} />
               </div>
             </section>
 
@@ -473,7 +473,7 @@ export function ZafTechApp() {
                 <Metric label={tr("Operations / transaction")} value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)} detail={tr("Latest transaction sample")} />
                 <Metric label={tr("Unique tx sources")} value={formatNumber(data?.metrics.uniqueTransactionSources ?? null)} detail={tr("Distinct source accounts in sample")} />
                 <Metric label={tr("Unique operation sources")} value={formatNumber(data?.metrics.uniqueOperationSources ?? null)} detail={tr("Distinct source accounts in sample")} />
-                <Metric label={tr("Top operation type")} value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} of latest 100 operations` : undefined} />
+                <Metric label={tr("Top operation type")} value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} ${tr("of latest 100 operations")}` : undefined} />
               </div>
             </section>
 
@@ -481,7 +481,7 @@ export function ZafTechApp() {
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Metric label="Activity state" value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"} detail={tr("Descriptive state from observed chain data")} />
+                  <Metric label={tr("Activity state")} value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"} detail={tr("Descriptive state from observed chain data")} />
                   <Metric label={tr("Transaction rate change")} value={data?.intelligence.transactionChangePercent != null ? `${data.intelligence.transactionChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.transactionChangePercent, 1)}%` : "—"} detail={tr("Newer vs older half of the latest 100-ledger window")} />
                   <Metric label={tr("Operation rate change")} value={data?.intelligence.operationChangePercent != null ? `${data.intelligence.operationChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.operationChangePercent, 1)}%` : "—"} detail={tr("Newer vs older half of the latest 100-ledger window")} />
                   <Metric label={tr("Dominant operation share")} value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail={tr("Share of latest operation sample")} />
@@ -495,7 +495,7 @@ export function ZafTechApp() {
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 text-[11px] text-muted-foreground">
-                  {(data?.intelligence.notes ?? []).map((note) => <p key={note}>• {note}</p>)}
+                  {(data?.intelligence.notes ?? []).map((note) => <p key={note}>• {tr(note)}</p>)}
                 </div>
               </div>
             </section>
@@ -505,7 +505,7 @@ export function ZafTechApp() {
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
                   <span>{tr("Latest 100 operations")}</span>
-                  <span>{data?.metrics.recentOperations ?? 0} records</span>
+                  <span>{data?.metrics.recentOperations ?? 0} {tr("records")}</span>
                 </div>
                 <div className="space-y-2.5">
                   {data?.metrics.operationTypeDistribution.length ? data.metrics.operationTypeDistribution.map((item) => (
@@ -535,12 +535,12 @@ export function ZafTechApp() {
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
-                  label="Transactions / hour"
+                  label={tr("Transactions / hour")}
                   value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"}
                   detail={tr("Calculated across the latest 100-ledger window")}
                 />
                 <Metric
-                  label="Operations / hour"
+                  label={tr("Operations / hour")}
                   value={data?.metrics.observedOperationsPerHour != null ? formatNumber(data.metrics.observedOperationsPerHour, 1) : "—"}
                   detail={tr("Calculated across the latest 100-ledger window")}
                 />
@@ -566,8 +566,8 @@ export function ZafTechApp() {
                 {historicalActivity?.points.length ? (
                   <div className="space-y-4">
                     {([
-                      ["Transactions / hour", historicalActivity.points.map((point) => point.transactionsPerHour ?? 0)],
-                      ["Operations / hour", historicalActivity.points.map((point) => point.operationsPerHour ?? 0)],
+                      [tr("Transactions / hour"), historicalActivity.points.map((point) => point.transactionsPerHour ?? 0)],
+                      [tr("Operations / hour"), historicalActivity.points.map((point) => point.operationsPerHour ?? 0)],
                     ] as const).map(([label, values]) => {
                       const min = Math.min(...values);
                       const max = Math.max(...values);
@@ -580,11 +580,11 @@ export function ZafTechApp() {
                       return (
                         <div key={label}>
                           <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                            <span>{label}</span>
+                            <span>{tr(label)}</span>
                             <span>{formatNumber(values[values.length - 1], 1)}</span>
                           </div>
                           <div className="h-16 w-full">
-                            <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" aria-label={label}>
+                            <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" aria-label={tr(label)}>
                               <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />
                             </svg>
                           </div>
