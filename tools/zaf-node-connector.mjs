@@ -200,8 +200,12 @@ async function readNode() {
   const image = String(candidate.Image || detail?.Config?.Image || "");
   const startedAt = detail?.State?.StartedAt || null;
   const running = Boolean(detail?.State?.Running);
-  const coreInfo = running ? await readCoreInfo(candidate.ID || candidate.Names) : null;
-  const corePeers = running ? await readCorePeers(candidate.ID || candidate.Names) : null;
+  const [coreInfo, corePeers] = running
+    ? await Promise.all([
+        readCoreInfo(candidate.ID || candidate.Names),
+        readCorePeers(candidate.ID || candidate.Names),
+      ])
+    : [null, null];
 
   return {
     connector: { connected: true, docker: true, core: Boolean(coreInfo) },
