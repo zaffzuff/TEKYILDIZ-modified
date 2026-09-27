@@ -224,7 +224,7 @@ export function ZafTechApp() {
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">24-hour chain history</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    Real Pi Mainnet ledger samples at approximately 2-hour intervals
+                    Hourly-equivalent rates from the latest real Pi Mainnet ledger window
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
@@ -235,8 +235,8 @@ export function ZafTechApp() {
                 {historicalActivity?.points.length ? (
                   <div className="space-y-4">
                     {([
-                      ["Transactions / ledger", historicalActivity.points.map((point) => point.transactions)],
-                      ["Operations / ledger", historicalActivity.points.map((point) => point.operations)],
+                      ["Transactions / hour", historicalActivity.points.map((point) => point.transactionsPerHour ?? 0)],
+                      ["Operations / hour", historicalActivity.points.map((point) => point.operationsPerHour ?? 0)],
                     ] as const).map(([label, values]) => {
                       const min = Math.min(...values);
                       const max = Math.max(...values);
@@ -250,7 +250,7 @@ export function ZafTechApp() {
                         <div key={label}>
                           <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
                             <span>{label}</span>
-                            <span>{formatNumber(values[values.length - 1])}</span>
+                            <span>{formatNumber(values[values.length - 1], 1)}</span>
                           </div>
                           <div className="h-16 w-full">
                             <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" aria-label={label}>
@@ -265,7 +265,7 @@ export function ZafTechApp() {
                       <span>{formatNumber(historicalActivity.points[historicalActivity.points.length - 1].successRate, 1)}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
-                      Each point is an actual Pi Mainnet ledger. This view samples the chain directly; it does not use prefilled or simulated historical data.
+                      Each point aggregates actual Pi Mainnet ledgers. Rates are normalized to an hourly equivalent using each bucket's real elapsed time; no simulated history is used.
                     </p>
                   </div>
                 ) : (
