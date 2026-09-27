@@ -41,11 +41,18 @@ export interface ZafHistoricalPoint {
   transactions: number;
   operations: number;
   successRate: number | null;
+  transactionsPerHour: number | null;
+  operationsPerHour: number | null;
+  windowMinutes: number;
 }
 
 export interface ZafHistoricalActivity {
   windowHours: number;
   points: ZafHistoricalPoint[];
+  change: {
+    transactionsPerHourPercent: number | null;
+    operationsPerHourPercent: number | null;
+  };
   error: string | null;
 }
 
