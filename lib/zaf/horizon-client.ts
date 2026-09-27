@@ -29,8 +29,8 @@ function mapLedger(raw: any): ZafLedger {
     sequence: String(raw.sequence),
     hash: String(raw.hash ?? ""),
     closedAt: String(raw.closed_at ?? ""),
-    transactionCount: Number(raw.transaction_count ?? 0),
-    operationCount: Number(raw.operation_count ?? 0),
+    transactionCount: numberOrNull(raw.transaction_count) ?? 0,
+    operationCount: numberOrNull(raw.operation_count) ?? 0,
     successfulTransactionCount: numberOrNull(raw.successful_transaction_count),
     successfulOperationCount: numberOrNull(raw.successful_operation_count),
     protocolVersion: numberOrNull(raw.protocol_version),
@@ -77,8 +77,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
   try {
     const [ledgerPage, transactionPage, operationPage] = await Promise.all([
       horizon("/ledgers?order=desc&limit=100"),
-      horizon("/transactions?order=desc&limit=20"),
-      horizon("/operations?order=desc&limit=20"),
+      horizon("/transactions?order=desc&limit=100"),
+      horizon("/operations?order=desc&limit=100"),
     ]);
 
     const recentLedgers = (ledgerPage?._embedded?.records ?? []).map(mapLedger);
@@ -95,8 +95,11 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       intervals.push((closeTimes[i] - closeTimes[i - 1]) / 1000);
     }
 
-    const txTotal = recentLedgers.reduce((sum, l) => sum + l.transactionCount, 0);
-    const opTotal = recentLedgers.reduce((sum, l) => sum + l.operationCount, 0);
+    const recentTransactions = transactions.length;
+    const recentOperations = operations.length;
+    const transactionLedgers = new Set(
+      transactions.map((transaction) => transaction.ledger).filter(Boolean),
+    );
 
     return {
       network: "Pi Network",
@@ -108,10 +111,15 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       operations,
       metrics: {
         recentLedgerCount: recentLedgers.length,
-        recentTransactions: txTotal,
-        recentOperations: opTotal,
-        avgTransactionsPerLedger: recentLedgers.length ? txTotal / recentLedgers.length : null,
-        avgOperationsPerLedger: recentLedgers.length ? opTotal / recentLedgers.length : null,
+        recentTransactions,
+        recentOperations,
+        avgTransactionsPerLedger:
+          transactionLedgers.size > 0 ? recentTransactions / transactionLedgers.size : null,
+        avgOperationsPerLedger:
+          new Set(operations.map((operation) => operation.ledger).filter(Boolean)).size > 0
+            ? recentOperations /
+              new Set(operations.map((operation) => operation.ledger).filter(Boolean)).size
+            : null,
         avgLedgerCloseSeconds: average(intervals),
         latestProtocolVersion: recentLedgers[0]?.protocolVersion ?? null,
       },
