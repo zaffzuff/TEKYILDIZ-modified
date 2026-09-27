@@ -9,7 +9,6 @@ const translations: Record<Locale, Record<string, string>> = {
   en: {},
   tr: {
     "fee": "ücret",
-    "operations": "operasyon",
     "Dark": "Koyu",
     "Light": "Açık",
     "Dark theme": "Koyu tema",
