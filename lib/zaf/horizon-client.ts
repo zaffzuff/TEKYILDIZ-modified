@@ -93,7 +93,7 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
   try {
     const [ledgerPage, transactionPage, operationPage] = await Promise.all([
       horizon("/ledgers?order=desc&limit=100"),
-      horizon("/transactions?order=desc&limit=100"),
+      horizon("/transactions?order=desc&limit=100&include_failed=true"),
       horizon("/operations?order=desc&limit=100"),
     ]);
 
