@@ -30,8 +30,24 @@ jobs:
       - name: Build Windows executable
         run: npm run build:win
 
-      - name: Upload connector artifact
+      - name: Install Inno Setup
+        shell: powershell
+        run: choco install innosetup -y --no-progress
+
+      - name: Build Windows installer
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force installer-dist | Out-Null
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\ZAF-TECH-Node-Connector.iss"
+
+      - name: Upload Windows executable
         uses: actions/upload-artifact@v4
         with:
           name: ZAF-TECH-Node-Connector-windows-x64
           path: tools/zaf-node-connector-package/dist/ZAF-TECH-Node-Connector.exe
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZAF-TECH-Node-Connector-Setup-windows-x64
+          path: tools/zaf-node-connector-package/installer-dist/ZAF-TECH-Node-Connector-Setup.exe
