@@ -68,14 +68,24 @@ jobs:
           $tag = if ($env:INPUT_TAG) { $env:INPUT_TAG } else { $env:GITHUB_REF_NAME }
           if (-not $tag) { throw "Release tag could not be determined." }
 
-          & gh release view $tag --repo "$env:GITHUB_REPOSITORY" 2>$null
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "Release $tag does not exist. Creating it..."
-            & gh release create $tag --repo "$env:GITHUB_REPOSITORY" --title "ZAF TECH Node Connector $tag" --generate-notes
-            if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit code $LASTEXITCODE" }
+          $releasesJson = gh release list --repo "$env:GITHUB_REPOSITORY" --limit 100 --json tagName | ConvertFrom-Json
+          $releaseExists = $false
+          if ($releasesJson) {
+            $releaseExists = @($releasesJson | Where-Object { $_.tagName -eq $tag }).Count -gt 0
           }
 
-          & gh release upload $tag "dist/ZAF-TECH-Node-Connector.exe" "installer-dist/ZAF-TECH-Node-Connector-Setup.exe" "ZAF-TECH-Node-Connector-SHA256SUMS.txt" --repo "$env:GITHUB_REPOSITORY" --clobber
+          if (-not $releaseExists) {
+            Write-Host "Release $tag does not exist. Creating it..."
+            gh release create $tag --repo "$env:GITHUB_REPOSITORY" --title "ZAF TECH Node Connector $tag" --generate-notes
+            if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit code $LASTEXITCODE" }
+          } else {
+            Write-Host "Release $tag already exists."
+          }
+
+          gh release upload $tag "dist/ZAF-TECH-Node-Connector.exe" "installer-dist/ZAF-TECH-Node-Connector-Setup.exe" --repo "$env:GITHUB_REPOSITORY" --clobber
           if ($LASTEXITCODE -ne 0) { throw "gh release upload failed with exit code $LASTEXITCODE" }
+
+          gh release upload $tag "ZAF-TECH-Node-Connector-SHA256SUMS.txt" --repo "$env:GITHUB_REPOSITORY" --clobber
+          if ($LASTEXITCODE -ne 0) { throw "gh release checksum upload failed with exit code $LASTEXITCODE" }
 
           Write-Host "Release assets uploaded successfully to $tag."
