@@ -132,7 +132,27 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       transactionChangePercent: null as number | null,
       operationChangePercent: null as number | null,
     };
-    const activityState: "rising" | "falling" | "stable" | "insufficient-data" = "insufficient-data";
+    const midpoint = Math.floor(recentLedgers.length / 2);
+    const olderLedgers = recentLedgers.slice(midpoint);
+    const newerLedgers = recentLedgers.slice(0, midpoint);
+    const ledgerTxCount = (ledger: ZafLedger) =>
+      ledger.successfulTransactionCount != null && ledger.failedTransactionCount != null
+        ? ledger.successfulTransactionCount + ledger.failedTransactionCount
+        : ledger.transactionCount;
+    const olderTxRate = olderLedgers.length ? olderLedgers.reduce((sum, ledger) => sum + ledgerTxCount(ledger), 0) / olderLedgers.length : null;
+    const newerTxRate = newerLedgers.length ? newerLedgers.reduce((sum, ledger) => sum + ledgerTxCount(ledger), 0) / newerLedgers.length : null;
+    const olderOpRate = olderLedgers.length ? olderLedgers.reduce((sum, ledger) => sum + ledger.operationCount, 0) / olderLedgers.length : null;
+    const newerOpRate = newerLedgers.length ? newerLedgers.reduce((sum, ledger) => sum + ledger.operationCount, 0) / newerLedgers.length : null;
+    const txChange = olderTxRate && newerTxRate != null ? ((newerTxRate - olderTxRate) / olderTxRate) * 100 : null;
+    const opChange = olderOpRate && newerOpRate != null ? ((newerOpRate - olderOpRate) / olderOpRate) * 100 : null;
+    const combinedChange = [txChange, opChange].filter((value): value is number => value != null);
+    const averageChange = combinedChange.length ? combinedChange.reduce((a, b) => a + b, 0) / combinedChange.length : null;
+    const activityState: "rising" | "falling" | "stable" | "insufficient-data" =
+      averageChange == null ? "insufficient-data" :
+      averageChange > 5 ? "rising" :
+      averageChange < -5 ? "falling" : "stable";
+    intelligenceChanges.transactionChangePercent = txChange;
+    intelligenceChanges.operationChangePercent = opChange;
     const transactionSampleWindowMinutes = sampleWindowMinutes(transactions.map((t) => t.createdAt));
     const operationSampleWindowMinutes = sampleWindowMinutes(operations.map((o) => o.createdAt));
 
