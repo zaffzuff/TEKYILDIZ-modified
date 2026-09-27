@@ -78,6 +78,18 @@ function formatDateTime(value: string | null) {
   });
 }
 
+function formatAge(value: string | null, nowMs = Date.now()) {
+  if (!value) return "—";
+  const time = Date.parse(value);
+  if (!Number.isFinite(time)) return "—";
+  const seconds = Math.max(0, Math.floor((nowMs - time) / 1000));
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ${seconds % 60}s ago`;
+  const hours = Math.floor(minutes / 60);
+  return `${hours}h ${minutes % 60}m ago`;
+}
+
 function ledgerTransactionCount(ledger: ZafSnapshot["recentLedgers"][number]) {
   if (ledger.successfulTransactionCount != null && ledger.failedTransactionCount != null) {
     return ledger.successfulTransactionCount + ledger.failedTransactionCount;
@@ -212,6 +224,18 @@ export function ZafTechApp() {
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Pi Network</span>
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Mainnet</span>
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Read-only</span>
+          </div>
+          <div className="mt-3 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
+            <div className="rounded-lg border border-border bg-card px-3 py-2">
+              <div className="text-muted-foreground">Data fetched</div>
+              <div className="mt-0.5 font-medium text-foreground">{data ? formatAge(data.generatedAt) : "—"}</div>
+              <div className="mt-0.5 text-muted-foreground">{data ? formatDateTime(data.generatedAt) : "Waiting for data"}</div>
+            </div>
+            <div className="rounded-lg border border-border bg-card px-3 py-2">
+              <div className="text-muted-foreground">Latest ledger closed</div>
+              <div className="mt-0.5 font-medium text-foreground">{data?.latestLedger ? formatAge(data.latestLedger.closedAt) : "—"}</div>
+              <div className="mt-0.5 text-muted-foreground">{data?.latestLedger ? formatDateTime(data.latestLedger.closedAt) : "Waiting for ledger"}</div>
+            </div>
           </div>
         </header>
 
