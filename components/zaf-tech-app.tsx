@@ -320,7 +320,7 @@ export function ZafTechApp() {
           <>
             {data?.error && (
               <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-xs text-foreground">
-                Pi Mainnet data error: {data.error}
+                {tr("Pi Mainnet data error:")} {data.error}
               </div>
             )}
 
@@ -328,7 +328,7 @@ export function ZafTechApp() {
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
-                  Health indicators derived from the latest observed Pi Mainnet ledger window
+                  {tr("Health indicators derived from the latest observed Pi Mainnet ledger window")}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -392,11 +392,11 @@ export function ZafTechApp() {
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    Latest real Pi Mainnet ledgers, newest first
+                    {tr("Latest real Pi Mainnet ledgers, newest first")}
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
-                  {data?.recentLedgers.length ?? 0} {locale === "tr" ? "ledger" : "ledgers"}
+                  {data?.recentLedgers.length ?? 0} {tr(data?.recentLedgers.length === 1 ? "ledger" : "ledgers")}
                 </div>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -411,7 +411,7 @@ export function ZafTechApp() {
                         <div key={ledger.sequence} className="border-b border-border p-3 last:border-b-0">
                           <div className="flex items-center justify-between gap-3">
                             <span className="font-mono text-xs font-medium text-foreground">
-                              Ledger {ledger.sequence}
+                              {tr("Ledger")} {ledger.sequence}
                             </span>
                             <span className="text-[11px] text-muted-foreground">
                               {formatDateTime(ledger.closedAt)}
@@ -461,7 +461,7 @@ export function ZafTechApp() {
                 )}
               </div>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                Each row is a real Mainnet ledger observed from Pi Horizon. Transaction counts include successful and failed transactions when both ledger counters are available.
+                {tr("Each row is a real Mainnet ledger observed from Pi Horizon. Transaction counts include successful and failed transactions when both ledger counters are available.")}
               </p>
             </section>
 
@@ -526,7 +526,7 @@ export function ZafTechApp() {
                   )}
                 </div>
                 <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                  Distribution is calculated from the latest real Pi Mainnet operation sample. It describes observed operation mix, not application or user activity outside the blockchain.
+                  {tr("Distribution is calculated from the latest real Pi Mainnet operation sample. It describes observed operation mix, not application or user activity outside the blockchain.")}
                 </p>
               </div>
             </section>
@@ -546,7 +546,7 @@ export function ZafTechApp() {
                 />
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
-                Rates are calculated from the transaction and operation counts recorded in the latest 100 ledgers; they are a rolling network activity measure, not a historical average.
+                {tr("Rates are calculated from the transaction and operation counts recorded in the latest 100 ledgers; they are a rolling network activity measure, not a historical average.")}
               </p>
             </section>
 
@@ -555,7 +555,7 @@ export function ZafTechApp() {
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    {tr("Hourly-equivalent rates across the latest")} {historicalActivity?.windowHours ?? "—"}h {tr("of real Pi Mainnet ledger data")}
+                    {tr("{tr("Hourly-equivalent rates across the latest")}")} {historicalActivity?.windowHours ?? "—"}h {tr("{tr("of real Pi Mainnet ledger data")}")}
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
@@ -614,12 +614,12 @@ export function ZafTechApp() {
                       <span>{formatNumber(historicalActivity.points[historicalActivity.points.length - 1].successRate, 1)}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
-                      Change compares the first and latest buckets in the current real ledger window. It describes observed blockchain activity; it is not a prediction or an ecosystem-wide usage score.
+                      {tr("Change compares the first and latest buckets in the current real ledger window. It describes observed blockchain activity; it is not a prediction or an ecosystem-wide usage score.")}
                     </p>
                   </div>
                 ) : (
                   <div className="py-8 text-center text-xs text-muted-foreground">
-                    Historical ledger data is not available right now.
+                    {tr("Historical ledger data is not available right now.")}
                   </div>
                 )}
               </div>
@@ -630,7 +630,7 @@ export function ZafTechApp() {
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    Local history collected from real Pi Mainnet snapshots on this device
+                    {tr("Local history collected from real Pi Mainnet snapshots on this device")}
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
@@ -640,7 +640,7 @@ export function ZafTechApp() {
               <div className="rounded-xl border border-border bg-card p-4">
                 {trendHistory.length < 2 ? (
                   <div className="py-8 text-center text-xs text-muted-foreground">
-                    History will appear after at least two automatic or manual refreshes.
+                    {tr("History will appear after at least two automatic or manual refreshes.")}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -697,7 +697,7 @@ export function ZafTechApp() {
                       <span>{formatNumber(trendHistory[trendHistory.length - 1].successRate, 1)}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
-                      This history is stored locally in the browser. It contains only snapshots actually observed by this ZAF TECH instance; it is not a prefilled historical dataset.
+                      {tr("This history is stored locally in the browser. It contains only snapshots actually observed by this ZAF TECH instance; it is not a prefilled historical dataset.")}
                     </p>
                   </div>
                 )}
@@ -721,7 +721,7 @@ export function ZafTechApp() {
                       </span>
                     </div>
                     <div className="mt-1 text-[11px] text-muted-foreground">
-                      Ledger {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} {tr("operations")} · {tr("fee")} {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
+                      {tr("Ledger")} {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} {tr("operations")} · {tr("fee")} {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
                     </div>
                   </div>
                 )) : <div className="p-4 text-xs text-muted-foreground">{tr("No transaction records available.")}</div>}
@@ -732,7 +732,7 @@ export function ZafTechApp() {
                   onClick={() => setShowAllTransactions((current) => !current)}
                   className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                 >
-                  {showAllTransactions ? tr("Show less") : `${tr("Show all")} ${data.transactions.length} ${locale === "tr" ? "işlem" : "transactions"}`}
+                  {showAllTransactions ? tr("Show less") : `${tr("Show all")} ${data.transactions.length} ${tr(data.transactions.length === 1 ? "transaction" : "transactions")}`}
                 </button>
               ) : null}
             </section>
@@ -747,7 +747,7 @@ export function ZafTechApp() {
                       <span className="font-mono text-[10px] text-muted-foreground">{short(op.id, 16)}</span>
                     </div>
                     <div className="mt-1 text-[11px] text-muted-foreground">
-                      Ledger {op.ledger ?? "—"} · {op.amountPi != null ? `${formatNumber(op.amountPi, 7)} Pi` : tr("No amount field")}
+                      {tr("Ledger")} {op.ledger ?? "—"} · {op.amountPi != null ? `${formatNumber(op.amountPi, 7)} Pi` : tr("No amount field")}
                     </div>
                   </div>
                 )) : <div className="p-4 text-xs text-muted-foreground">{tr("No operation records available.")}</div>}
@@ -758,7 +758,7 @@ export function ZafTechApp() {
                   onClick={() => setShowAllOperations((current) => !current)}
                   className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                 >
-                  {showAllOperations ? tr("Show less") : `${tr("Show all")} ${data.operations.length} ${locale === "tr" ? "operation" : "operations"}`}
+                  {showAllOperations ? tr("Show less") : `${tr("Show all")} ${data.operations.length} ${tr(data.operations.length === 1 ? "operation" : "operations")}`}
                 </button>
               ) : null}
             </section>
