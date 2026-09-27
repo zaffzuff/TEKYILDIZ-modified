@@ -2,7 +2,14 @@ import type React from "react";
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { Michroma } from "next/font/google";
 import "./globals.css";
+
+const michroma = Michroma({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "ZAF TECH — Pi Ecosystem Activity Intelligence",
@@ -32,6 +39,7 @@ html {
   font-family: ${GeistSans.style.fontFamily};
   --font-sans: ${GeistSans.variable};
   --font-mono: ${GeistMono.variable};
+  --font-michroma: ${michroma.style.fontFamily};
 }
         `}</style>
       </head>
