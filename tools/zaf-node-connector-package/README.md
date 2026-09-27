@@ -122,3 +122,16 @@ Before public distribution, ZAF TECH should publish Connector releases from a co
 ## License
 
 The licensing terms for the ZAF TECH project are defined by the project owner and may be added here before public distribution.
+
+
+## Release integrity
+
+Official GitHub Releases include a SHA-256 checksum file named `ZAF-TECH-Node-Connector-SHA256SUMS.txt`.
+
+On Windows PowerShell, after downloading an installer, verify it with:
+
+```powershell
+Get-FileHash .\ZAF-TECH-Node-Connector-Setup.exe -Algorithm SHA256
+```
+
+Compare the resulting hash with the `ZAF-TECH-Node-Connector-Setup.exe` entry in the official checksum file. The same process can be used for the standalone executable.
