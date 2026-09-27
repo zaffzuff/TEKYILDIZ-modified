@@ -356,6 +356,8 @@ export function ZafTechApp() {
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Metric label="Activity state" value={data?.intelligence.activityState ?? "—"} detail="Descriptive state from observed chain data" />
+                  <Metric label="Transaction rate change" value={data?.intelligence.transactionChangePercent != null ? `${data.intelligence.transactionChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.transactionChangePercent, 1)}%` : "—"} detail="Newer vs older half of the latest 100-ledger window" />
+                  <Metric label="Operation rate change" value={data?.intelligence.operationChangePercent != null ? `${data.intelligence.operationChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.operationChangePercent, 1)}%` : "—"} detail="Newer vs older half of the latest 100-ledger window" />
                   <Metric label="Dominant operation share" value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail="Share of latest operation sample" />
                   <Metric label="Unique tx sources" value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail="Distinct source accounts" />
                   <Metric label="Unique operation sources" value={formatNumber(data?.intelligence.uniqueOperationSources ?? null)} detail="Distinct source accounts" />
