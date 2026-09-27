@@ -205,6 +205,17 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   const tx = all.reduce((sum, ledger) => sum + ledger.transactionCount, 0);
   const ops = all.reduce((sum, ledger) => sum + ledger.operationCount, 0);
 
+  const chronological = [...all].sort((a, b) => Number(a.sequence) - Number(b.sequence));
+  const oldest = chronological[0] ?? null;
+  const newest = chronological[chronological.length - 1] ?? null;
+  const elapsedHours = oldest && newest
+    ? Math.max(0, (Date.parse(newest.closedAt) - Date.parse(oldest.closedAt)) / 3_600_000)
+    : 0;
+  const historicalTxPerHour = elapsedHours > 0 ? tx / elapsedHours : null;
+  const historicalOpsPerHour = elapsedHours > 0 ? ops / elapsedHours : null;
+  const averageTxPerLedger = all.length ? tx / all.length : null;
+  const averageOpsPerLedger = all.length ? ops / all.length : null;
+
   return (
     <section className="mt-7">
       <div className="mb-3 flex items-end justify-between gap-3">
@@ -224,7 +235,11 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
               <Metric label={tr("Stored locally", "Yerelde saklanan")} value={storedCount.toLocaleString("en-US")} detail={tr("Persistent IndexedDB records on this device", "Bu cihazdaki kalıcı IndexedDB kayıtları")} />
               <Metric label={tr("New this sync", "Bu senkronizasyonda yeni")} value={newLedgers.toLocaleString("en-US")} detail={tr("Ledgers newer than the stored tip", "Yerel kayıtların en yeni ledger'ından sonraki kayıtlar")} />
               <Metric label={tr("Transactions", "İşlemler")} value={tx.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
-              <Metric label={tr("Operations", "Operasyonlar")} value={ops.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
+              <Metric label={tr("Operations", "Operasyonlar")} value={ops.toLocaleString("en-US")} detail={tr("Yüklenen ledger sayaçlarının toplamı", "Yüklenen ledger sayaçlarının toplamı")} />
+              <Metric label={tr("Historical tx / hour", "Tarihsel işlem / saat")} value={historicalTxPerHour != null ? historicalTxPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
+              <Metric label={tr("Historical ops / hour", "Tarihsel operasyon / saat")} value={historicalOpsPerHour != null ? historicalOpsPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
+              <Metric label={tr("Average tx / ledger", "Ortalama işlem / ledger")} value={averageTxPerLedger != null ? averageTxPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
+              <Metric label={tr("Average ops / ledger", "Ortalama operasyon / ledger")} value={averageOpsPerLedger != null ? averageOpsPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
             </div>
             {lastSync ? <p className="mt-3 text-[10px] text-muted-foreground">{tr("Last sync", "Son senkronizasyon")}: {new Date(lastSync).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</p> : null}
             {error ? <p className="mt-3 text-xs text-destructive">{error}</p> : null}
@@ -233,7 +248,18 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
                 {loading ? tr("Loading…", "Yükleniyor…") : cursor ? tr("Load older 200 ledgers", "200 daha eski ledger yükle") : tr("End of available history", "Mevcut geçmişin sonu")}
               </button>
             </div>
-            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+            <div className="mt-4 rounded-lg border border-border px-3 py-3">
+              <div className="text-[11px] font-medium text-foreground">{tr("Historical window", "Tarihsel pencere")}</div>
+              <div className="mt-1 text-[11px] text-muted-foreground">
+                {oldest && newest
+                  ? `${new Date(oldest.closedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(newest.closedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}`
+                  : "—"}
+              </div>
+              <div className="mt-1 text-[10px] text-muted-foreground">
+                {elapsedHours > 0 ? tr(`${elapsedHours.toFixed(1)} hours observed locally`, `${elapsedHours.toFixed(1)} saat yerel olarak gözlendi`) : tr("Waiting for enough time-separated records", "Yeterli zaman ayrışmasına sahip kayıt bekleniyor")}
+              </div>
+            </div>
+                        <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
               {tr("The engine does not pretend that one page equals the full Mainnet. It advances through Horizon pagination so the dataset can grow without loading the entire chain into the browser at once.", "Motor tek bir sayfanın tüm Mainnet olduğunu varsaymaz. Horizon pagination ile ilerleyerek tüm zinciri tarayıcıya tek seferde yüklemeden veri kümesini büyütür.")}
             </p>
           </>
