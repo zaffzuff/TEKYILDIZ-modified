@@ -54,6 +54,17 @@ export function ZafTechApp() {
           avgOperationsPerLedger: null,
           avgLedgerCloseSeconds: null,
           latestProtocolVersion: null,
+          transactionSuccessRate: null,
+          averageTransactionFeePi: null,
+          averageOperationsPerTransaction: null,
+          uniqueTransactionSources: 0,
+          uniqueOperationSources: 0,
+          topOperationType: null,
+          topOperationTypeCount: 0,
+          transactionSampleWindowMinutes: null,
+          operationSampleWindowMinutes: null,
+          observedTransactionsPerHour: null,
+          observedOperationsPerHour: null,
         },
         error: error instanceof Error ? error.message : "Unable to load Pi Mainnet data",
       });
@@ -128,6 +139,25 @@ export function ZafTechApp() {
                 <Metric label="Unique operation sources" value={formatNumber(data?.metrics.uniqueOperationSources ?? null)} detail="Distinct source accounts in sample" />
                 <Metric label="Top operation type" value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} of latest 100 operations` : undefined} />
               </div>
+            </section>
+
+            <section className="mt-7">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Observed activity rate</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <Metric
+                  label="Transactions / hour"
+                  value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"}
+                  detail={data?.metrics.transactionSampleWindowMinutes != null ? `Based on latest 100 tx over ${formatNumber(data.metrics.transactionSampleWindowMinutes, 1)} minutes` : "Latest transaction sample"}
+                />
+                <Metric
+                  label="Operations / hour"
+                  value={data?.metrics.observedOperationsPerHour != null ? formatNumber(data.metrics.observedOperationsPerHour, 1) : "—"}
+                  detail={data?.metrics.operationSampleWindowMinutes != null ? `Based on latest 100 operations over ${formatNumber(data.metrics.operationSampleWindowMinutes, 1)} minutes` : "Latest operation sample"}
+                />
+              </div>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Sample rates describe the time span covered by the latest records; they are not a full-network historical average.
+              </p>
             </section>
 
             <section className="mt-7">
