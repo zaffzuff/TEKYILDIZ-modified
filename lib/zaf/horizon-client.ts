@@ -139,12 +139,23 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       ledger.successfulTransactionCount != null && ledger.failedTransactionCount != null
         ? ledger.successfulTransactionCount + ledger.failedTransactionCount
         : ledger.transactionCount;
-    const olderTxRate = olderLedgers.length ? olderLedgers.reduce((sum, ledger) => sum + ledgerTxCount(ledger), 0) / olderLedgers.length : null;
-    const newerTxRate = newerLedgers.length ? newerLedgers.reduce((sum, ledger) => sum + ledgerTxCount(ledger), 0) / newerLedgers.length : null;
-    const olderOpRate = olderLedgers.length ? olderLedgers.reduce((sum, ledger) => sum + ledger.operationCount, 0) / olderLedgers.length : null;
-    const newerOpRate = newerLedgers.length ? newerLedgers.reduce((sum, ledger) => sum + ledger.operationCount, 0) / newerLedgers.length : null;
-    const txChange = olderTxRate && newerTxRate != null ? ((newerTxRate - olderTxRate) / olderTxRate) * 100 : null;
-    const opChange = olderOpRate && newerOpRate != null ? ((newerOpRate - olderOpRate) / olderOpRate) * 100 : null;
+    function ledgerRatePerHour(ledgers: ZafLedger[], countFor: (ledger: ZafLedger) => number): number | null {
+      if (ledgers.length < 2) return null;
+      const validTimes = ledgers
+        .map((ledger) => Date.parse(ledger.closedAt))
+        .filter(Number.isFinite)
+        .sort((a, b) => a - b);
+      if (validTimes.length < 2) return null;
+      const elapsedHours = (validTimes[validTimes.length - 1] - validTimes[0]) / 3_600_000;
+      if (elapsedHours <= 0) return null;
+      return ledgers.reduce((sum, ledger) => sum + countFor(ledger), 0) / elapsedHours;
+    }
+    const olderTxRate = ledgerRatePerHour(olderLedgers, ledgerTxCount);
+    const newerTxRate = ledgerRatePerHour(newerLedgers, ledgerTxCount);
+    const olderOpRate = ledgerRatePerHour(olderLedgers, (ledger) => ledger.operationCount);
+    const newerOpRate = ledgerRatePerHour(newerLedgers, (ledger) => ledger.operationCount);
+    const txChange = olderTxRate != null && olderTxRate !== 0 && newerTxRate != null ? ((newerTxRate - olderTxRate) / olderTxRate) * 100 : null;
+    const opChange = olderOpRate != null && olderOpRate !== 0 && newerOpRate != null ? ((newerOpRate - olderOpRate) / olderOpRate) * 100 : null;
     const combinedChange = [txChange, opChange].filter((value): value is number => value != null);
     const averageChange = combinedChange.length ? combinedChange.reduce((a, b) => a + b, 0) / combinedChange.length : null;
     const activityState: "rising" | "falling" | "stable" | "insufficient-data" =
