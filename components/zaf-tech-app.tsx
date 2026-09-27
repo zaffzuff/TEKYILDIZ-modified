@@ -535,20 +535,32 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("activity")}`}>
-              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
+              <div className="mb-3">
+                <h2 className="text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
+                <p className="text-[11px] text-muted-foreground">
+                  {tr("Recent activity context derived from the latest observed Mainnet ledger window")}
+                </p>
+              </div>
               <div className="rounded-xl border border-border bg-card p-4">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <Metric label={tr("Activity state")} value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"} detail={tr("Descriptive state from observed chain data")} />
+                  <Metric label={tr("Transactions / hour")} value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"} detail={tr("Latest observed ledger window")} />
+                  <Metric label={tr("Operations / hour")} value={data?.metrics.observedOperationsPerHour != null ? formatNumber(data.metrics.observedOperationsPerHour, 1) : "—"} detail={tr("Latest observed ledger window")} />
                   <Metric label={tr("Transaction rate change")} value={data?.intelligence.transactionChangePercent != null ? `${data.intelligence.transactionChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.transactionChangePercent, 1)}%` : "—"} detail={tr("Newer vs older half of the latest 100-ledger window")} />
                   <Metric label={tr("Operation rate change")} value={data?.intelligence.operationChangePercent != null ? `${data.intelligence.operationChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.operationChangePercent, 1)}%` : "—"} detail={tr("Newer vs older half of the latest 100-ledger window")} />
+                  <Metric label={tr("Average ledger interval")} value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail={tr("Average close interval across the latest observed ledgers")} />
+                  <Metric label={tr("Empty ledger rate")} value={data?.metrics.emptyLedgerRatePercent != null ? `${formatNumber(data.metrics.emptyLedgerRatePercent, 1)}%` : "—"} detail={tr("Ledgers with 0 transactions and 0 operations")} />
                   <Metric label={tr("Dominant operation share")} value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail={tr("Share of latest operation sample")} />
                   <Metric label={tr("Unique tx sources")} value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail={tr("Distinct source accounts")} />
                   <Metric label={tr("Unique operation sources")} value={formatNumber(data?.intelligence.uniqueOperationSources ?? null)} detail={tr("Distinct source accounts")} />
+                  <Metric label={tr("Observed ledger window")} value={formatNumber(data?.recentLedgers.length ?? null)} detail={tr("Recent Mainnet ledgers used for activity intelligence")} />
                 </div>
                 <div className="mt-3 rounded-lg border border-border px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="font-medium text-foreground">{tr("Measurement basis")}</div>
                   <div className="mt-1 leading-relaxed">
-                    {tr("Rate changes compare the newer and older halves of the latest {data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.")}
+                    {locale === "tr"
+                      ? `Oran değişimleri son ${data?.recentLedgers.length ?? 0} gözlemlenen ledger'ın yeni ve eski yarısını gerçek geçen süreye göre karşılaştırır. Sonuç gözlemlenen zincir aktivitesini açıklar; tahmin veya ekosistem geneli kullanım ölçümü değildir.`
+                      : `Rate changes compare the newer and older halves of the latest ${data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.`}
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 text-[11px] text-muted-foreground">
