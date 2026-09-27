@@ -25,7 +25,9 @@ function mapLedger(raw: any): ZafLedger {
     sequence: String(raw.sequence),
     hash: String(raw.hash ?? ""),
     closedAt: String(raw.closed_at ?? ""),
-    transactionCount: Number(raw.transaction_count ?? 0),
+    transactionCount: raw.successful_transaction_count != null || raw.failed_transaction_count != null
+      ? Number(raw.successful_transaction_count ?? 0) + Number(raw.failed_transaction_count ?? 0)
+      : Number(raw.transaction_count ?? 0),
     operationCount: Number(raw.operation_count ?? 0),
     successfulTransactionCount: raw.successful_transaction_count == null ? null : Number(raw.successful_transaction_count),
     failedTransactionCount: raw.failed_transaction_count == null ? null : Number(raw.failed_transaction_count),
