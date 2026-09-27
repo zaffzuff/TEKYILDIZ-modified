@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 
@@ -14,6 +14,15 @@ function formatNumber(value: number | null, digits = 0) {
   });
 }
 
+function shortenKey(value: string, head = 10, tail = 8) {
+  if (value.length <= head + tail + 3) return value;
+  return `${value.slice(0, head)}…${value.slice(-tail)}`;
+}
+
+function isPiPublicKey(value: string) {
+  return /^G[A-Z2-7]{55}$/.test(value);
+}
+
 function NodeMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -24,15 +33,46 @@ function NodeMetric({ label, value, detail }: { label: string; value: string; de
   );
 }
 
+function SignalCard({
+  label,
+  trLabel,
+  description,
+  trDescription,
+}: {
+  label: string;
+  trLabel: string;
+  description: string;
+  trDescription: string;
+}) {
+  return (
+    <div className="rounded-lg border border-border px-3 py-3">
+      <div className="text-xs font-medium text-foreground">{label === "Reliability" ? trLabel : trLabel}</div>
+      <div className="mt-1 text-sm font-semibold text-muted-foreground">—</div>
+      <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
+        {description}
+      </div>
+      <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
+        {trDescription}
+      </div>
+    </div>
+  );
+}
+
 export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: ZafSnapshot | null }) {
   const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
   const [publicKey, setPublicKey] = useState("");
   const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(NODE_KEY_STORAGE);
-    if (stored) setPublicKey(stored);
+    if (stored) {
+      setPublicKey(stored);
+      setSaved(true);
+    }
   }, []);
+
+  const keyValid = useMemo(() => isPiPublicKey(publicKey.trim()), [publicKey]);
 
   function saveIdentity() {
     const value = publicKey.trim();
@@ -41,8 +81,23 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       setSaved(false);
       return;
     }
+    if (!isPiPublicKey(value)) {
+      setSaved(false);
+      return;
+    }
     window.localStorage.setItem(NODE_KEY_STORAGE, value);
     setSaved(true);
+  }
+
+  async function copyIdentity() {
+    if (!publicKey) return;
+    try {
+      await navigator.clipboard.writeText(publicKey);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
   }
 
   return (
@@ -51,32 +106,32 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         <h2 className="text-sm font-semibold text-foreground">{tr("Node Intelligence", "Node İstihbaratı")}</h2>
         <p className="text-[11px] text-muted-foreground">
           {tr(
-            "A node-operator workspace built around Pi's published ranking signals and real Mainnet observations.",
-            "Pi'nin yayımladığı Node sıralama sinyalleri ve gerçek Mainnet gözlemleri üzerine kurulu Node operatörü çalışma alanı."
+            "A node-operator workspace combining Pi's published ranking signals with real Mainnet observations.",
+            "Pi'nin yayımladığı Node sıralama sinyallerini gerçek Mainnet gözlemleriyle birleştiren Node operatörü çalışma alanı."
           )}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <NodeMetric
-          label={tr("Pi Node operators", "Pi Node operatörleri")}
+          label={tr("Pi Node runners", "Pi Node çalıştıranlar")}
           value="420,000+"
-          detail={tr("Pi-published figure from June 2026", "Pi'nin Haziran 2026'da yayımladığı sayı")}
+          detail={tr("Pi-published June 2026 figure for Node runners", "Pi'nin Haziran 2026'da yayımladığı Node çalıştıranları sayısı")}
         />
         <NodeMetric
           label={tr("Published ranking", "Yayımlanan sıralama")}
           value="Top 5,000"
-          detail={tr("Ranking page published by Pi Blockexplorer", "Pi Blockexplorer tarafından yayımlanan sıralama")}
+          detail={tr("Pi Blockexplorer's published Node ranking", "Pi Blockexplorer'ın yayımladığı Node sıralaması")}
         />
         <NodeMetric
           label={tr("Ranking refresh", "Sıralama yenileme")}
           value="24h"
-          detail={tr("Pi says rankings refresh every 24 hours", "Pi sıralamanın 24 saatte bir yenilendiğini belirtiyor")}
+          detail={tr("Pi says the ranking refreshes every 24 hours", "Pi sıralamanın 24 saatte bir yenilendiğini belirtiyor")}
         />
         <NodeMetric
           label={tr("Observed Mainnet protocol", "Gözlemlenen Mainnet protokolü")}
           value={data?.metrics.latestProtocolVersion != null ? `v${data.metrics.latestProtocolVersion}` : "—"}
-          detail={tr("Read directly from the latest observed Mainnet ledger", "Son gözlemlenen Mainnet ledger'ından doğrudan okunur")}
+          detail={tr("Read from the latest observed Mainnet ledger", "Son gözlemlenen Mainnet ledger'ından okunur")}
         />
         <NodeMetric
           label={tr("Observed ledger window", "Gözlemlenen ledger penceresi")}
@@ -84,20 +139,20 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           detail={tr("Current ZAF TECH Mainnet observation window", "ZAF TECH'in mevcut Mainnet gözlem penceresi")}
         />
         <NodeMetric
-          label={tr("Node data mode", "Node veri modu")}
-          value={tr("Public", "Herkese açık")}
-          detail={tr("No private node credentials are requested", "Özel Node kimlik bilgileri istenmez")}
+          label={tr("Data boundary", "Veri sınırı")}
+          value={tr("Public + local", "Herkese açık + yerel")}
+          detail={tr("Public ranking data plus optional local diagnostics", "Herkese açık sıralama verisi ve isteğe bağlı yerel teşhis")}
         />
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="text-sm font-semibold text-foreground">{tr("My Node identity", "Node kimliğim")}</h3>
-            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
               {tr(
-                "Save your Node public key locally so ZAF TECH can use it for future ranking and identity features. The key is stored only in this browser.",
-                "Node public key'inizi yerel olarak saklayın; ZAF TECH bunu gelecekteki sıralama ve kimlik özelliklerinde kullanabilir. Anahtar yalnızca bu tarayıcıda saklanır."
+                "Enter the public key shown in Pi Desktop. ZAF TECH keeps it only in this browser and uses it as the identity for future Node intelligence features.",
+                "Pi Desktop'ta gösterilen public key'i girin. ZAF TECH bunu yalnızca bu tarayıcıda saklar ve gelecekteki Node istihbaratı özellikleri için kimlik olarak kullanır."
               )}
             </p>
           </div>
@@ -107,7 +162,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             rel="noreferrer"
             className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
           >
-            {tr("Open Pi Node ranking", "Pi Node sıralamasını aç")}
+            {tr("Open official Node ranking", "Resmi Node sıralamasını aç")}
           </a>
         </div>
 
@@ -115,8 +170,9 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <input
             value={publicKey}
             onChange={(event) => {
-              setPublicKey(event.target.value.trim());
+              setPublicKey(event.target.value.trim().toUpperCase());
               setSaved(false);
+              setCopied(false);
             }}
             placeholder="G..."
             aria-label={tr("Node public key", "Node public key")}
@@ -125,44 +181,81 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <button
             type="button"
             onClick={saveIdentity}
-            className="rounded-lg border border-border bg-foreground px-4 py-2 text-xs font-medium text-background"
+            disabled={!keyValid}
+            className="rounded-lg border border-border bg-foreground px-4 py-2 text-xs font-medium text-background disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {saved ? tr("Saved", "Kaydedildi") : tr("Save identity", "Kimliği kaydet")}
+            {saved ? tr("Identity saved", "Kimlik kaydedildi") : tr("Save identity", "Kimliği kaydet")}
           </button>
         </div>
 
-        <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]">
+          <span className={keyValid ? "text-foreground" : "text-muted-foreground"}>
+            {keyValid
+              ? tr("Valid Pi public-key format", "Geçerli Pi public key formatı")
+              : tr("Expected format: G + 55 characters", "Beklenen format: G + 55 karakter")}
+          </span>
+          {saved && keyValid ? (
+            <>
+              <span className="text-muted-foreground">
+                {tr("Stored locally", "Yerel olarak saklandı")}: <span className="font-mono">{shortenKey(publicKey)}</span>
+              </span>
+              <button type="button" onClick={copyIdentity} className="text-foreground underline underline-offset-2">
+                {copied ? tr("Copied", "Kopyalandı") : tr("Copy key", "Anahtarı kopyala")}
+              </button>
+            </>
+          ) : null}
+        </div>
+
+        <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
+          <span className="font-medium text-foreground">{tr("What saving does now", "Kaydetmenin şu an yaptığı")}: </span>
           {tr(
-            "Pi says the public key shown in Pi Desktop's Node section can be used to identify a Node in the public ranking page.",
-            "Pi, Pi Desktop'ın Node bölümünde gösterilen public key'in herkese açık sıralama sayfasında bir Node'u tanımlamak için kullanılabileceğini belirtiyor."
+            "It creates a persistent Node identity for this ZAF TECH installation. The public Blockexplorer ranking is still the authoritative place for the published Node ranking; ZAF TECH will not invent ranking values when a machine-readable public feed is unavailable.",
+            "Bu işlem bu ZAF TECH kurulumu için kalıcı bir Node kimliği oluşturur. Yayımlanan Node sıralaması için yetkili kaynak hâlâ Blockexplorer'dır; makine tarafından okunabilen herkese açık bir akış yoksa ZAF TECH sıralama değerleri uydurmaz."
           )}
-        </p>
+        </div>
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="mb-3">
           <h3 className="text-sm font-semibold text-foreground">{tr("Published Node signals", "Yayımlanan Node sinyalleri")}</h3>
-          <p className="mt-1 text-[11px] text-muted-foreground">
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {tr(
-              "These are the metrics Pi says its Node ranking uses. ZAF TECH does not invent values when the public source is unavailable.",
-              "Bunlar Pi'nin Node sıralamasında kullandığını belirttiği metriklerdir. Herkese açık kaynak erişilebilir değilse ZAF TECH değer uydurmaz."
+              "Pi's ranking page uses five published performance signals. Their current per-Node values are not exposed to ZAF TECH through a verified machine-readable public API, so these cards remain source-aware rather than fabricated.",
+              "Pi'nin sıralama sayfası beş yayımlanmış performans sinyali kullanır. Güncel Node bazlı değerler ZAF TECH'e doğrulanmış makine tarafından okunabilir bir public API üzerinden sunulmadığı için bu kartlar uydurma değer yerine kaynak durumunu gösterir."
             )}
           </p>
         </div>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          {[
-            ["Reliability", "Güvenilirlik"],
-            ["Availability", "Erişilebilirlik"],
-            ["Open ports", "Açık portlar"],
-            ["Total active days", "Toplam aktif gün"],
-            ["CPU performance", "CPU performansı"],
-          ].map(([en, trText]) => (
-            <div key={en} className="rounded-lg border border-border px-3 py-3">
-              <div className="text-xs font-medium text-foreground">{tr(en, trText)}</div>
-              <div className="mt-1 text-sm font-semibold text-muted-foreground">—</div>
-              <div className="mt-1 text-[10px] text-muted-foreground">{tr("Public ranking value not imported yet", "Herkese açık sıralama değeri henüz içe aktarılmadı")}</div>
-            </div>
-          ))}
+          <SignalCard
+            label="Reliability"
+            trLabel={tr("Reliability", "Güvenilirlik")}
+            description={tr("Reflects functional uptime/reliability signals.", "İşlevsel çalışma süresi ve güvenilirlik sinyallerini ifade eder.")}
+            trDescription={tr("Pi's published ranking metric.", "Pi'nin yayımladığı sıralama metriği.")}
+          />
+          <SignalCard
+            label="Availability"
+            trLabel={tr("Availability", "Erişilebilirlik")}
+            description={tr("Indicates how consistently the Node is available.", "Node'un ne kadar düzenli erişilebilir olduğunu ifade eder.")}
+            trDescription={tr("Published by Pi's ranking system.", "Pi'nin sıralama sisteminde yayımlanır.")}
+          />
+          <SignalCard
+            label="Open ports"
+            trLabel={tr("Open ports", "Açık portlar")}
+            description={tr("Tracks network reachability through Node ports.", "Node portları üzerinden ağ erişilebilirliğini izler.")}
+            trDescription={tr("Pi documents ports 31400–31409 for Node connectivity.", "Pi Node bağlantısı için 31400–31409 portlarını belgeler.")}
+          />
+          <SignalCard
+            label="Total active days"
+            trLabel={tr("Total active days", "Toplam aktif gün")}
+            description={tr("Represents accumulated Node activity history.", "Biriken Node çalışma geçmişini ifade eder.")}
+            trDescription={tr("Longer history is part of Pi's published ranking signals.", "Daha uzun geçmiş Pi'nin yayımladığı sıralama sinyallerindendir.")}
+          />
+          <SignalCard
+            label="CPU performance"
+            trLabel={tr("CPU performance", "CPU performansı")}
+            description={tr("Represents the computer's available processing contribution.", "Bilgisayarın sağladığı işlem kapasitesi katkısını ifade eder.")}
+            trDescription={tr("Pi also describes CPU as a Node performance factor.", "Pi CPU'yu ayrıca Node performans faktörü olarak açıklar.")}
+          />
         </div>
       </div>
 
@@ -177,23 +270,41 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           ].map(([en, trText]) => (
             <div key={en} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-[11px]">
               <span className="text-foreground">{tr(en, trText)}</span>
-              <span className="text-muted-foreground">{tr("Planned", "Planlandı")}</span>
+              <span className="text-muted-foreground">{tr("Local connector required", "Yerel bağlantı gerekli")}</span>
             </div>
           ))}
         </div>
         <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
           {tr(
-            "A web app cannot safely read your Pi Desktop or Docker state by itself. The next diagnostic layer will use an explicit local connector rather than pretending the browser can see the machine.",
-            "Bir web uygulaması Pi Desktop veya Docker durumunuzu kendi başına güvenli şekilde okuyamaz. Sonraki teşhis katmanı, tarayıcının makineyi görebildiğini varsaymak yerine açık bir yerel bağlantı katmanı kullanacaktır."
+            "The next layer can read Pi Desktop/Docker state only through an explicit local connector. That keeps ZAF TECH honest about what a normal web browser can and cannot access.",
+            "Sonraki katman Pi Desktop/Docker durumunu yalnızca açık bir yerel bağlantı üzerinden okuyabilir. Böylece ZAF TECH normal bir web tarayıcısının erişebileceği ve erişemeyeceği sınırları doğru şekilde korur."
           )}
         </p>
+      </div>
+
+      <div className="mt-4 rounded-xl border border-border bg-card p-4">
+        <h3 className="text-sm font-semibold text-foreground">{tr("Why your Node matters", "Node'unuz neden önemli")}</h3>
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
+            <div className="font-medium text-foreground">{tr("Blockchain contribution", "Blockchain katkısı")}</div>
+            <div className="mt-1">{tr("Pi describes Nodes as computers that verify blockchain validity and support the distributed ledger.", "Pi, Node'ları blockchain geçerliliğini doğrulayan ve dağıtık ledger'a katkı sağlayan bilgisayarlar olarak tanımlar.")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
+            <div className="font-medium text-foreground">{tr("Connectivity", "Bağlantı")}</div>
+            <div className="mt-1">{tr("Pi's published Node metrics include availability and open-port signals, making connectivity an observable part of Node performance.", "Pi'nin yayımladığı Node metrikleri arasında erişilebilirlik ve açık port sinyalleri bulunur; bağlantı Node performansının gözlemlenebilir bir parçasıdır.")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
+            <div className="font-medium text-foreground">{tr("Future compute utility", "Gelecekteki hesaplama kullanımı")}</div>
+            <div className="mt-1">{tr("Pi is also developing Node-based distributed computing use cases through SoloHost.", "Pi ayrıca SoloHost üzerinden Node tabanlı dağıtık hesaplama kullanım alanları geliştiriyor.")}</div>
+          </div>
+        </div>
       </div>
 
       <div className="mt-4 rounded-xl border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
         <span className="font-medium text-foreground">{tr("Data boundary", "Veri sınırı")}: </span>
         {tr(
-          "ZAF TECH does not display a fabricated global map of individual Node computers. A complete official public geolocation feed for all Nodes was not verified, so location data is not inferred from IP addresses.",
-          "ZAF TECH tek tek Node bilgisayarlarını gösteren uydurma bir küresel harita sunmaz. Tüm Node'lar için eksiksiz resmi bir herkese açık konum akışı doğrulanmadığı için IP adreslerinden konum çıkarımı yapılmaz."
+          "ZAF TECH does not infer individual Node location from IP addresses or display a fabricated global Node map. It only presents data that can be tied to a documented public source or an explicit local connector.",
+          "ZAF TECH IP adreslerinden tek tek Node konumu çıkarmaz ve uydurma küresel Node haritası göstermez. Yalnızca belgelenmiş herkese açık bir kaynağa veya açık bir yerel bağlantıya bağlanabilen verileri sunar."
         )}
       </div>
     </section>
