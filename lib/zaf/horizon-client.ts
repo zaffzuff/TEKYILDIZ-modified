@@ -120,7 +120,13 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       m[o.type] = (m[o.type] ?? 0) + 1;
       return m;
     }, {});
-    const topOperation = Object.entries(typeCounts).sort((a,b) => b[1] - a[1])[0];
+    const sortedOperationTypes = Object.entries(typeCounts).sort((a,b) => b[1] - a[1]);
+    const topOperation = sortedOperationTypes[0];
+    const operationTypeDistribution = sortedOperationTypes.slice(0, 6).map(([type, count]) => ({
+      type,
+      count,
+      percentage: operations.length ? (count / operations.length) * 100 : 0,
+    }));
     const transactionSampleWindowMinutes = sampleWindowMinutes(transactions.map((t) => t.createdAt));
     const operationSampleWindowMinutes = sampleWindowMinutes(operations.map((o) => o.createdAt));
 
@@ -165,6 +171,7 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         transactionSuccessRate: null, averageTransactionFeePi: null,
         averageOperationsPerTransaction: null, uniqueTransactionSources: 0,
         uniqueOperationSources: 0, topOperationType: null, topOperationTypeCount: 0,
+        operationTypeDistribution: [],
         transactionSampleWindowMinutes: null, operationSampleWindowMinutes: null,
         observedTransactionsPerHour: null, observedOperationsPerHour: null,
       },
