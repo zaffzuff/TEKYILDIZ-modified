@@ -362,6 +362,12 @@ export function ZafTechApp() {
                   <Metric label="Unique tx sources" value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail="Distinct source accounts" />
                   <Metric label="Unique operation sources" value={formatNumber(data?.intelligence.uniqueOperationSources ?? null)} detail="Distinct source accounts" />
                 </div>
+                <div className="mt-3 rounded-lg border border-border px-3 py-2 text-[11px] text-muted-foreground">
+                  <div className="font-medium text-foreground">Measurement basis</div>
+                  <div className="mt-1 leading-relaxed">
+                    Rate changes compare the newer and older halves of the latest {data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.
+                  </div>
+                </div>
                 <div className="mt-3 space-y-1 text-[11px] text-muted-foreground">
                   {(data?.intelligence.notes ?? []).map((note) => <p key={note}>• {note}</p>)}
                 </div>
