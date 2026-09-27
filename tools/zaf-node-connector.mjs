@@ -81,7 +81,7 @@ function inferSync(logs) {
   return "unknown";
 }
 
-async async function readCorePeers(containerId) {
+async function readCorePeers(containerId) {
   const result = await docker([
     "exec",
     containerId,
@@ -103,7 +103,7 @@ async async function readCorePeers(containerId) {
   }
 }
 
-function readCoreInfo(containerId) {
+async function readCoreInfo(containerId) {
   const result = await docker([
     "exec",
     containerId,
