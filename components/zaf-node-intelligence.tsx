@@ -24,7 +24,7 @@ function isPiPublicKey(value: string) {
 }
 
 type LocalNodeData = {
-  connector?: { connected?: boolean; docker?: boolean; core?: boolean };
+  connector?: { connected?: boolean; docker?: boolean; core?: boolean; version?: string };
   node?: {
     containerName?: string;
     containerId?: string;
