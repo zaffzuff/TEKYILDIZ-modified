@@ -91,7 +91,6 @@ export interface ZafSnapshot {
     latestProtocolVersion: number | null;
     transactionSuccessRate: number | null;
     averageTransactionFeePi: number | null;
-    averageOperationsPerTransaction: number | null;
     uniqueTransactionSources: number;
     uniqueOperationSources: number;
     topOperationType: string | null;
