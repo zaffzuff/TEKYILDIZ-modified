@@ -149,6 +149,8 @@ export function ZafTechApp() {
   const [trendHistory, setTrendHistory] = useState<TrendPoint[]>([]);
   const [historicalActivity, setHistoricalActivity] = useState<ZafHistoricalActivity | null>(null);
   const [showAllTransactions, setShowAllTransactions] = useState(false);
+  const [transactionFilter, setTransactionFilter] = useState<"all" | "successful" | "failed">("all");
+  const [transactionSearch, setTransactionSearch] = useState("");
   const [showAllOperations, setShowAllOperations] = useState(false);
   const [showAllLedgers, setShowAllLedgers] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
@@ -800,31 +802,81 @@ export function ZafTechApp() {
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
                   <p className="text-[11px] text-muted-foreground">{tr("Latest 100 from Pi Mainnet Horizon")}</p>
                 </div>
+                <div className="text-right text-[11px] text-muted-foreground">
+                  {tr("Showing")} {data?.transactions.filter((tx) => {
+                    const matchesStatus = transactionFilter === "all" || (transactionFilter === "failed" ? tx.successful === false : tx.successful === true);
+                    const q = transactionSearch.trim().toLowerCase();
+                    return matchesStatus && (!q || [tx.hash, tx.ledger, tx.sourceAccount, tx.memo].some((value) => value?.toLowerCase().includes(q)));
+                  }).length ?? 0} / {data?.transactions.length ?? 0}
+                </div>
+              </div>
+              <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
+                <input
+                  value={transactionSearch}
+                  onChange={(event) => setTransactionSearch(event.target.value)}
+                  placeholder={tr("Search hash, ledger, source or memo")}
+                  aria-label={tr("Search transactions")}
+                  className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring"
+                />
+                <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Transaction status filter")}>
+                  {([
+                    ["all", "All"],
+                    ["successful", "Successful"],
+                    ["failed", "Failed"],
+                  ] as const).map(([id, label]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setTransactionFilter(id)}
+                      className={`rounded-md px-2.5 py-1.5 font-medium ${transactionFilter === id ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+                    >
+                      {tr(label)}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
-                {data?.transactions.length ? (showAllTransactions ? data.transactions : data.transactions.slice(0, RECENT_RECORD_PREVIEW)).map((tx) => (
-                  <div key={tx.hash} className="border-b border-border p-3 last:border-b-0">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-mono text-xs text-foreground">{short(tx.hash, 18)}</span>
-                      <span className={`text-[11px] ${tx.successful === false ? "text-destructive" : "text-muted-foreground"}`}>
-                        {tx.successful === false ? tr("Failed") : tr("Successful")}
-                      </span>
+                {(() => {
+                  const q = transactionSearch.trim().toLowerCase();
+                  const filtered = (data?.transactions ?? []).filter((tx) => {
+                    const matchesStatus = transactionFilter === "all" || (transactionFilter === "failed" ? tx.successful === false : tx.successful === true);
+                    const matchesSearch = !q || [tx.hash, tx.ledger, tx.sourceAccount, tx.memo].some((value) => value?.toLowerCase().includes(q));
+                    return matchesStatus && matchesSearch;
+                  });
+                  const visible = showAllTransactions ? filtered : filtered.slice(0, RECENT_RECORD_PREVIEW);
+                  if (!visible.length) return <div className="p-4 text-xs text-muted-foreground">{tr("No transactions match the current filters.")}</div>;
+                  return visible.map((tx) => (
+                    <div key={tx.hash} className="border-b border-border p-3 last:border-b-0">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-mono text-xs text-foreground">{short(tx.hash, 18)}</span>
+                        <span className={`text-[11px] ${tx.successful === false ? "text-destructive" : "text-muted-foreground"}`}>
+                          {tx.successful === false ? tr("Failed") : tr("Successful")}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-[11px] text-muted-foreground">
+                        {tr("Ledger")} {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} {tr("operations")} · {tr("fee")} {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
+                      </div>
+                      <div className="mt-1 grid grid-cols-1 gap-1 text-[10px] text-muted-foreground sm:grid-cols-2">
+                        <span>{tr("Source")} {tx.sourceAccount ? short(tx.sourceAccount, 18) : "—"}</span>
+                        <span>{tr("Created")} {tx.createdAt ? formatDateTime(tx.createdAt, locale) : "—"}</span>
+                      </div>
+                      {tx.memo ? <div className="mt-1 truncate text-[10px] text-muted-foreground">{tr("Memo")}: {tx.memo}</div> : null}
                     </div>
-                    <div className="mt-1 text-[11px] text-muted-foreground">
-                      {tr("Ledger")} {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} {tr("operations")} · {tr("fee")} {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
-                    </div>
-                  </div>
-                )) : <div className="p-4 text-xs text-muted-foreground">{tr("No transaction records available.")}</div>}
+                  ));
+                })()}
               </div>
-              {data?.transactions.length && data.transactions.length > RECENT_RECORD_PREVIEW ? (
+              {(data?.transactions.length ?? 0) > 0 ? (
                 <button
                   type="button"
                   onClick={() => setShowAllTransactions((current) => !current)}
                   className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                 >
-                  {showAllTransactions ? tr("Show less") : `${tr("Show all")} ${data.transactions.length} ${tr(data.transactions.length === 1 ? "transaction" : "transactions")}`}
+                  {showAllTransactions ? tr("Show less") : tr("Show filtered records")}
                 </button>
               ) : null}
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                {tr("Filters and search apply to the latest transaction sample returned by Pi Mainnet Horizon.")}
+              </p>
             </section>
 
             <section className={`mt-7 ${tabClass("operations")}`}>
