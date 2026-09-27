@@ -50,6 +50,13 @@ export interface ZafSnapshot {
     avgOperationsPerLedger: number | null;
     avgLedgerCloseSeconds: number | null;
     latestProtocolVersion: number | null;
+    transactionSuccessRate: number | null;
+    averageTransactionFeePi: number | null;
+    averageOperationsPerTransaction: number | null;
+    uniqueTransactionSources: number;
+    uniqueOperationSources: number;
+    topOperationType: string | null;
+    topOperationTypeCount: number;
   };
   error: string | null;
 }
