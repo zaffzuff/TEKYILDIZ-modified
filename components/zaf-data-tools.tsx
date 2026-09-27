@@ -127,6 +127,9 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [storedCount, setStoredCount] = useState(0);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState<string | null>(null);
+  const [newLedgers, setNewLedgers] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -144,8 +147,37 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
         if (active) setStoredCount(count);
       });
     }).catch(() => undefined);
+    void syncLatest();
     return () => { active = false; };
   }, []);
+
+  async function syncLatest() {
+    setSyncing(true);
+    setError("");
+    try {
+      const response = await fetch("/api/zaf/historical?limit=200", { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Historical sync failed");
+
+      const existing = await getStoredLedgers(1);
+      const newestStored = existing[0] ? Number(existing[0].sequence) : 0;
+      const fresh = payload.ledgers.filter((ledger: LedgerPage["ledgers"][number]) => Number(ledger.sequence) > newestStored);
+
+      await saveLedgers(payload.ledgers.map((ledger: LedgerPage["ledgers"][number]) => ({
+        ...ledger,
+        savedAt: new Date().toISOString(),
+      })));
+
+      setStoredCount(await countStoredLedgers());
+      setNewLedgers(fresh.length);
+      setLastSync(new Date().toISOString());
+      setPages((current) => current.length ? current : [payload]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Historical sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   async function loadPage(reset = false) {
     setLoading(true);
@@ -190,9 +222,11 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Metric label={tr("Loaded ledgers", "Yüklenen ledger")} value={all.length.toLocaleString("en-US")} detail={tr("Real Mainnet records in this view", "Bu görünümdeki gerçek Mainnet kayıtları")} />
               <Metric label={tr("Stored locally", "Yerelde saklanan")} value={storedCount.toLocaleString("en-US")} detail={tr("Persistent IndexedDB records on this device", "Bu cihazdaki kalıcı IndexedDB kayıtları")} />
+              <Metric label={tr("New this sync", "Bu senkronizasyonda yeni")} value={newLedgers.toLocaleString("en-US")} detail={tr("Ledgers newer than the stored tip", "Yerel kayıtların en yeni ledger'ından sonraki kayıtlar")} />
               <Metric label={tr("Transactions", "İşlemler")} value={tx.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
               <Metric label={tr("Operations", "Operasyonlar")} value={ops.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
             </div>
+            {lastSync ? <p className="mt-3 text-[10px] text-muted-foreground">{tr("Last sync", "Son senkronizasyon")}: {new Date(lastSync).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</p> : null}
             {error ? <p className="mt-3 text-xs text-destructive">{error}</p> : null}
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <button type="button" onClick={() => void loadPage(false)} disabled={loading || !cursor} className="flex-1 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">
