@@ -30,6 +30,7 @@ function mapLedger(raw: any): ZafLedger {
     transactionCount: numberOrNull(raw.transaction_count) ?? 0,
     operationCount: numberOrNull(raw.operation_count) ?? 0,
     successfulTransactionCount: numberOrNull(raw.successful_transaction_count),
+    failedTransactionCount: numberOrNull(raw.failed_transaction_count),
     successfulOperationCount: numberOrNull(raw.successful_operation_count),
     protocolVersion: numberOrNull(raw.protocol_version),
     baseFeePi: stroopsToPi(raw.base_fee_in_stroops),
@@ -107,9 +108,14 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
 
     const transactionLedgers = new Set(transactions.map((t) => t.ledger).filter(Boolean));
     const operationLedgers = new Set(operations.map((o) => o.ledger).filter(Boolean));
+    const ledgerSuccessfulTransactions = recentLedgers.reduce((sum, ledger) => sum + (ledger.successfulTransactionCount ?? 0), 0);
+    const ledgerFailedTransactions = recentLedgers.reduce((sum, ledger) => sum + (ledger.failedTransactionCount ?? 0), 0);
+    const ledgerTransactionTotal = ledgerSuccessfulTransactions + ledgerFailedTransactions;
+    const ledgerOperationTotal = recentLedgers.reduce((sum, ledger) => sum + (ledger.operationCount ?? 0), 0);
     const successfulTransactions = transactions.filter((t) => t.successful === true).length;
     const fees = transactions.flatMap((t) => t.feePi == null ? [] : [t.feePi]);
     const operationCounts = transactions.flatMap((t) => t.operationCount == null ? [] : [t.operationCount]);
+    const ledgerWindowSeconds = closeTimes.length >= 2 ? (closeTimes[closeTimes.length - 1] - closeTimes[0]) / 1000 : null;
     const typeCounts = operations.reduce<Record<string, number>>((m, o) => {
       m[o.type] = (m[o.type] ?? 0) + 1;
       return m;
@@ -134,7 +140,7 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         avgOperationsPerLedger: operationLedgers.size ? operations.length / operationLedgers.size : null,
         avgLedgerCloseSeconds: average(intervals),
         latestProtocolVersion: recentLedgers[0]?.protocolVersion ?? null,
-        transactionSuccessRate: transactions.length ? (successfulTransactions / transactions.length) * 100 : null,
+        transactionSuccessRate: ledgerTransactionTotal ? (ledgerSuccessfulTransactions / ledgerTransactionTotal) * 100 : (transactions.length ? (successfulTransactions / transactions.length) * 100 : null),
         averageTransactionFeePi: average(fees),
         averageOperationsPerTransaction: average(operationCounts),
         uniqueTransactionSources: uniqueCount(transactions.map((t) => t.sourceAccount)),
@@ -143,8 +149,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         topOperationTypeCount: topOperation?.[1] ?? 0,
         transactionSampleWindowMinutes,
         operationSampleWindowMinutes,
-        observedTransactionsPerHour: observedPerHour(transactions.length, transactionSampleWindowMinutes),
-        observedOperationsPerHour: observedPerHour(operations.length, operationSampleWindowMinutes),
+        observedTransactionsPerHour: ledgerWindowSeconds ? ledgerTransactionTotal / (ledgerWindowSeconds / 3600) : observedPerHour(transactions.length, transactionSampleWindowMinutes),
+        observedOperationsPerHour: ledgerWindowSeconds ? ledgerOperationTotal / (ledgerWindowSeconds / 3600) : observedPerHour(operations.length, operationSampleWindowMinutes),
       },
       error: null,
     };
