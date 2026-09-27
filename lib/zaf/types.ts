@@ -49,6 +49,12 @@ export interface ZafHistoricalActivity {
   error: string | null;
 }
 
+export interface ZafOperationTypeShare {
+  type: string;
+  count: number;
+  percentage: number;
+}
+
 export interface ZafSnapshot {
   network: "Pi Network";
   source: "Pi Mainnet Horizon";
@@ -72,6 +78,7 @@ export interface ZafSnapshot {
     uniqueOperationSources: number;
     topOperationType: string | null;
     topOperationTypeCount: number;
+    operationTypeDistribution: ZafOperationTypeShare[];
     transactionSampleWindowMinutes: number | null;
     operationSampleWindowMinutes: number | null;
     observedTransactionsPerHour: number | null;
