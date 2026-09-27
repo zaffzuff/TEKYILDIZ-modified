@@ -105,6 +105,15 @@ export function ZafTechApp() {
         recentLedgers: [],
         transactions: [],
         operations: [],
+        intelligence: {
+          activityState: "insufficient-data",
+          transactionChangePercent: null,
+          operationChangePercent: null,
+          dominantOperationShare: null,
+          uniqueTransactionSources: 0,
+          uniqueOperationSources: 0,
+          notes: [],
+        },
         metrics: {
           recentLedgerCount: 0,
           recentTransactions: 0,
@@ -198,6 +207,21 @@ export function ZafTechApp() {
                 <Metric label="Unique tx sources" value={formatNumber(data?.metrics.uniqueTransactionSources ?? null)} detail="Distinct source accounts in sample" />
                 <Metric label="Unique operation sources" value={formatNumber(data?.metrics.uniqueOperationSources ?? null)} detail="Distinct source accounts in sample" />
                 <Metric label="Top operation type" value={data?.metrics.topOperationType ?? "—"} detail={data?.metrics.topOperationType ? `${data.metrics.topOperationTypeCount} of latest 100 operations` : undefined} />
+              </div>
+            </section>
+
+            <section className="mt-7">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Activity intelligence</h2>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <Metric label="Activity state" value={data?.intelligence.activityState ?? "—"} detail="Descriptive state from observed chain data" />
+                  <Metric label="Dominant operation share" value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"} detail="Share of latest operation sample" />
+                  <Metric label="Unique tx sources" value={formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} detail="Distinct source accounts" />
+                  <Metric label="Unique operation sources" value={formatNumber(data?.intelligence.uniqueOperationSources ?? null)} detail="Distinct source accounts" />
+                </div>
+                <div className="mt-3 space-y-1 text-[11px] text-muted-foreground">
+                  {(data?.intelligence.notes ?? []).map((note) => <p key={note}>• {note}</p>)}
+                </div>
               </div>
             </section>
 
