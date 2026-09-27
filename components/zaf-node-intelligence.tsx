@@ -31,6 +31,8 @@ type LocalNodeData = {
     state?: string;
     image?: string;
     protocol?: number | string | null;
+    protocolSupport?: "supported" | "newer_or_unsupported" | "unknown";
+    compatibility?: { supportedProtocols?: number[]; status?: string };
     sync?: string;
     startedAt?: string | null;
     restartCount?: number;
@@ -159,8 +161,8 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         <h2 className="text-sm font-semibold text-foreground">{tr("Node Intelligence", "Node İstihbaratı")}</h2>
         <p className="text-[11px] text-muted-foreground">
           {tr(
-            "A node-operator workspace combining Pi's published ranking signals with real Mainnet observations.",
-            "Pi'nin yayımladığı Node sıralama sinyallerini gerçek Mainnet gözlemleriyle birleştiren Node operatörü çalışma alanı."
+            "A node-operator workspace combining Pi's published ranking signals with live local Node diagnostics.",
+            "Pi'nin yayımladığı Node sıralama sinyallerini canlı yerel Node teşhisleriyle birleştiren Node operatörü çalışma alanı."
           )}
         </p>
       </div>
@@ -182,9 +184,9 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           detail={tr("Pi says the ranking refreshes every 24 hours", "Pi sıralamanın 24 saatte bir yenilendiğini belirtiyor")}
         />
         <NodeMetric
-          label={tr("Observed Mainnet protocol", "Gözlemlenen Mainnet protokolü")}
+          label={tr("Observed network protocol", "Gözlemlenen ağ protokolü")}
           value={data?.metrics.latestProtocolVersion != null ? `v${data.metrics.latestProtocolVersion}` : "—"}
-          detail={tr("Read from the latest observed Mainnet ledger", "Son gözlemlenen Mainnet ledger'ından okunur")}
+          detail={tr("Read from the latest observed ledger", "Son gözlemlenen ledger'dan okunur")}
         />
         <NodeMetric
           label={tr("Observed ledger window", "Gözlemlenen ledger penceresi")}
@@ -411,6 +413,24 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="text-[10px] text-muted-foreground">{tr("Protocol", "Protokol")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.protocol || "—"}</div>
             <div className="mt-1 text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
+          </div>
+          <div className="rounded-lg border border-border px-3 py-3">
+            <div className="text-[10px] text-muted-foreground">{tr("Protocol support", "Protokol desteği")}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">
+              {localNode?.node?.protocolSupport === "supported"
+                ? tr("Supported", "Destekleniyor")
+                : localNode?.node?.protocolSupport === "newer_or_unsupported"
+                  ? tr("Newer / unsupported", "Yeni / desteklenmiyor")
+                  : "—"}
+            </div>
+            <div className="mt-1 text-[10px] text-muted-foreground">
+              {localNode?.node?.compatibility?.supportedProtocols?.length
+                ? tr(
+                    "Connector supports v" + localNode.node.compatibility.supportedProtocols.join(" / v"),
+                    "Connector v" + localNode.node.compatibility.supportedProtocols.join(" / v") + " destekliyor"
+                  )
+                : "—"}
+            </div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Local ports", "Yerel portlar")}</div>
