@@ -112,7 +112,7 @@ async function readNode() {
 
   if (!list.ok) {
     return {
-      connector: { connected: true, docker: false },
+      connector: { connected: true, version: VERSION, docker: false },
       node: null,
       ports: [],
       error: "Docker CLI is not available or the Docker daemon cannot be reached.",
@@ -153,7 +153,7 @@ async function readNode() {
 
   if (!candidate) {
     return {
-      connector: { connected: true, docker: true },
+      connector: { connected: true, version: VERSION, docker: true },
       node: null,
       ports,
       candidates: [],
@@ -277,7 +277,7 @@ const server = createServer(async (req, res) => {
       res,
       500,
       {
-        connector: { connected: true, docker: false },
+        connector: { connected: true, version: VERSION, docker: false },
         error: error instanceof Error ? error.message : String(error),
       },
       origin
