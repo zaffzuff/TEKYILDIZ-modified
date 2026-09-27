@@ -255,11 +255,18 @@ export function ZafTechApp() {
       <main className="mx-auto max-w-3xl px-4 pb-10">
         <header className="border-b border-border pb-5 pt-7">
           <div className="flex items-center justify-between gap-4">
-            <div>
-              <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {tr("Pi Ecosystem Activity Intelligence")}
-              </p>
+            <div className="flex items-center gap-3">
+              <img
+                src="/zaf-tech-logo.png"
+                alt="ZAF TECH"
+                className="h-11 w-11 shrink-0 rounded-xl border border-border object-cover shadow-sm"
+              />
+              <div>
+                <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {tr("Pi Ecosystem Activity Intelligence")}
+                </p>
+              </div>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
               <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Language")}>
