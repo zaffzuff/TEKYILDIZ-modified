@@ -530,7 +530,7 @@ export function ZafTechApp() {
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    {tr("Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? "—"}h of real Pi Mainnet ledger data")}
+                    {tr("Hourly-equivalent rates across the latest")} {historicalActivity?.windowHours ?? "—"}h {tr("of real Pi Mainnet ledger data")}
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
