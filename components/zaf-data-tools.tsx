@@ -148,8 +148,8 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
         transactionCount: row.transactionCount,
         operationCount: row.operationCount,
       }));
-      setPages([{ ledgers: restored, nextCursor: rows.length ? rows[rows.length - 1].sequence : null, hasMore: true }]);
-      setCursor(rows.length ? rows[rows.length - 1].sequence : null);
+      setPages([{ ledgers: restored, nextCursor: null, hasMore: true }]);
+      setCursor(null);
       return Promise.all([countStoredLedgers(), getStoredLedgerStats()]).then(([count, stats]) => {
         if (active) {
           setStoredCount(count);
@@ -183,7 +183,8 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       setHistoricalStats(stats);
       setNewLedgers(fresh.length);
       setLastSync(new Date().toISOString());
-      setPages((current) => current.length ? current : [payload]);
+      setPages([payload]);
+      setCursor(payload.nextCursor);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Historical sync failed");
     } finally {
@@ -209,7 +210,10 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       setStoredCount(count);
       setHistoricalStats(stats);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Historical request failed");
+      const message = err instanceof Error ? err.message : "Historical request failed";
+      setError(message.includes("410")
+        ? tr("Pi Horizon has no history available for the requested pagination cursor.", "Pi Horizon istenen sayfalama imlecinden önce erişilebilir geçmiş sunmuyor.")
+        : message);
     } finally {
       setLoading(false);
     }
