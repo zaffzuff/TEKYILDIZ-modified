@@ -92,8 +92,8 @@ function ledgerIntervalSeconds(
   if (!older) return null;
   const currentTime = Date.parse(current.closedAt);
   const olderTime = Date.parse(older.closedAt);
-  if (!Number.isFinite(currentTime) || !Number.isFinite(olderTime) || olderTime <= currentTime) return null;
-  return (olderTime - currentTime) / 1000;
+  if (!Number.isFinite(currentTime) || !Number.isFinite(olderTime) || olderTime >= currentTime) return null;
+  return (currentTime - olderTime) / 1000;
 }
 
 function operationsPerTransaction(transactions: number, operations: number) {
