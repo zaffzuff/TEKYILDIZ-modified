@@ -35,6 +35,20 @@ export interface ZafOperation {
   to: string | null;
 }
 
+export interface ZafHistoricalPoint {
+  sequence: string;
+  closedAt: string;
+  transactions: number;
+  operations: number;
+  successRate: number | null;
+}
+
+export interface ZafHistoricalActivity {
+  windowHours: number;
+  points: ZafHistoricalPoint[];
+  error: string | null;
+}
+
 export interface ZafSnapshot {
   network: "Pi Network";
   source: "Pi Mainnet Horizon";
