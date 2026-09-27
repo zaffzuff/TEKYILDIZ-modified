@@ -56,35 +56,62 @@ export async function getZafHistoricalActivity(): Promise<ZafHistoricalActivity>
       ? (times[times.length - 1] - times[0]) / 1000 / (times.length - 1)
       : 5;
 
-    const latestSequence = Number(recent[0].sequence);
-    const ledgersPerTwoHours = Math.max(1, Math.round((2 * 60 * 60) / averageIntervalSeconds));
-    const sequences = Array.from({ length: 12 }, (_, index) =>
-      Math.max(1, latestSequence - index * ledgersPerTwoHours)
-    );
+    const windowStart = times[0];
+    const windowEnd = times[times.length - 1];
+    const latest = recent[0];
 
-    const sampled = await Promise.all(
-      sequences.map(async (sequence) => {
+    const sampled = new Map<string, ZafLedger>();
+    for (const ledger of recent) sampled.set(ledger.sequence, ledger);
+
+    const checkpoints = Array.from({ length: 12 }, (_, index) => {
+      const target = windowEnd - ((windowEnd - windowStart) * index) / 11;
+      let closest = recent[0];
+      let closestDistance = Math.abs(Date.parse(closest.closedAt) - target);
+      for (const candidate of recent) {
+        const distance = Math.abs(Date.parse(candidate.closedAt) - target);
+        if (distance < closestDistance) {
+          closest = candidate;
+          closestDistance = distance;
+        }
+      }
+      return closest.sequence;
+    });
+
+    for (const sequence of checkpoints) {
+      if (sampled.has(sequence)) continue;
+      try {
         const raw = await horizon(`/ledgers/${sequence}`);
-        return mapLedger(raw);
-      })
-    );
+        sampled.set(sequence, mapLedger(raw));
+      } catch {
+        // Keep the endpoint useful even if a single historical lookup is unavailable.
+      }
+    }
 
-    const points = sampled
-      .sort((a, b) => Number(a.sequence) - Number(b.sequence))
+    const points = Array.from(sampled.values())
+      .filter((ledger) => checkpoints.includes(ledger.sequence))
+      .sort((a, b) => Date.parse(a.closedAt) - Date.parse(b.closedAt))
       .map((ledger) => {
-        const successful = ledger.successfulTransactionCount ?? 0;
-        const failed = ledger.failedTransactionCount ?? 0;
-        const total = successful + failed;
+        const successful = ledger.successfulTransactionCount;
+        const failed = ledger.failedTransactionCount;
+        const total = successful != null && failed != null
+          ? successful + failed
+          : ledger.transactionCount;
         return {
           sequence: ledger.sequence,
           closedAt: ledger.closedAt,
           transactions: total,
           operations: ledger.operationCount,
-          successRate: total ? (successful / total) * 100 : null,
+          successRate: successful != null && failed != null && total
+            ? (successful / total) * 100
+            : null,
         };
       });
 
-    return { windowHours: 24, points, error: null };
+    const actualWindowHours = latest.closedAt && windowStart
+      ? Math.max(1, (Date.parse(latest.closedAt) - windowStart) / 1000 / 60 / 60)
+      : 24;
+
+    return { windowHours: Number(actualWindowHours.toFixed(1)), points, error: null };
   } catch (error) {
     return {
       windowHours: 24,
