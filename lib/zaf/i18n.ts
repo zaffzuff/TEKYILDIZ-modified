@@ -8,6 +8,16 @@ export const localeLabels: Record<Locale, string> = {
 const translations: Record<Locale, Record<string, string>> = {
   en: {},
   tr: {
+    "fee": "ücret",
+    "operations": "operation",
+    "Dark": "Koyu",
+    "Light": "Açık",
+    "Dark theme": "Koyu tema",
+    "Light theme": "Açık tema",
+    "Toggle theme": "Temayı değiştir",
+    "Language": "Dil",
+    "Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? \"—\"}h of real Pi Mainnet ledger data": "Gerçek Pi Mainnet ledger verisinin son {historicalActivity?.windowHours ?? \"—\"} saatindeki saatlik eşdeğer oranlar",
+    "Rate changes compare the newer and older halves of the latest {data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.": "Oran değişimleri son gözlemlenen ledger'ların yeni ve eski yarısını gerçek geçen süreye göre karşılaştırır. Sonuç gözlemlenen zincir aktivitesini açıklar; tahmin veya ekosistem geneli kullanım ölçümü değildir.",
     "Pi Ecosystem Activity Intelligence": "Pi Ekosistem Aktivite İstihbaratı",
     "Refresh": "Yenile",
     "Refreshing…": "Yenileniyor…",
