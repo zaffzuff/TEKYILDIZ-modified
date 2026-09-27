@@ -90,15 +90,9 @@ export function ZafTechApp() {
             </button>
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">
-              Pi Network
-            </span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">
-              Mainnet
-            </span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">
-              Read-only
-            </span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Pi Network</span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Mainnet</span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">Read-only</span>
           </div>
         </header>
 
@@ -115,33 +109,12 @@ export function ZafTechApp() {
             <section className="mt-5">
               <h1 className="mb-3 text-sm font-semibold text-foreground">Network snapshot</h1>
               <div className="grid grid-cols-2 gap-3">
-                <Metric
-                  label="Latest ledger"
-                  value={data?.latestLedger?.sequence ?? "—"}
-                  detail={data?.latestLedger ? short(data.latestLedger.hash, 16) : undefined}
-                />
-                <Metric
-                  label="Protocol version"
-                  value={data?.metrics.latestProtocolVersion != null ? String(data.metrics.latestProtocolVersion) : "—"}
-                />
-                <Metric
-                  label="Transactions"
-                  value={formatNumber(data?.metrics.recentTransactions ?? null)}
-                  detail="Across the latest 100 ledgers"
-                />
-                <Metric
-                  label="Operations"
-                  value={formatNumber(data?.metrics.recentOperations ?? null)}
-                  detail="Across the latest 100 ledgers"
-                />
-                <Metric
-                  label="Tx / ledger"
-                  value={formatNumber(data?.metrics.avgTransactionsPerLedger ?? null, 2)}
-                />
-                <Metric
-                  label="Ledger interval"
-                  value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"}
-                />
+                <Metric label="Latest ledger" value={data?.latestLedger?.sequence ?? "—"} detail={data?.latestLedger ? short(data.latestLedger.hash, 16) : undefined} />
+                <Metric label="Protocol version" value={data?.metrics.latestProtocolVersion != null ? String(data.metrics.latestProtocolVersion) : "—"} />
+                <Metric label="Recent transactions" value={formatNumber(data?.metrics.recentTransactions ?? null)} detail="Latest 100 from Pi Mainnet Horizon" />
+                <Metric label="Recent operations" value={formatNumber(data?.metrics.recentOperations ?? null)} detail="Latest 100 from Pi Mainnet Horizon" />
+                <Metric label="Tx / ledger (sample)" value={formatNumber(data?.metrics.avgTransactionsPerLedger ?? null, 2)} detail="Based on ledgers represented in the transaction sample" />
+                <Metric label="Ledger interval" value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail="Average across the latest 100 ledgers" />
               </div>
             </section>
 
@@ -149,7 +122,7 @@ export function ZafTechApp() {
               <div className="mb-3 flex items-end justify-between">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">Recent transactions</h2>
-                  <p className="text-[11px] text-muted-foreground">Latest 20 from Pi Mainnet Horizon</p>
+                  <p className="text-[11px] text-muted-foreground">Latest 100 from Pi Mainnet Horizon</p>
                 </div>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
