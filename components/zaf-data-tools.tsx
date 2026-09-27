@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { countStoredLedgers, getStoredLedgers, saveLedgers } from "@/lib/zaf/history-db";
+import { countStoredLedgers, getStoredLedgers, getStoredLedgerStats, saveLedgers, type StoredLedgerStats } from "@/lib/zaf/history-db";
 import type { Locale } from "@/lib/zaf/i18n";
 
 interface WalletData {
@@ -130,6 +130,13 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [newLedgers, setNewLedgers] = useState(0);
+  const [historicalStats, setHistoricalStats] = useState<StoredLedgerStats>({
+    count: 0,
+    transactionCount: 0,
+    operationCount: 0,
+    oldestClosedAt: null,
+    newestClosedAt: null,
+  });
 
   useEffect(() => {
     let active = true;
@@ -143,8 +150,11 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       }));
       setPages([{ ledgers: restored, nextCursor: rows.length ? rows[rows.length - 1].sequence : null, hasMore: true }]);
       setCursor(rows.length ? rows[rows.length - 1].sequence : null);
-      return countStoredLedgers().then((count) => {
-        if (active) setStoredCount(count);
+      return Promise.all([countStoredLedgers(), getStoredLedgerStats()]).then(([count, stats]) => {
+        if (active) {
+          setStoredCount(count);
+          setHistoricalStats(stats);
+        }
       });
     }).catch(() => undefined);
     void syncLatest();
@@ -168,7 +178,9 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
         savedAt: new Date().toISOString(),
       })));
 
-      setStoredCount(await countStoredLedgers());
+      const [count, stats] = await Promise.all([countStoredLedgers(), getStoredLedgerStats()]);
+      setStoredCount(count);
+      setHistoricalStats(stats);
       setNewLedgers(fresh.length);
       setLastSync(new Date().toISOString());
       setPages((current) => current.length ? current : [payload]);
@@ -193,7 +205,9 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       })));
       setPages((current) => reset ? [payload] : [...current, payload]);
       setCursor(payload.nextCursor);
-      setStoredCount(await countStoredLedgers());
+      const [count, stats] = await Promise.all([countStoredLedgers(), getStoredLedgerStats()]);
+      setStoredCount(count);
+      setHistoricalStats(stats);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Historical request failed");
     } finally {
@@ -202,19 +216,17 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   }
 
   const all = pages.flatMap((page) => page.ledgers);
-  const tx = all.reduce((sum, ledger) => sum + ledger.transactionCount, 0);
-  const ops = all.reduce((sum, ledger) => sum + ledger.operationCount, 0);
+  const uniqueVisibleLedgers = Array.from(
+    new Map(all.map((ledger) => [ledger.sequence, ledger])).values()
+  );
 
-  const chronological = [...all].sort((a, b) => Number(a.sequence) - Number(b.sequence));
-  const oldest = chronological[0] ?? null;
-  const newest = chronological[chronological.length - 1] ?? null;
-  const elapsedHours = oldest && newest
-    ? Math.max(0, (Date.parse(newest.closedAt) - Date.parse(oldest.closedAt)) / 3_600_000)
+  const elapsedHours = historicalStats.oldestClosedAt && historicalStats.newestClosedAt
+    ? Math.max(0, (Date.parse(historicalStats.newestClosedAt) - Date.parse(historicalStats.oldestClosedAt)) / 3_600_000)
     : 0;
-  const historicalTxPerHour = elapsedHours > 0 ? tx / elapsedHours : null;
-  const historicalOpsPerHour = elapsedHours > 0 ? ops / elapsedHours : null;
-  const averageTxPerLedger = all.length ? tx / all.length : null;
-  const averageOpsPerLedger = all.length ? ops / all.length : null;
+  const historicalTxPerHour = elapsedHours > 0 ? historicalStats.transactionCount / elapsedHours : null;
+  const historicalOpsPerHour = elapsedHours > 0 ? historicalStats.operationCount / elapsedHours : null;
+  const averageTxPerLedger = historicalStats.count ? historicalStats.transactionCount / historicalStats.count : null;
+  const averageOpsPerLedger = historicalStats.count ? historicalStats.operationCount / historicalStats.count : null;
 
   return (
     <section className="mt-7">
@@ -231,11 +243,11 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
         {all.length ? (
           <>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <Metric label={tr("Loaded ledgers", "Yüklenen ledger")} value={all.length.toLocaleString("en-US")} detail={tr("Real Mainnet records in this view", "Bu görünümdeki gerçek Mainnet kayıtları")} />
+              <Metric label={tr("Loaded ledgers", "Yüklenen ledger")} value={uniqueVisibleLedgers.length.toLocaleString("en-US")} detail={tr("Unique real Mainnet records in this view", "Bu görünümdeki benzersiz gerçek Mainnet kayıtları")} />
               <Metric label={tr("Stored locally", "Yerelde saklanan")} value={storedCount.toLocaleString("en-US")} detail={tr("Persistent IndexedDB records on this device", "Bu cihazdaki kalıcı IndexedDB kayıtları")} />
               <Metric label={tr("New this sync", "Bu senkronizasyonda yeni")} value={newLedgers.toLocaleString("en-US")} detail={tr("Ledgers newer than the stored tip", "Yerel kayıtların en yeni ledger'ından sonraki kayıtlar")} />
-              <Metric label={tr("Transactions", "İşlemler")} value={tx.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
-              <Metric label={tr("Operations", "Operasyonlar")} value={ops.toLocaleString("en-US")} detail={tr("Yüklenen ledger sayaçlarının toplamı", "Yüklenen ledger sayaçlarının toplamı")} />
+              <Metric label={tr("Transactions", "İşlemler")} value={historicalStats.transactionCount.toLocaleString("en-US")} detail={tr("Sum across all stored unique ledgers", "Tüm saklanan benzersiz ledger'ların toplamı")} />
+              <Metric label={tr("Operations", "Operasyonlar")} value={historicalStats.operationCount.toLocaleString("en-US")} detail={tr("Sum across all stored unique ledgers", "Tüm saklanan benzersiz ledger'ların toplamı")} />
               <Metric label={tr("Historical tx / hour", "Tarihsel işlem / saat")} value={historicalTxPerHour != null ? historicalTxPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
               <Metric label={tr("Historical ops / hour", "Tarihsel operasyon / saat")} value={historicalOpsPerHour != null ? historicalOpsPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
               <Metric label={tr("Average tx / ledger", "Ortalama işlem / ledger")} value={averageTxPerLedger != null ? averageTxPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
@@ -251,16 +263,16 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
             <div className="mt-4 rounded-lg border border-border px-3 py-3">
               <div className="text-[11px] font-medium text-foreground">{tr("Historical window", "Tarihsel pencere")}</div>
               <div className="mt-1 text-[11px] text-muted-foreground">
-                {oldest && newest
-                  ? `${new Date(oldest.closedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(newest.closedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}`
+                {historicalStats.oldestClosedAt && historicalStats.newestClosedAt
+                  ? `${new Date(historicalStats.oldestClosedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(historicalStats.newestClosedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}`
                   : "—"}
               </div>
               <div className="mt-1 text-[10px] text-muted-foreground">
-                {elapsedHours > 0 ? tr(`${elapsedHours.toFixed(1)} hours observed locally`, `${elapsedHours.toFixed(1)} saat yerel olarak gözlendi`) : tr("Waiting for enough time-separated records", "Yeterli zaman ayrışmasına sahip kayıt bekleniyor")}
+                {elapsedHours > 0 ? tr(`${elapsedHours.toFixed(1)} hours observed across all stored records`, `${elapsedHours.toFixed(1)} saat tüm saklanan kayıtlar genelinde`) : tr("Waiting for enough time-separated records", "Yeterli zaman ayrışmasına sahip kayıt bekleniyor")}
               </div>
             </div>
                         <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-              {tr("The engine does not pretend that one page equals the full Mainnet. It advances through Horizon pagination so the dataset can grow without loading the entire chain into the browser at once.", "Motor tek bir sayfanın tüm Mainnet olduğunu varsaymaz. Horizon pagination ile ilerleyerek tüm zinciri tarayıcıya tek seferde yüklemeden veri kümesini büyütür.")}
+              {tr("The engine does not pretend that one page equals the full Mainnet. Each ledger is keyed by its sequence in IndexedDB, so repeated pages are stored once and long-term metrics aggregate the complete locally stored history.", "Motor tek bir sayfanın tüm Mainnet olduğunu varsaymaz. Her ledger IndexedDB'de sequence değeriyle tekilleştirilir; tekrarlanan sayfalar bir kez saklanır ve uzun dönem metrikleri yerelde saklanan tüm geçmiş üzerinden hesaplanır.")}
             </p>
           </>
         ) : (
