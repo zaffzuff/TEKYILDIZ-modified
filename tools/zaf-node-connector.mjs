@@ -196,8 +196,8 @@ async function readNode() {
         version: Number(coreInfo.ledger.version ?? 0) || null,
       } : null,
       peers: coreInfo?.peers ? {
-        authenticated: Number(coreInfo.peers.authenticated ?? 0),
-        pending: Number(coreInfo.peers.pending ?? 0),
+        authenticated: Number(coreInfo.peers.authenticated_count ?? coreInfo.peers.authenticated ?? 0),
+        pending: Number(coreInfo.peers.pending_count ?? coreInfo.peers.pending ?? 0),
       } : null,
       quorum: coreInfo?.quorum ? {
         node: coreInfo.quorum.node ?? null,
@@ -205,9 +205,9 @@ async function readNode() {
         agree: Number(coreInfo.quorum.qset?.agree ?? coreInfo.quorum.agree ?? 0),
         disagree: Number(coreInfo.quorum.qset?.disagree ?? coreInfo.quorum.disagree ?? 0),
         missing: Number(coreInfo.quorum.qset?.missing ?? coreInfo.quorum.missing ?? 0),
-        lagMs: Number(coreInfo.quorum.qset?.lagMs ?? coreInfo.quorum.lagMs ?? 0),
-        intersection: coreInfo.quorum.qset?.intersection ?? coreInfo.quorum.intersection ?? null,
-        nodeCount: Number(coreInfo.quorum.qset?.nodeCount ?? coreInfo.quorum.nodeCount ?? 0) || null,
+        lagMs: Number(coreInfo.quorum.qset?.lag_ms ?? coreInfo.quorum.qset?.lagMs ?? coreInfo.quorum.lag_ms ?? coreInfo.quorum.lagMs ?? 0),
+        intersection: coreInfo.quorum.transitive?.intersection ?? coreInfo.quorum.qset?.intersection ?? coreInfo.quorum.intersection ?? null,
+        nodeCount: Number(coreInfo.quorum.transitive?.node_count ?? coreInfo.quorum.qset?.nodeCount ?? coreInfo.quorum.nodeCount ?? 0) || null,
       } : null,
       startedAt,
       restartCount: Number(detail?.RestartCount ?? 0),
