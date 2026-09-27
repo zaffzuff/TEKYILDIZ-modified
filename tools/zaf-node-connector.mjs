@@ -94,7 +94,8 @@ async function readCoreInfo(containerId) {
   if (start < 0) return null;
 
   try {
-    return JSON.parse(result.stdout.slice(start));
+    const parsed = JSON.parse(result.stdout.slice(start));
+    return parsed?.info ?? parsed;
   } catch {
     return null;
   }
