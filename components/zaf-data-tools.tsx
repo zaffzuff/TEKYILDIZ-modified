@@ -138,7 +138,8 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
         transactionCount: row.transactionCount,
         operationCount: row.operationCount,
       }));
-      setPages([{ ledgers: restored, nextCursor: null, hasMore: false }]);
+      setPages([{ ledgers: restored, nextCursor: rows.length ? rows[rows.length - 1].sequence : null, hasMore: true }]);
+      setCursor(rows.length ? rows[rows.length - 1].sequence : null);
       return countStoredLedgers().then((count) => {
         if (active) setStoredCount(count);
       });
