@@ -1,4 +1,4 @@
-import type { ZafLedger } from "./types";
+import type { ZafHistoricalActivity, ZafHistoricalPoint, ZafLedger } from "./types";
 
 const BASE = "https://api.mainnet.minepi.com";
 
@@ -46,34 +46,12 @@ function mapLedger(raw: any): ZafLedger {
   };
 }
 
-export interface ZafHistoricalPoint {
-  sequence: string;
-  closedAt: string;
-  transactions: number;
-  operations: number;
-  successRate: number | null;
-  transactionsPerHour: number | null;
-  operationsPerHour: number | null;
-  windowMinutes: number;
-}
-
-export interface ZafHistoricalActivity {
-  windowHours: number;
-  points: ZafHistoricalPoint[];
-  change: {
-    transactionsPerHourPercent: number | null;
-    operationsPerHourPercent: number | null;
-  };
-  error: string | null;
-}
-
 export async function getZafHistoricalActivity(): Promise<ZafHistoricalActivity> {
   try {
     const page = await horizon("/ledgers?order=desc&limit=100");
     const recent = (page?._embedded?.records ?? []).map(mapLedger) as ZafLedger[];
     if (recent.length < 2) throw new Error("Insufficient ledger history");
 
-    const times = recent.map((l) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a, b) => a - b);
     const ordered = recent
       .filter((ledger) => Number.isFinite(Date.parse(ledger.closedAt)))
       .sort((a, b) => Date.parse(a.closedAt) - Date.parse(b.closedAt));
