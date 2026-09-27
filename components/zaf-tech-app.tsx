@@ -356,10 +356,10 @@ export function ZafTechApp() {
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
-                  {tr("Health indicators derived from the latest observed Pi Mainnet ledger window")}
+                  {tr("Technical indicators derived from the latest observed Pi Mainnet ledger window")}
                 </p>
               </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <Metric
                   label={tr("Transaction success rate")}
                   value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 2)}%` : "—"}
@@ -381,6 +381,11 @@ export function ZafTechApp() {
                   detail={tr("Average fee across the transaction sample")}
                 />
                 <Metric
+                  label={tr("Ledger interval")}
+                  value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"}
+                  detail={tr("Average close interval across the latest observed ledgers")}
+                />
+                <Metric
                   label={tr("Ledger interval variability")}
                   value={data?.metrics.ledgerIntervalStdDevSeconds != null ? `${formatNumber(data.metrics.ledgerIntervalStdDevSeconds, 2)}s` : "—"}
                   detail={data?.metrics.ledgerIntervalCoefficientVariationPercent != null ? `${tr("Coefficient of variation:")} ${formatNumber(data.metrics.ledgerIntervalCoefficientVariationPercent, 2)}%` : tr("Standard deviation of ledger close intervals")}
@@ -396,10 +401,26 @@ export function ZafTechApp() {
                   detail={tr("Observed ledger closes per minute")}
                 />
                 <Metric
+                  label={tr("Latest protocol version")}
+                  value={data?.metrics.latestProtocolVersion != null ? `v${data.metrics.latestProtocolVersion}` : "—"}
+                  detail={tr("Protocol version reported by the latest ledger")}
+                />
+                <Metric
                   label={tr("Protocol distribution")}
                   value={data?.metrics.protocolVersionDistribution?.length ? data.metrics.protocolVersionDistribution.map((item) => `v${item.version}: ${formatNumber(item.percentage, 1)}%`).join(" · ") : "—"}
                   detail={tr("Distribution across the latest observed ledger window")}
                 />
+                <Metric
+                  label={tr("Observed ledger window")}
+                  value={formatNumber(data?.metrics.recentLedgerCount ?? null)}
+                  detail={tr("Recent Mainnet ledgers used for these indicators")}
+                />
+              </div>
+              <div className="mt-3 rounded-lg border border-border px-3 py-2 text-[11px] text-muted-foreground">
+                <div className="font-medium text-foreground">{tr("Measurement basis")}</div>
+                <div className="mt-1 leading-relaxed">
+                  {tr("Network Health is a technical observation panel. It reports measured Mainnet ledger and transaction properties and does not assign a subjective health score or predict future network behavior.")}
+                </div>
               </div>
             </section>
 
