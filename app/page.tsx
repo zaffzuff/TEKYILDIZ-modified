@@ -1,7 +1,7 @@
 "use client";
 
-import { TekyildizApp } from "@/components/tekyildiz/tekyildiz-app";
+import { ZafTechApp } from "@/components/zaf-tech-app";
 
 export default function HomePage() {
-  return <TekyildizApp />;
+  return <ZafTechApp />;
 }
