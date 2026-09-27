@@ -132,7 +132,7 @@ export function ZafTechApp() {
             <section className="mt-7">
               <h2 className="mb-3 text-sm font-semibold text-foreground">Activity signals</h2>
               <div className="grid grid-cols-2 gap-3">
-                <Metric label="Transaction success rate" value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail="Latest 100 transactions" />
+                <Metric label="Transaction success rate" value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail="Latest 100-ledger window" />
                 <Metric label="Average fee" value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"} detail="Latest transaction sample" />
                 <Metric label="Operations / transaction" value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)} detail="Latest transaction sample" />
                 <Metric label="Unique tx sources" value={formatNumber(data?.metrics.uniqueTransactionSources ?? null)} detail="Distinct source accounts in sample" />
@@ -147,16 +147,16 @@ export function ZafTechApp() {
                 <Metric
                   label="Transactions / hour"
                   value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"}
-                  detail={data?.metrics.transactionSampleWindowMinutes != null ? `Based on latest 100 tx over ${formatNumber(data.metrics.transactionSampleWindowMinutes, 1)} minutes` : "Latest transaction sample"}
+                  detail="Calculated across the latest 100-ledger window"
                 />
                 <Metric
                   label="Operations / hour"
                   value={data?.metrics.observedOperationsPerHour != null ? formatNumber(data.metrics.observedOperationsPerHour, 1) : "—"}
-                  detail={data?.metrics.operationSampleWindowMinutes != null ? `Based on latest 100 operations over ${formatNumber(data.metrics.operationSampleWindowMinutes, 1)} minutes` : "Latest operation sample"}
+                  detail="Calculated across the latest 100-ledger window"
                 />
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
-                Sample rates describe the time span covered by the latest records; they are not a full-network historical average.
+                Rates are calculated from the transaction and operation counts recorded in the latest 100 ledgers; they are a rolling network activity measure, not a historical average.
               </p>
             </section>
 
