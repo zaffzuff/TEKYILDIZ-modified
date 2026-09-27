@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
 import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
+import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-data-tools";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -762,6 +763,9 @@ export function ZafTechApp() {
                 </button>
               ) : null}
             </section>
+
+            <ZafHistoricalExplorer locale={locale} />
+            <ZafWalletIntelligence locale={locale} />
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
