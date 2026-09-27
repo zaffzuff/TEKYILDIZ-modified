@@ -259,7 +259,7 @@ export function ZafTechApp() {
               <img
                 src="/zaf-tech-logo.png"
                 alt="ZAF TECH"
-                className="h-11 w-11 shrink-0 rounded-xl border border-border object-cover shadow-sm"
+                className="h-11 w-11 shrink-0 object-contain"
               />
               <div>
                 <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
