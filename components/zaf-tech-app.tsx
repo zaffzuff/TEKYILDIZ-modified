@@ -239,7 +239,7 @@ export function ZafTechApp() {
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
-              <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label="Language">
+              <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Language")}>
                 {(Object.keys(localeLabels) as Locale[]).map((option) => (
                   <button
                     key={option}
@@ -255,10 +255,10 @@ export function ZafTechApp() {
                 type="button"
                 onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")}
                 className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground"
-                aria-label="Toggle theme"
-                title={theme === "dark" ? "Light theme" : "Dark theme"}
+                aria-label={tr("Toggle theme")}
+                title={theme === "dark" ? tr("Light theme") : tr("Dark theme")}
               >
-                {theme === "dark" ? "☀ Light" : "☾ Dark"}
+                {theme === "dark" ? `☀ ${tr("Light")}` : `☾ ${tr("Dark")}`}
               </button>
                           <button
               type="button"
@@ -266,7 +266,7 @@ export function ZafTechApp() {
               disabled={refreshing}
               className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50"
             >
-              {refreshing ? "Refreshing…" : "Refresh"}
+              {refreshing ? tr("Refreshing…") : tr("Refresh")}
             </button>
             </div>
           </div>
@@ -466,7 +466,7 @@ export function ZafTechApp() {
                 <div className="mt-3 rounded-lg border border-border px-3 py-2 text-[11px] text-muted-foreground">
                   <div className="font-medium text-foreground">{tr("Measurement basis")}</div>
                   <div className="mt-1 leading-relaxed">
-                    Rate changes compare the newer and older halves of the latest {data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.
+                    {tr("Rate changes compare the newer and older halves of the latest {data?.recentLedgers.length ?? 0} observed ledgers and normalize each half by its actual elapsed time. The result describes recent observed chain activity; it is not a forecast or ecosystem-wide usage estimate.")}
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 text-[11px] text-muted-foreground">
@@ -530,7 +530,7 @@ export function ZafTechApp() {
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? "—"}h of real Pi Mainnet ledger data
+                    {tr("Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? "—"}h of real Pi Mainnet ledger data")}
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
@@ -625,7 +625,7 @@ export function ZafTechApp() {
                         <span>{formatNumber(trendHistory[trendHistory.length - 1].transactionsPerHour, 1)}</span>
                       </div>
                       <div className="h-16 w-full">
-                        <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" role="img" aria-label="Transactions per hour history">
+                        <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" role="img" aria-label={tr("Transactions / hour")}>
                           {(() => {
                             const values = trendHistory.map((point) => point.transactionsPerHour).filter((value): value is number => value != null);
                             if (values.length < 2) return null;
@@ -649,7 +649,7 @@ export function ZafTechApp() {
                         <span>{formatNumber(trendHistory[trendHistory.length - 1].operationsPerHour, 1)}</span>
                       </div>
                       <div className="h-16 w-full">
-                        <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" role="img" aria-label="Operations per hour history">
+                        <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" role="img" aria-label={tr("Operations / hour")}>
                           {(() => {
                             const values = trendHistory.map((point) => point.operationsPerHour).filter((value): value is number => value != null);
                             if (values.length < 2) return null;
@@ -683,7 +683,7 @@ export function ZafTechApp() {
               <div className="mb-3 flex items-end justify-between">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
-                  <p className="text-[11px] text-muted-foreground">Latest 100 from Pi Mainnet Horizon</p>
+                  <p className="text-[11px] text-muted-foreground">{tr("Latest 100 from Pi Mainnet Horizon")}</p>
                 </div>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -692,11 +692,11 @@ export function ZafTechApp() {
                     <div className="flex items-center justify-between gap-3">
                       <span className="font-mono text-xs text-foreground">{short(tx.hash, 18)}</span>
                       <span className={`text-[11px] ${tx.successful === false ? "text-destructive" : "text-muted-foreground"}`}>
-                        {tx.successful === false ? "Failed" : "Successful"}
+                        {tx.successful === false ? tr("Failed") : tr("Successful")}
                       </span>
                     </div>
                     <div className="mt-1 text-[11px] text-muted-foreground">
-                      Ledger {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} operations · fee {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
+                      Ledger {tx.ledger ?? "—"} · {tx.operationCount ?? "—"} {tr("operations")} · {tr("fee")} {tx.feePi != null ? `${formatNumber(tx.feePi, 7)} Pi` : "—"}
                     </div>
                   </div>
                 )) : <div className="p-4 text-xs text-muted-foreground">{tr("No transaction records available.")}</div>}
@@ -722,7 +722,7 @@ export function ZafTechApp() {
                       <span className="font-mono text-[10px] text-muted-foreground">{short(op.id, 16)}</span>
                     </div>
                     <div className="mt-1 text-[11px] text-muted-foreground">
-                      Ledger {op.ledger ?? "—"} · {op.amountPi != null ? `${formatNumber(op.amountPi, 7)} Pi` : "No amount field"}
+                      Ledger {op.ledger ?? "—"} · {op.amountPi != null ? `${formatNumber(op.amountPi, 7)} Pi` : tr("No amount field")}
                     </div>
                   </div>
                 )) : <div className="p-4 text-xs text-muted-foreground">{tr("No operation records available.")}</div>}
