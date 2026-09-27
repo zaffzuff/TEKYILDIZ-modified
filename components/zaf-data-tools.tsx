@@ -210,10 +210,10 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       <div className="mb-3 flex items-end justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{tr("Historical Data Engine", "Tarihsel Veri Motoru")}</h2>
-          <p className="text-[11px] text-muted-foreground">{tr("Paginated Pi Mainnet ledger history with persistent local storage. Each sync extends the observed dataset.", "Kalıcı yerel depolama kullanan sayfalanmış Pi Mainnet ledger geçmişi. Her senkronizasyon gözlenen veri kümesini genişletir.")}</p>
+          <p className="text-[11px] text-muted-foreground">{tr("Incremental Pi Mainnet ledger collection with persistent local storage.", "Kalıcı yerel depolama kullanan artımlı Pi Mainnet ledger toplama motoru.")}</p>
         </div>
-        <button type="button" onClick={() => void loadPage(true)} disabled={loading} className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">
-          {loading ? tr("Loading…", "Yükleniyor…") : tr("Load latest", "En yeniyi yükle")}
+        <button type="button" onClick={() => void syncLatest()} disabled={syncing} className="shrink-0 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">
+          {syncing ? tr("Syncing…", "Senkronize ediliyor…") : tr("Sync Mainnet", "Mainnet'i senkronize et")}
         </button>
       </div>
       <div className="rounded-xl border border-border bg-card p-4">
