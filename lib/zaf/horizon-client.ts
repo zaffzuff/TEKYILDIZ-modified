@@ -191,6 +191,7 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         uniqueOperationSources: uniqueCount(operations.map((o) => o.sourceAccount)),
         topOperationType: topOperation?.[0] ?? null,
         topOperationTypeCount: topOperation?.[1] ?? 0,
+        operationTypeDistribution,
         transactionSampleWindowMinutes,
         operationSampleWindowMinutes,
         observedTransactionsPerHour: ledgerWindowSeconds ? ledgerTransactionTotal / (ledgerWindowSeconds / 3600) : observedPerHour(transactions.length, transactionSampleWindowMinutes),
