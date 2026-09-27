@@ -403,6 +403,35 @@ export function ZafTechApp() {
               </div>
             </section>
 
+            <section className={`mt-7 ${tabClass("overview")}`}>
+              <div className="mb-3">
+                <h2 className="text-sm font-semibold text-foreground">{tr("Current Activity")}</h2>
+                <p className="text-[11px] text-muted-foreground">{tr("A compact view of the latest observed Mainnet activity")}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <Metric
+                  label={tr("Activity state")}
+                  value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"}
+                  detail={tr("Descriptive state from observed chain data")}
+                />
+                <Metric
+                  label={tr("Transactions / hour")}
+                  value={data?.metrics.observedTransactionsPerHour != null ? `${formatNumber(data.metrics.observedTransactionsPerHour, 1)}` : "—"}
+                  detail={tr("Latest observed ledger window")}
+                />
+                <Metric
+                  label={tr("Operations / hour")}
+                  value={data?.metrics.observedOperationsPerHour != null ? `${formatNumber(data.metrics.observedOperationsPerHour, 1)}` : "—"}
+                  detail={tr("Latest observed ledger window")}
+                />
+                <Metric
+                  label={tr("Transaction success rate")}
+                  value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"}
+                  detail={tr("Observed transaction total")}
+                />
+              </div>
+            </section>
+
             <section className={`mt-5 ${tabClass("overview")}`}>
               <h1 className="mb-3 text-sm font-semibold text-foreground">{tr("Network Snapshot")}</h1>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
