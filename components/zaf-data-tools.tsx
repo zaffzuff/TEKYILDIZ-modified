@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { countStoredLedgers, getStoredLedgers, saveLedgers } from "@/lib/zaf/history-db";
 import type { Locale } from "@/lib/zaf/i18n";
 
 interface WalletData {
@@ -74,7 +75,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
 
         {wallet ? (
           <div className="mt-4 space-y-3">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <Metric label={tr("Available Pi", "Kullanılabilir Pi")} value={wallet.availablePi.toLocaleString("en-US", { maximumFractionDigits: 7 })} detail={tr("Native account balance", "Native hesap bakiyesi")} />
               <Metric label={tr("Claimable / locked", "Claimable / kilitli")} value={wallet.claimablePi.toLocaleString("en-US", { maximumFractionDigits: 7 })} detail={tr("Claimable balances observed on-chain", "Zincirde gözlenen claimable bakiyeler")} />
               <Metric label={tr("Observed total", "Gözlenen toplam")} value={wallet.totalObservedPi.toLocaleString("en-US", { maximumFractionDigits: 7 })} detail={tr("Available + claimable", "Kullanılabilir + claimable")} />
@@ -125,6 +126,25 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [storedCount, setStoredCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    void getStoredLedgers().then((rows) => {
+      if (!active || !rows.length) return;
+      const restored = rows.map((row) => ({
+        sequence: row.sequence,
+        closedAt: row.closedAt,
+        transactionCount: row.transactionCount,
+        operationCount: row.operationCount,
+      }));
+      setPages([{ ledgers: restored, nextCursor: null, hasMore: false }]);
+      return countStoredLedgers().then((count) => {
+        if (active) setStoredCount(count);
+      });
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   async function loadPage(reset = false) {
     setLoading(true);
@@ -134,8 +154,13 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       const response = await fetch(`/api/zaf/historical?limit=200${currentCursor ? `&cursor=${encodeURIComponent(currentCursor)}` : ""}`, { cache: "no-store" });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error ?? "Historical request failed");
+      await saveLedgers(payload.ledgers.map((ledger: LedgerPage["ledgers"][number]) => ({
+        ...ledger,
+        savedAt: new Date().toISOString(),
+      })));
       setPages((current) => reset ? [payload] : [...current, payload]);
       setCursor(payload.nextCursor);
+      setStoredCount(await countStoredLedgers());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Historical request failed");
     } finally {
@@ -152,7 +177,7 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       <div className="mb-3 flex items-end justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{tr("Historical Data Engine", "Tarihsel Veri Motoru")}</h2>
-          <p className="text-[11px] text-muted-foreground">{tr("Paginated Pi Mainnet ledger history. Each loaded page extends the observed dataset.", "Sayfalanmış Pi Mainnet ledger geçmişi. Yüklenen her sayfa gözlenen veri kümesini genişletir.")}</p>
+          <p className="text-[11px] text-muted-foreground">{tr("Paginated Pi Mainnet ledger history with persistent local storage. Each sync extends the observed dataset.", "Kalıcı yerel depolama kullanan sayfalanmış Pi Mainnet ledger geçmişi. Her senkronizasyon gözlenen veri kümesini genişletir.")}</p>
         </div>
         <button type="button" onClick={() => void loadPage(true)} disabled={loading} className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">
           {loading ? tr("Loading…", "Yükleniyor…") : tr("Load latest", "En yeniyi yükle")}
@@ -162,7 +187,8 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
         {all.length ? (
           <>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <Metric label={tr("Loaded ledgers", "Yüklenen ledger")} value={all.length.toLocaleString("en-US")} detail={tr("Real Mainnet records loaded", "Yüklenen gerçek Mainnet kayıtları")} />
+              <Metric label={tr("Loaded ledgers", "Yüklenen ledger")} value={all.length.toLocaleString("en-US")} detail={tr("Real Mainnet records in this view", "Bu görünümdeki gerçek Mainnet kayıtları")} />
+              <Metric label={tr("Stored locally", "Yerelde saklanan")} value={storedCount.toLocaleString("en-US")} detail={tr("Persistent IndexedDB records on this device", "Bu cihazdaki kalıcı IndexedDB kayıtları")} />
               <Metric label={tr("Transactions", "İşlemler")} value={tx.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
               <Metric label={tr("Operations", "Operasyonlar")} value={ops.toLocaleString("en-US")} detail={tr("Sum of loaded ledger counters", "Yüklenen ledger sayaçlarının toplamı")} />
             </div>
