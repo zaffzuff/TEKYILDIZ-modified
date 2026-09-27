@@ -101,6 +101,9 @@ export interface ZafSnapshot {
     operationSampleWindowMinutes: number | null;
     observedTransactionsPerHour: number | null;
     observedOperationsPerHour: number | null;
+    emptyLedgerRatePercent: number | null;
+    ledgerActivityRatePerMinute: number | null;
+    averageOperationsPerTransaction: number | null;
   };
   error: string | null;
 }
