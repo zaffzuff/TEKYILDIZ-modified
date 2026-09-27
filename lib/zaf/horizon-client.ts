@@ -99,6 +99,13 @@ function sampleWindowMinutes(createdAtValues: Array<string | null>): number | nu
   return (max - min) / 60_000;
 }
 
+function ledgerTransactionCount(ledger: ZafLedger): number {
+  if (ledger.successfulTransactionCount != null && ledger.failedTransactionCount != null) {
+    return ledger.successfulTransactionCount + ledger.failedTransactionCount;
+  }
+  return ledger.transactionCount;
+}
+
 function observedPerHour(count: number, windowMinutes: number | null): number | null {
   if (!count || windowMinutes == null || windowMinutes <= 0) return null;
   return count / (windowMinutes / 60);
@@ -120,6 +127,11 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
     const closeTimes = recentLedgers.map((l) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a,b) => a-b);
     const intervals: number[] = [];
     for (let i = 1; i < closeTimes.length; i++) intervals.push((closeTimes[i] - closeTimes[i-1]) / 1000);
+    const emptyLedgerCount = recentLedgers.filter((ledger) => ledgerTransactionCount(ledger) === 0 && ledger.operationCount === 0).length;
+    const emptyLedgerRatePercent = recentLedgers.length ? (emptyLedgerCount / recentLedgers.length) * 100 : null;
+    const ledgerActivityRatePerMinute = ledgerWindowSeconds != null && ledgerWindowSeconds > 0
+      ? ((Math.max(0, recentLedgers.length - 1)) / ledgerWindowSeconds) * 60
+      : null;
 
     const transactionLedgers = new Set(transactions.map((t) => t.ledger).filter(Boolean));
     const operationLedgers = new Set(operations.map((o) => o.ledger).filter(Boolean));
@@ -222,6 +234,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         operationSampleWindowMinutes,
         observedTransactionsPerHour: ledgerWindowSeconds ? ledgerTransactionTotal / (ledgerWindowSeconds / 3600) : observedPerHour(transactions.length, transactionSampleWindowMinutes),
         observedOperationsPerHour: ledgerWindowSeconds ? ledgerOperationTotal / (ledgerWindowSeconds / 3600) : observedPerHour(operations.length, operationSampleWindowMinutes),
+        emptyLedgerRatePercent,
+        ledgerActivityRatePerMinute,
       },
       error: null,
     };
@@ -248,6 +262,7 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         operationTypeDistribution: [],
         transactionSampleWindowMinutes: null, operationSampleWindowMinutes: null,
         observedTransactionsPerHour: null, observedOperationsPerHour: null,
+        emptyLedgerRatePercent: null, ledgerActivityRatePerMinute: null,
       },
       error: error instanceof Error ? error.message : "Unknown Pi Mainnet error",
     };
