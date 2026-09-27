@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
 import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
 import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-data-tools";
+import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -22,7 +23,7 @@ const TREND_STORAGE_KEY = "zaf-tech-observation-history-v1";
 const MAX_TREND_POINTS = 1440;
 const RECENT_RECORD_PREVIEW = 10;
 
-type ZafTab = "overview" | "activity" | "transactions" | "operations" | "history" | "wallet" | "network";
+type ZafTab = "overview" | "activity" | "transactions" | "operations" | "history" | "wallet" | "network" | "node";
 
 interface TrendPoint {
   capturedAt: string;
@@ -336,6 +337,7 @@ export function ZafTechApp() {
                 ["history", "History", "Geçmiş"],
                 ["wallet", "Wallet", "Cüzdan"],
                 ["network", "Network", "Ağ"],
+                ["node", "Node", "Node"],
               ] as const).map(([id, en, trLabel]) => (
                 <button
                   key={id}
@@ -914,6 +916,7 @@ export function ZafTechApp() {
 
             {activeTab === "history" ? <ZafHistoricalExplorer locale={locale} /> : null}
             {activeTab === "wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
+            {activeTab === "node" ? <ZafNodeIntelligence locale={locale} data={data} /> : null}
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
