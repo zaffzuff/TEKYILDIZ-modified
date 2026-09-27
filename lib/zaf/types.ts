@@ -88,8 +88,12 @@ export interface ZafSnapshot {
     avgTransactionsPerLedger: number | null;
     avgOperationsPerLedger: number | null;
     avgLedgerCloseSeconds: number | null;
+    ledgerIntervalStdDevSeconds: number | null;
+    ledgerIntervalCoefficientVariationPercent: number | null;
     latestProtocolVersion: number | null;
+    protocolVersionDistribution: Array<{ version: number; count: number; percentage: number }>;
     transactionSuccessRate: number | null;
+    failedTransactionRatePercent: number | null;
     averageTransactionFeePi: number | null;
     uniqueTransactionSources: number;
     uniqueOperationSources: number;
