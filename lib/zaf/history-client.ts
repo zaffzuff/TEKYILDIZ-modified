@@ -37,6 +37,9 @@ export interface ZafHistoricalPoint {
   transactions: number;
   operations: number;
   successRate: number | null;
+  transactionsPerHour: number | null;
+  operationsPerHour: number | null;
+  windowMinutes: number;
 }
 
 export interface ZafHistoricalActivity {
@@ -52,66 +55,57 @@ export async function getZafHistoricalActivity(): Promise<ZafHistoricalActivity>
     if (recent.length < 2) throw new Error("Insufficient ledger history");
 
     const times = recent.map((l) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a, b) => a - b);
-    const averageIntervalSeconds = times.length > 1
-      ? (times[times.length - 1] - times[0]) / 1000 / (times.length - 1)
-      : 5;
+    const ordered = recent
+      .filter((ledger) => Number.isFinite(Date.parse(ledger.closedAt)))
+      .sort((a, b) => Date.parse(a.closedAt) - Date.parse(b.closedAt));
 
-    const windowStart = times[0];
-    const windowEnd = times[times.length - 1];
-    const latest = recent[0];
+    if (ordered.length < 2) throw new Error("Ledger timestamps are unavailable");
 
-    const sampled = new Map<string, ZafLedger>();
-    for (const ledger of recent) sampled.set(ledger.sequence, ledger);
+    const bucketCount = Math.min(12, ordered.length);
+    const bucketSize = Math.ceil(ordered.length / bucketCount);
+    const points: ZafHistoricalPoint[] = [];
+    const fullWindowSeconds = Math.max(
+      1,
+      (Date.parse(ordered[ordered.length - 1].closedAt) - Date.parse(ordered[0].closedAt)) / 1000
+    );
+    const averageIntervalSeconds = fullWindowSeconds / Math.max(1, ordered.length - 1);
 
-    const checkpoints = Array.from({ length: 12 }, (_, index) => {
-      const target = windowEnd - ((windowEnd - windowStart) * index) / 11;
-      let closest = recent[0];
-      let closestDistance = Math.abs(Date.parse(closest.closedAt) - target);
-      for (const candidate of recent) {
-        const distance = Math.abs(Date.parse(candidate.closedAt) - target);
-        if (distance < closestDistance) {
-          closest = candidate;
-          closestDistance = distance;
-        }
-      }
-      return closest.sequence;
-    });
+    for (let start = 0; start < ordered.length; start += bucketSize) {
+      const bucket = ordered.slice(start, Math.min(start + bucketSize, ordered.length));
+      const first = Date.parse(bucket[0].closedAt);
+      const last = Date.parse(bucket[bucket.length - 1].closedAt);
+      const elapsedSeconds = bucket.length > 1
+        ? Math.max(1, (last - first) / 1000)
+        : averageIntervalSeconds;
 
-    for (const sequence of checkpoints) {
-      if (sampled.has(sequence)) continue;
-      try {
-        const raw = await horizon(`/ledgers/${sequence}`);
-        sampled.set(sequence, mapLedger(raw));
-      } catch {
-        // Keep the endpoint useful even if a single historical lookup is unavailable.
-      }
-    }
-
-    const points = Array.from(sampled.values())
-      .filter((ledger) => checkpoints.includes(ledger.sequence))
-      .sort((a, b) => Date.parse(a.closedAt) - Date.parse(b.closedAt))
-      .map((ledger) => {
+      const transactions = bucket.reduce((sum, ledger) => {
         const successful = ledger.successfulTransactionCount;
         const failed = ledger.failedTransactionCount;
-        const total = successful != null && failed != null
+        return sum + (successful != null && failed != null
           ? successful + failed
-          : ledger.transactionCount;
-        return {
-          sequence: ledger.sequence,
-          closedAt: ledger.closedAt,
-          transactions: total,
-          operations: ledger.operationCount,
-          successRate: successful != null && failed != null && total
-            ? (successful / total) * 100
-            : null,
-        };
+          : ledger.transactionCount);
+      }, 0);
+      const operations = bucket.reduce((sum, ledger) => sum + ledger.operationCount, 0);
+      const successful = bucket.reduce((sum, ledger) => sum + (ledger.successfulTransactionCount ?? 0), 0);
+      const failed = bucket.reduce((sum, ledger) => sum + (ledger.failedTransactionCount ?? 0), 0);
+      const knownTotal = successful + failed;
+      const hours = elapsedSeconds / 3600;
+
+      points.push({
+        sequence: bucket[bucket.length - 1].sequence,
+        closedAt: bucket[bucket.length - 1].closedAt,
+        transactions,
+        operations,
+        successRate: knownTotal > 0 ? (successful / knownTotal) * 100 : null,
+        transactionsPerHour: transactions / hours,
+        operationsPerHour: operations / hours,
+        windowMinutes: elapsedSeconds / 60,
       });
+    }
 
-    const actualWindowHours = latest.closedAt && windowStart
-      ? Math.max(1, (Date.parse(latest.closedAt) - windowStart) / 1000 / 60 / 60)
-      : 24;
+    const actualWindowHours = fullWindowSeconds / 3600;
 
-    return { windowHours: Number(actualWindowHours.toFixed(1)), points, error: null };
+    return { windowHours: Number(actualWindowHours.toFixed(2)), points, error: null };
   } catch (error) {
     return {
       windowHours: 24,
