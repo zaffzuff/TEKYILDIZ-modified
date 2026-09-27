@@ -1,0 +1,52 @@
+name: Release ZAF TECH Node Connector
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: tools/zaf-node-connector-package
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install packaging dependencies
+        run: npm install
+
+      - name: Build Windows executable
+        run: npm run build:win
+
+      - name: Install Inno Setup
+        shell: powershell
+        run: choco install innosetup -y --no-progress
+
+      - name: Build Windows installer
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force installer-dist | Out-Null
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\ZAF-TECH-Node-Connector.iss"
+
+      - name: Create GitHub Release
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$env:GITHUB_REF_NAME" `
+            "dist/ZAF-TECH-Node-Connector.exe" `
+            "installer-dist/ZAF-TECH-Node-Connector-Setup.exe" `
+            --title "ZAF TECH Node Connector $env:GITHUB_REF_NAME" `
+            --generate-notes
