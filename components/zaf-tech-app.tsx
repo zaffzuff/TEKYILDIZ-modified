@@ -222,9 +222,9 @@ export function ZafTechApp() {
             <section className="mt-7">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">24-hour chain history</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Recent chain activity</h2>
                   <p className="text-[11px] text-muted-foreground">
-                    Hourly-equivalent rates from the latest real Pi Mainnet ledger window
+                    Hourly-equivalent rates across the latest {historicalActivity?.windowHours ?? "—"}h of real Pi Mainnet ledger data
                   </p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
