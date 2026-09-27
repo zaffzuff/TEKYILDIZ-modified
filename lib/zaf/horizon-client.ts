@@ -72,6 +72,22 @@ function uniqueCount(values: Array<string | null>): number {
   return new Set(values.filter((value): value is string => Boolean(value))).size;
 }
 
+function sampleWindowMinutes(createdAtValues: Array<string | null>): number | null {
+  const times = createdAtValues
+    .map((value) => (value ? Date.parse(value) : NaN))
+    .filter(Number.isFinite);
+
+  if (times.length < 2) return null;
+  const min = Math.min(...times);
+  const max = Math.max(...times);
+  return (max - min) / 60_000;
+}
+
+function observedPerHour(count: number, windowMinutes: number | null): number | null {
+  if (!count || windowMinutes == null || windowMinutes <= 0) return null;
+  return count / (windowMinutes / 60);
+}
+
 export async function getZafSnapshot(): Promise<ZafSnapshot> {
   const generatedAt = new Date().toISOString();
   try {
@@ -99,6 +115,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       return m;
     }, {});
     const topOperation = Object.entries(typeCounts).sort((a,b) => b[1] - a[1])[0];
+    const transactionSampleWindowMinutes = sampleWindowMinutes(transactions.map((t) => t.createdAt));
+    const operationSampleWindowMinutes = sampleWindowMinutes(operations.map((o) => o.createdAt));
 
     return {
       network: "Pi Network",
@@ -123,6 +141,10 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         uniqueOperationSources: uniqueCount(operations.map((o) => o.sourceAccount)),
         topOperationType: topOperation?.[0] ?? null,
         topOperationTypeCount: topOperation?.[1] ?? 0,
+        transactionSampleWindowMinutes,
+        operationSampleWindowMinutes,
+        observedTransactionsPerHour: observedPerHour(transactions.length, transactionSampleWindowMinutes),
+        observedOperationsPerHour: observedPerHour(operations.length, operationSampleWindowMinutes),
       },
       error: null,
     };
@@ -137,6 +159,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         transactionSuccessRate: null, averageTransactionFeePi: null,
         averageOperationsPerTransaction: null, uniqueTransactionSources: 0,
         uniqueOperationSources: 0, topOperationType: null, topOperationTypeCount: 0,
+        transactionSampleWindowMinutes: null, operationSampleWindowMinutes: null,
+        observedTransactionsPerHour: null, observedOperationsPerHour: null,
       },
       error: error instanceof Error ? error.message : "Unknown Pi Mainnet error",
     };
