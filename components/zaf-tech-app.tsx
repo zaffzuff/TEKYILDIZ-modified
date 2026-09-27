@@ -65,6 +65,25 @@ function saveTrendPoint(snapshot: ZafSnapshot) {
   }
 }
 
+function formatDateTime(value: string | null) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function ledgerTransactionCount(ledger: ZafSnapshot["recentLedgers"][number]) {
+  if (ledger.successfulTransactionCount != null && ledger.failedTransactionCount != null) {
+    return ledger.successfulTransactionCount + ledger.failedTransactionCount;
+  }
+  return ledger.transactionCount;
+}
 function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -83,6 +102,7 @@ export function ZafTechApp() {
   const [historicalActivity, setHistoricalActivity] = useState<ZafHistoricalActivity | null>(null);
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [showAllOperations, setShowAllOperations] = useState(false);
+  const [showAllLedgers, setShowAllLedgers] = useState(false);
 
   useEffect(() => {
     setTrendHistory(loadTrendHistory());
@@ -199,6 +219,75 @@ export function ZafTechApp() {
                 <Metric label="Tx / ledger (sample)" value={formatNumber(data?.metrics.avgTransactionsPerLedger ?? null, 2)} detail="Based on ledgers represented in the transaction sample" />
                 <Metric label="Ledger interval" value={data?.metrics.avgLedgerCloseSeconds != null ? `${formatNumber(data.metrics.avgLedgerCloseSeconds, 2)}s` : "—"} detail="Average across the latest 100 ledgers" />
               </div>
+            </section>
+
+            <section className="mt-7">
+              <div className="mb-3 flex items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-foreground">Ledger Activity Timeline</h2>
+                  <p className="text-[11px] text-muted-foreground">
+                    Latest real Pi Mainnet ledgers, newest first
+                  </p>
+                </div>
+                <div className="text-right text-[11px] text-muted-foreground">
+                  {data?.recentLedgers.length ?? 0} ledgers
+                </div>
+              </div>
+              <div className="overflow-hidden rounded-xl border border-border bg-card">
+                {data?.recentLedgers.length ? (
+                  <>
+                    {(showAllLedgers ? data.recentLedgers : data.recentLedgers.slice(0, 12)).map((ledger) => {
+                      const transactions = ledgerTransactionCount(ledger);
+                      return (
+                        <div key={ledger.sequence} className="border-b border-border p-3 last:border-b-0">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="font-mono text-xs font-medium text-foreground">
+                              Ledger {ledger.sequence}
+                            </span>
+                            <span className="text-[11px] text-muted-foreground">
+                              {formatDateTime(ledger.closedAt)}
+                            </span>
+                          </div>
+                          <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-4">
+                            <div>
+                              <div className="text-muted-foreground">Transactions</div>
+                              <div className="mt-0.5 font-medium text-foreground">{formatNumber(transactions)}</div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Operations</div>
+                              <div className="mt-0.5 font-medium text-foreground">{formatNumber(ledger.operationCount)}</div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Protocol</div>
+                              <div className="mt-0.5 font-medium text-foreground">{ledger.protocolVersion ?? "—"}</div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Base fee</div>
+                              <div className="mt-0.5 font-medium text-foreground">
+                                {ledger.baseFeePi != null ? formatNumber(ledger.baseFeePi, 7) + " Pi" : "—"}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {data.recentLedgers.length > 12 ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllLedgers((current) => !current)}
+                        className="w-full border-t border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        {showAllLedgers ? "Show less" : "Show all " + data.recentLedgers.length + " ledgers"}
+                      </button>
+                    ) : null}
+                  </>
+                ) : (
+                  <div className="p-4 text-xs text-muted-foreground">No ledger records available.</div>
+                )}
+              </div>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                Each row is a real Mainnet ledger observed from Pi Horizon. Transaction counts include successful and failed transactions when both ledger counters are available.
+              </p>
             </section>
 
             <section className="mt-7">
