@@ -5,6 +5,7 @@ import type { Locale } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
+const MIN_CONNECTOR_VERSION = "0.2.0";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -21,6 +22,17 @@ function shortenKey(value: string, head = 10, tail = 8) {
 
 function isPiPublicKey(value: string) {
   return /^G[A-Z2-7]{55}$/.test(value);
+}
+
+function compareVersions(a: string, b: string) {
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i += 1) {
+    const av = Number.isFinite(pa[i]) ? pa[i] : 0;
+    const bv = Number.isFinite(pb[i]) ? pb[i] : 0;
+    if (av !== bv) return av - bv;
+  }
+  return 0;
 }
 
 type LocalNodeData = {
@@ -499,6 +511,16 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             </div>
           </div>
         </div>
+
+        {!localNodeError && localNode?.connector?.version && compareVersions(localNode.connector.version, MIN_CONNECTOR_VERSION) < 0 ? (
+          <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
+            <span className="font-medium text-foreground">{tr("Connector update required", "Connector güncellemesi gerekli")}: </span>
+            {tr(
+              "This ZAF TECH version requires Connector v" + MIN_CONNECTOR_VERSION + " or newer. Your local Connector is v" + localNode.connector.version + ". Download the current Windows release before using local diagnostics.",
+              "Bu ZAF TECH sürümü Connector v" + MIN_CONNECTOR_VERSION + " veya daha yenisini gerektiriyor. Yerel Connector sürümünüz v" + localNode.connector.version + ". Yerel teşhisleri kullanmadan önce güncel Windows sürümünü indirin."
+            )}
+          </div>
+        ) : null}
 
         {localNodeError ? (
           <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
