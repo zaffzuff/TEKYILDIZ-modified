@@ -6,11 +6,18 @@ import { Socket } from "node:net";
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
+const VERSION = "0.1.0";
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
-const ALLOWED_ORIGINS = new Set([
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-]);
+const ALLOWED_ORIGINS = new Set(
+  [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    ...(process.env.ZAF_NODE_CONNECTOR_ALLOWED_ORIGINS || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean),
+  ]
+);
 
 function json(res, status, payload, origin) {
   res.writeHead(status, {
@@ -164,11 +171,11 @@ async function readNode() {
 
   const logsResult = await docker(["logs", "--tail", "120", candidate.ID || candidate.Names]);
   const logs = logsResult.ok ? logsResult.stdout : "";
-  const coreInfo = running ? await readCoreInfo(candidate.ID || candidate.Names) : null;
 
   const image = String(candidate.Image || detail?.Config?.Image || "");
   const startedAt = detail?.State?.StartedAt || null;
   const running = Boolean(detail?.State?.Running);
+  const coreInfo = running ? await readCoreInfo(candidate.ID || candidate.Names) : null;
 
   return {
     connector: { connected: true, docker: true, core: Boolean(coreInfo) },
@@ -230,8 +237,20 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  if (req.method !== "GET" || req.url !== "/node") {
+  if (req.method !== "GET" || !["/health", "/node"].includes(req.url)) {
     json(res, 404, { error: "Not found" }, origin);
+    return;
+  }
+
+  if (req.url === "/health") {
+    json(res, 200, {
+      connector: "zaf-node-connector",
+      version: VERSION,
+      ok: true,
+      host: HOST,
+      port: PORT,
+      observedAt: new Date().toISOString(),
+    }, origin);
     return;
   }
 
@@ -251,6 +270,7 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`ZAF TECH Node Connector listening on http://${HOST}:${PORT}/node`);
+  console.log(`ZAF TECH Node Connector v${VERSION} listening on http://${HOST}:${PORT}/node`);
+  console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
   console.log("Local-only connector. It does not expose Docker outside this computer.");
 });
