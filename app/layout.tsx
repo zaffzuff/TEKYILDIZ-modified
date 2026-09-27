@@ -6,12 +6,10 @@ import { AppWrapper } from "@/components/app-wrapper";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TEKYILDIZ — Pi ecosystem activity tracker",
-  description: "A neutral, read-only activity tracker for the Pi ecosystem.",
+  title: "ZAF TECH — Pi Ecosystem Activity Intelligence",
+  description: "Read-only intelligence surface for observable Pi Network Mainnet blockchain activity.",
   icons: {
-    icon: [
-      { url: "/tekyildiz-mark.png", sizes: "512x512", type: "image/png" },
-    ],
+    icon: [{ url: "/tekyildiz-mark.png", sizes: "512x512", type: "image/png" }],
     apple: "/tekyildiz-mark.png",
   },
 };
@@ -26,9 +24,7 @@ export const viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="dark bg-background">
       <head>
