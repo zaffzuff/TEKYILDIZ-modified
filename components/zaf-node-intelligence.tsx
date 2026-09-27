@@ -5,7 +5,7 @@ import type { Locale } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
-const MIN_CONNECTOR_VERSION = "0.2.3";
+const MIN_CONNECTOR_VERSION = "0.2.4";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -51,7 +51,7 @@ type LocalNodeData = {
     health?: string | null;
     publishedPorts?: string;
     ledger?: { number?: number; age?: number; hash?: string; version?: number };
-    peers?: { authenticated?: number; pending?: number };
+    peers?: { authenticated?: number; pending?: number; inbound?: number | null; outbound?: number | null; pendingInbound?: number | null; pendingOutbound?: number | null };
     quorum?: { node?: string; phase?: string; agree?: number; disagree?: number; missing?: number; lagMs?: number; intersection?: boolean; nodeCount?: number };
   } | null;
   ports?: Array<{ port: number; listeningLocally: boolean }>;
@@ -483,7 +483,20 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Peers", "Peerler")}</div>
-            <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.peers?.authenticated ?? "—"}</div>
+            <div className="mt-1 text-sm font-semibold text-foreground">
+              {localNode?.node?.peers?.authenticated ?? "—"}
+              <span className="ml-1 text-[10px] font-normal text-muted-foreground">
+                {tr("authenticated", "doğrulanmış")}
+              </span>
+            </div>
+            <div className="mt-1 text-[10px] text-muted-foreground">
+              {localNode?.node?.peers?.inbound != null && localNode?.node?.peers?.outbound != null
+                ? tr(
+                    `Incoming ${localNode.node.peers.inbound} / Outgoing ${localNode.node.peers.outbound}`,
+                    `Gelen ${localNode.node.peers.inbound} / Giden ${localNode.node.peers.outbound}`
+                  )
+                : tr("Direction data unavailable", "Yön verisi kullanılamıyor")}
+            </div>
             <div className="mt-1 text-[10px] text-muted-foreground">
               {localNode?.node?.peers?.pending != null
                 ? tr(`${localNode.node.peers.pending} pending`, `${localNode.node.peers.pending} beklemede`)
