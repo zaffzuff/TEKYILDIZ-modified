@@ -135,3 +135,8 @@ Get-FileHash .\ZAF-TECH-Node-Connector-Setup.exe -Algorithm SHA256
 ```
 
 Compare the resulting hash with the `ZAF-TECH-Node-Connector-Setup.exe` entry in the official checksum file. The same process can be used for the standalone executable.
+
+
+## Attribution
+
+ZAF TECH Node Connector is created and maintained by **zaffzuff** for the ZAF TECH project.
