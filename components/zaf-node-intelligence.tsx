@@ -378,7 +378,11 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           {[
             [
               tr("Local connector", "Yerel bağlantı"),
-              localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : localNodeError ? tr("Offline", "Çevrimdışı") : tr("Connected", "Bağlı"),
+              localNodeLoading
+                ? tr("Checking…", "Kontrol ediliyor…")
+                : localNodeError
+                  ? tr("Not detected", "Bulunamadı")
+                  : tr("Connected", "Bağlı"),
             ],
             [
               tr("Docker", "Docker"),
@@ -496,10 +500,20 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           </div>
         </div>
 
+        {localNodeError ? (
+          <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
+            <span className="font-medium text-foreground">{tr("Connector not detected", "Connector bulunamadı")}: </span>
+            {tr(
+              "Install and start ZAF TECH Node Connector on this Windows computer, then refresh the local Node diagnostics.",
+              "Bu Windows bilgisayara ZAF TECH Node Connector'ı kurup çalıştırın, ardından yerel Node teşhislerini yenileyin."
+            )}
+          </div>
+        ) : null}
+
         <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
           {tr(
-            "This first connector layer reports local Docker/container state and local port listeners. It deliberately does not label local port listeners as Internet-open ports and does not fabricate Pi ranking values.",
-            "Bu ilk bağlantı katmanı yerel Docker/container durumunu ve yerel port dinleyicilerini raporlar. Yerel portları kasıtlı olarak Internet'e açık port diye etiketlemez ve Pi sıralama değerleri uydurmaz."
+            "This connector layer reports local Docker/container state and local port listeners. It deliberately does not label local port listeners as Internet-open ports and does not fabricate Pi ranking values.",
+            "Bu bağlantı katmanı yerel Docker/container durumunu ve yerel port dinleyicilerini raporlar. Yerel portları kasıtlı olarak Internet'e açık port diye etiketlemez ve Pi sıralama değerleri uydurmaz."
           )}
         </p>
       </div>
