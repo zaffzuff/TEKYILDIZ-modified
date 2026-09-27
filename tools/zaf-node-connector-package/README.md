@@ -140,3 +140,8 @@ Compare the resulting hash with the `ZAF-TECH-Node-Connector-Setup.exe` entry in
 ## Attribution
 
 ZAF TECH Node Connector is created and maintained by **zaffzuff** for the ZAF TECH project.
+
+
+## Windows branding
+
+The distributed Windows executable and installer use the official ZAF TECH logo as their application/installer icon. The package also identifies **zaffzuff** as the creator and maintainer of the Connector.
