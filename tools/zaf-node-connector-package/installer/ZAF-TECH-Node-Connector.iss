@@ -24,9 +24,9 @@ SetupIconFile=zaf-tech-logo.ico
 UninstallDisplayIcon={app}\zaf-tech-logo.ico
 
 [Files]
-Source="..\dist\{#MyAppExeName}"; DestDir="{app}"; Flags=ignoreversion
-Source="zaf-tech-logo.ico"; DestDir="{app}"; Flags=ignoreversion
-Source="zaf-tech-logo.png"; DestDir="{app}"; Flags=ignoreversion
+Source: "..\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "zaf-tech-logo.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "zaf-tech-logo.png"; DestDir: "{app}"; Flags: ignoreversion
 
 [Tasks]
 Name: "startup"; Description: "Start ZAF TECH Node Connector automatically with Windows"; GroupDescription: "Startup options:"; Flags: checkedonce
