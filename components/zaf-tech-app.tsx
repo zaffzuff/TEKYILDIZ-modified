@@ -249,6 +249,27 @@ export function ZafTechApp() {
               </div>
             )}
 
+            <section className="mt-7">
+              <div className="mb-3">
+                <h2 className="text-sm font-semibold text-foreground">Network Health</h2>
+                <p className="text-[11px] text-muted-foreground">
+                  Health indicators derived from the latest observed Pi Mainnet ledger window
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Metric
+                  label="Empty ledger rate"
+                  value={data?.metrics.emptyLedgerRatePercent != null ? `${formatNumber(data.metrics.emptyLedgerRatePercent, 2)}%` : "—"}
+                  detail="Ledgers with 0 transactions and 0 operations"
+                />
+                <Metric
+                  label="Ledger activity rate"
+                  value={data?.metrics.ledgerActivityRatePerMinute != null ? `${formatNumber(data.metrics.ledgerActivityRatePerMinute, 2)} / min` : "—"}
+                  detail="Observed ledger closes per minute"
+                />
+              </div>
+            </section>
+
             <section className="mt-5">
               <h1 className="mb-3 text-sm font-semibold text-foreground">Network Snapshot</h1>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
