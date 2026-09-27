@@ -127,6 +127,12 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       count,
       percentage: operations.length ? (count / operations.length) * 100 : 0,
     }));
+    const dominantOperationShare = operationTypeDistribution[0]?.percentage ?? null;
+    const intelligenceChanges = {
+      transactionChangePercent: null as number | null,
+      operationChangePercent: null as number | null,
+    };
+    const activityState: "rising" | "falling" | "stable" | "insufficient-data" = "insufficient-data";
     const transactionSampleWindowMinutes = sampleWindowMinutes(transactions.map((t) => t.createdAt));
     const operationSampleWindowMinutes = sampleWindowMinutes(operations.map((o) => o.createdAt));
 
@@ -138,6 +144,18 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       recentLedgers,
       transactions,
       operations,
+      intelligence: {
+        activityState,
+        transactionChangePercent: intelligenceChanges.transactionChangePercent,
+        operationChangePercent: intelligenceChanges.operationChangePercent,
+        dominantOperationShare,
+        uniqueTransactionSources: uniqueCount(transactions.map((t) => t.sourceAccount)),
+        uniqueOperationSources: uniqueCount(operations.map((o) => o.sourceAccount)),
+        notes: [
+          "Intelligence is derived only from observable Pi Mainnet blockchain data.",
+          "No app-traffic, user-intent, or ecosystem-wide usage inference is made.",
+        ],
+      },
       metrics: {
         recentLedgerCount: recentLedgers.length,
         recentTransactions: transactions.length,
@@ -164,6 +182,15 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
     return {
       network: "Pi Network", source: "Pi Mainnet Horizon", generatedAt,
       latestLedger: null, recentLedgers: [], transactions: [], operations: [],
+      intelligence: {
+        activityState: "insufficient-data",
+        transactionChangePercent: null,
+        operationChangePercent: null,
+        dominantOperationShare: null,
+        uniqueTransactionSources: 0,
+        uniqueOperationSources: 0,
+        notes: [],
+      },
       metrics: {
         recentLedgerCount: 0, recentTransactions: 0, recentOperations: 0,
         avgTransactionsPerLedger: null, avgOperationsPerLedger: null,
