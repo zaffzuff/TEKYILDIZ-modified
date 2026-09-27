@@ -45,6 +45,10 @@ export interface ZafHistoricalPoint {
 export interface ZafHistoricalActivity {
   windowHours: number;
   points: ZafHistoricalPoint[];
+  change: {
+    transactionsPerHourPercent: number | null;
+    operationsPerHourPercent: number | null;
+  };
   error: string | null;
 }
 
@@ -105,7 +109,22 @@ export async function getZafHistoricalActivity(): Promise<ZafHistoricalActivity>
 
     const actualWindowHours = fullWindowSeconds / 3600;
 
-    return { windowHours: Number(actualWindowHours.toFixed(2)), points, error: null };
+    const firstPoint = points[0];
+    const lastPoint = points[points.length - 1];
+    const percentageChange = (first: number | null, last: number | null) => {
+      if (first == null || last == null || first === 0) return null;
+      return ((last - first) / first) * 100;
+    };
+
+    return {
+      windowHours: Number(actualWindowHours.toFixed(2)),
+      points,
+      change: {
+        transactionsPerHourPercent: percentageChange(firstPoint?.transactionsPerHour ?? null, lastPoint?.transactionsPerHour ?? null),
+        operationsPerHourPercent: percentageChange(firstPoint?.operationsPerHour ?? null, lastPoint?.operationsPerHour ?? null),
+      },
+      error: null,
+    };
   } catch (error) {
     return {
       windowHours: 24,
