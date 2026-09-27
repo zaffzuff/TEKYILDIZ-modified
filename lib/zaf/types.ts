@@ -57,6 +57,10 @@ export interface ZafSnapshot {
     uniqueOperationSources: number;
     topOperationType: string | null;
     topOperationTypeCount: number;
+    transactionSampleWindowMinutes: number | null;
+    operationSampleWindowMinutes: number | null;
+    observedTransactionsPerHour: number | null;
+    observedOperationsPerHour: number | null;
   };
   error: string | null;
 }
