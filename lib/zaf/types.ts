@@ -5,6 +5,7 @@ export interface ZafLedger {
   transactionCount: number;
   operationCount: number;
   successfulTransactionCount: number | null;
+  failedTransactionCount: number | null;
   successfulOperationCount: number | null;
   protocolVersion: number | null;
   baseFeePi: number | null;
