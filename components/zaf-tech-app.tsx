@@ -258,7 +258,46 @@ export function ZafTechApp() {
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
+                  label="Transaction success rate"
+                  value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 2)}%` : "—"}
+                  detail="Successful transactions / observed transaction total"
+                />
+                <Metric
+                  label="Failed transaction rate"
+                  value={data?.metrics.failedTransactionRatePercent != null ? `${formatNumber(data.metrics.failedTransactionRatePercent, 2)}%` : "—"}
+                  detail="Failed transactions / observed transaction total"
+                />
+                <Metric
+                  label="Average operations / transaction"
+                  value={formatNumber(data?.metrics.averageOperationsPerTransaction ?? null, 2)}
+                  detail="From transactions where operation count is reported"
+                />
+                <Metric
+                  label="Average transaction fee"
+                  value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"}
+                  detail="Average fee across the transaction sample"
+                />
+                <Metric
+                  label="Ledger interval variability"
+                  value={data?.metrics.ledgerIntervalStdDevSeconds != null ? `${formatNumber(data.metrics.ledgerIntervalStdDevSeconds, 2)}s` : "—"}
+                  detail={data?.metrics.ledgerIntervalCoefficientVariationPercent != null ? `Coefficient of variation: ${formatNumber(data.metrics.ledgerIntervalCoefficientVariationPercent, 2)}%` : "Standard deviation of ledger close intervals"}
+                />
+                <Metric
                   label="Empty ledger rate"
+                  value={data?.metrics.emptyLedgerRatePercent != null ? `${formatNumber(data.metrics.emptyLedgerRatePercent, 2)}%` : "—"}
+                  detail="Ledgers with 0 transactions and 0 operations"
+                />
+                <Metric
+                  label="Ledger activity rate"
+                  value={data?.metrics.ledgerActivityRatePerMinute != null ? `${formatNumber(data.metrics.ledgerActivityRatePerMinute, 2)} / min` : "—"}
+                  detail="Observed ledger closes per minute"
+                />
+                <Metric
+                  label="Protocol distribution"
+                  value={data?.metrics.protocolVersionDistribution?.length ? data.metrics.protocolVersionDistribution.map((item) => `v${item.version}: ${formatNumber(item.percentage, 1)}%`).join(" · ") : "—"}
+                  detail="Distribution across the latest observed ledger window"
+                />
+              </div>
                   value={data?.metrics.emptyLedgerRatePercent != null ? `${formatNumber(data.metrics.emptyLedgerRatePercent, 2)}%` : "—"}
                   detail="Ledgers with 0 transactions and 0 operations"
                 />
