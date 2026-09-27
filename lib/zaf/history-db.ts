@@ -12,6 +12,14 @@ export interface StoredLedger {
   savedAt: string;
 }
 
+export interface StoredLedgerStats {
+  count: number;
+  transactionCount: number;
+  operationCount: number;
+  oldestClosedAt: string | null;
+  newestClosedAt: string | null;
+}
+
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -68,4 +76,59 @@ export async function countStoredLedgers(): Promise<number> {
   });
   db.close();
   return count;
+}
+
+export async function getStoredLedgerStats(): Promise<StoredLedgerStats> {
+  if (typeof indexedDB === "undefined") {
+    return {
+      count: 0,
+      transactionCount: 0,
+      operationCount: 0,
+      oldestClosedAt: null,
+      newestClosedAt: null,
+    };
+  }
+
+  const db = await openDb();
+  const stats = await new Promise<StoredLedgerStats>((resolve, reject) => {
+    const transaction = db.transaction(STORE, "readonly");
+    const request = transaction.objectStore(STORE).openCursor();
+    const result: StoredLedgerStats = {
+      count: 0,
+      transactionCount: 0,
+      operationCount: 0,
+      oldestClosedAt: null,
+      newestClosedAt: null,
+    };
+
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (!cursor) {
+        resolve(result);
+        return;
+      }
+
+      const ledger = cursor.value as StoredLedger;
+      result.count += 1;
+      result.transactionCount += Number(ledger.transactionCount) || 0;
+      result.operationCount += Number(ledger.operationCount) || 0;
+
+      const closedAtMs = Date.parse(ledger.closedAt);
+      if (Number.isFinite(closedAtMs)) {
+        if (!result.oldestClosedAt || closedAtMs < Date.parse(result.oldestClosedAt)) {
+          result.oldestClosedAt = ledger.closedAt;
+        }
+        if (!result.newestClosedAt || closedAtMs > Date.parse(result.newestClosedAt)) {
+          result.newestClosedAt = ledger.closedAt;
+        }
+      }
+
+      cursor.continue();
+    };
+
+    request.onerror = () => reject(request.error ?? new Error("IndexedDB stats read failed"));
+  });
+
+  db.close();
+  return stats;
 }
