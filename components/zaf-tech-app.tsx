@@ -361,7 +361,7 @@ export function ZafTechApp() {
 
             <section className={`mt-7 ${tabClass("network")}`}>
               <div className="mb-3">
-                <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
+                <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
                   {tr("Technical indicators derived from the latest observed Pi Mainnet ledger window")}
                 </p>
@@ -433,7 +433,7 @@ export function ZafTechApp() {
 
             <section className={`mt-7 ${tabClass("overview")}`}>
               <div className="mb-3">
-                <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Current Activity")}</h2>
+                <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Current Activity")}</h2>
                 <p className="text-[11px] text-muted-foreground">{tr("A compact view of the latest observed Mainnet activity")}</p>
               </div>
               <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -475,7 +475,7 @@ export function ZafTechApp() {
             <section className={`mt-7 ${tabClass("activity")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
+                  <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
                   <p className="text-[11px] text-muted-foreground">
                     {tr("Latest real Pi Mainnet ledgers, newest first")}
                   </p>
@@ -551,7 +551,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("activity")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Activity Signals")}</h2>
+              <h2 className="zaf-heading zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Activity Signals")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric label={tr("Transaction success rate")} value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail={tr("Latest 100-ledger window")} />
                 <Metric label={tr("Average fee")} value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"} detail={tr("Latest transaction sample")} />
@@ -564,7 +564,7 @@ export function ZafTechApp() {
 
             <section className={`mt-7 ${tabClass("activity")}`}>
               <div className="mb-3">
-                <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
+                <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
                 <p className="text-[11px] text-muted-foreground">
                   {tr("Recent activity context derived from the latest observed Mainnet ledger window")}
                 </p>
@@ -598,7 +598,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("operations")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
+              <h2 className="zaf-heading zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
                   <span>{tr("Latest 100 operations")}</span>
@@ -629,7 +629,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("activity")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
+              <h2 className="zaf-heading zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
                   label={tr("Transactions / hour")}
@@ -650,7 +650,7 @@ export function ZafTechApp() {
             <section className={`mt-7 ${tabClass("overview")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
+                  <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Recent Chain Activity")}</h2>
                   <p className="text-[11px] text-muted-foreground">
                     {tr("Hourly-equivalent rates across the latest")} {historicalActivity?.windowHours ?? "—"}h {tr("of real Pi Mainnet ledger data")}
                   </p>
@@ -725,7 +725,7 @@ export function ZafTechApp() {
             <section className={`mt-7 ${tabClass("history")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
+                  <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
                   <p className="text-[11px] text-muted-foreground">
                     {tr("Local history collected from real Pi Mainnet snapshots on this device")}
                   </p>
@@ -804,7 +804,7 @@ export function ZafTechApp() {
             <section className={`mt-7 ${tabClass("transactions")}`}>
               <div className="mb-3 flex items-end justify-between">
                 <div>
-                  <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
+                  <h2 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
                   <p className="text-[11px] text-muted-foreground">{tr("Latest 100 from Pi Mainnet Horizon")}</p>
                 </div>
                 <div className="text-right text-[11px] text-muted-foreground">
@@ -885,7 +885,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("operations")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Recent Operations")}</h2>
+              <h2 className="zaf-heading zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Recent Operations")}</h2>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
                 {data?.operations.length ? (showAllOperations ? data.operations : data.operations.slice(0, RECENT_RECORD_PREVIEW)).map((op) => (
                   <div key={op.id} className="border-b border-border p-3 last:border-b-0">
