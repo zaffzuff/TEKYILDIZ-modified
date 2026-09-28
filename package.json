@@ -74,6 +74,7 @@
     "tw-animate-css": "1.3.3",
     "typescript": "^5",
     "eslint": "^9.39.1",
-    "eslint-config-next": "15.5.12"
+    "eslint-config-next": "15.5.12",
+    "@eslint/eslintrc": "^3.3.7"
   }
 }
