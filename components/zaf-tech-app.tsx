@@ -175,6 +175,7 @@ export function ZafTechApp() {
 
   useEffect(() => {
     window.localStorage.setItem("zaf-tech-locale-v1", locale);
+    document.documentElement.lang = locale;
   }, [locale]);
 
   useEffect(() => {
