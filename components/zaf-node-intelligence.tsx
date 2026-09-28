@@ -253,7 +253,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             href="https://blockexplorer.minepi.com/mainnet/nodes"
             target="_blank"
             rel="noreferrer"
-            className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+            className="w-full shrink-0 rounded-lg border border-border px-3 py-2 text-center text-xs font-medium text-foreground hover:bg-muted sm:w-auto"
           >
             {tr("Open official Node ranking", "Resmi Node sıralamasını aç")}
           </a>
@@ -391,8 +391,8 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         </p>
       </div>
 
-      <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mt-4 rounded-xl border border-border bg-card p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="text-sm font-semibold text-foreground">{tr("Node Diagnostics", "Node Teşhisi")}</h3>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
@@ -406,7 +406,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             type="button"
             onClick={() => void refreshLocalNode()}
             disabled={localNodeLoading}
-            className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50"
+            className="w-full shrink-0 rounded-lg border border-border px-3 py-2 text-center text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50 sm:w-auto"
           >
             {localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : tr("Refresh local Node", "Yerel Node'u yenile")}
           </button>
@@ -443,9 +443,9 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
                       : "—",
             ],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-lg border border-border px-3 py-3">
+            <div key={label} className="min-w-0 rounded-lg border border-border px-3 py-3">
               <div className="text-[10px] text-muted-foreground">{label}</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">{value}</div>
+              <div className="mt-1 min-w-0 break-words text-sm font-semibold text-foreground">{value}</div>
             </div>
           ))}
         </div>
@@ -454,7 +454,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Protocol", "Protokol")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.protocol || "—"}</div>
-            <div className="mt-1 text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
+            <div className="mt-1 min-w-0 break-words text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Protocol support", "Protokol desteği")}</div>
@@ -479,7 +479,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.ports ? localNode.ports.filter((item) => item.listeningLocally).length : 0}/10
             </div>
-            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Listening on this computer; not an Internet reachability test", "Bu bilgisayarda dinleyen portlar; Internet erişilebilirlik testi değildir")}</div>
+            <div className="mt-1 break-words text-[10px] text-muted-foreground">{tr("Listening on this computer; not an Internet reachability test", "Bu bilgisayarda dinleyen portlar; Internet erişilebilirlik testi değildir")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Started", "Başlangıç")}</div>
