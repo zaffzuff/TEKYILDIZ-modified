@@ -175,7 +175,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
     <section className="mt-4 rounded-xl border border-border bg-card p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="zaf-heading text-sm font-semibold text-foreground">{tr("Node Performance History", "Node Performans Geçmişi")}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{tr("Node Performance History", "Node Performans Geçmişi")}</h3>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {tr("Local read-only observations stored by the Connector on this Windows computer.", "Connector tarafından bu Windows bilgisayarda saklanan yerel salt-okunur gözlemler.")}
           </p>
