@@ -9,7 +9,7 @@ on:
       tag:
         description: "Release tag to build and upload"
         required: true
-        default: "v0.3.0"
+        default: "v0.3.1"
         type: string
 
 permissions:
@@ -42,7 +42,7 @@ jobs:
         run: |
           $inputFile = "dist/ZAF-TECH-Node-Connector.exe"
           $outputFile = "dist/ZAF-TECH-Node-Connector-branded.exe"
-          & npx resedit-cli --in "$inputFile" --out "$outputFile" --icon "1,installer/zaf-tech-logo.ico" --product-name "ZAF TECH Node Connector" --file-description "Local read-only Pi Node diagnostics for ZAF TECH" --company-name "ZAF TECH - zaffzuff" --file-version "0.3.0.0" --product-version "0.3.0.0" --internal-name "ZAF-TECH-Node-Connector.exe"
+          & npx resedit-cli --in "$inputFile" --out "$outputFile" --icon "1,installer/zaf-tech-logo.ico" --product-name "ZAF TECH Node Connector" --file-description "Local read-only Pi Node diagnostics for ZAF TECH" --company-name "ZAF TECH - zaffzuff" --file-version "0.3.1.0" --product-version "0.3.1.0" --internal-name "ZAF-TECH-Node-Connector.exe"
           if ($LASTEXITCODE -ne 0) { throw "resedit-cli failed with exit code $LASTEXITCODE" }
           Move-Item -Force "$outputFile" "$inputFile"
       - name: Install Inno Setup
