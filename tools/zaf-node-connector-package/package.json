@@ -1,6 +1,6 @@
 {
   "name": "zaf-node-connector",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "private": true,
   "description": "Windows distribution package for the ZAF TECH local Pi Node Connector.",
   "scripts": {
