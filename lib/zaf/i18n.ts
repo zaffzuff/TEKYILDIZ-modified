@@ -45,7 +45,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Observed transaction total": "Gözlemlenen toplam işlem",
     "Health indicators derived from the latest observed Pi Mainnet ledger window": "Son gözlemlenen Pi Mainnet ledger penceresinden türetilen ağ göstergeleri",
     "Technical indicators derived from the latest observed Pi Mainnet ledger window": "Son gözlemlenen Pi Mainnet ledger penceresinden türetilen teknik göstergeler",
-    "Average close interval across the latest observed ledgers": "Son gözlemlenen ledger'lar arasındaki ortalama kapanış aralığı",
     "Latest protocol version": "Son protokol sürümü",
     "Protocol version reported by the latest ledger": "Son ledger tarafından bildirilen protokol sürümü",
     "Recent Mainnet ledgers used for these indicators": "Bu göstergelerde kullanılan son Mainnet ledger'ları",
