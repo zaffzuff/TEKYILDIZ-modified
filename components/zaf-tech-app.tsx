@@ -183,7 +183,7 @@ export function ZafTechApp() {
     void fetch("/api/zaf/history", { cache: "no-store" })
       .then((response) => response.json())
       .then((history) => setHistoricalActivity(history as ZafHistoricalActivity))
-      .catch(() => setHistoricalActivity({ windowHours: 24, points: [], error: "Unable to load historical activity" }));
+      .catch(() => setHistoricalActivity({ windowHours: 24, points: [], change: { transactionsPerHourPercent: null, operationsPerHourPercent: null }, error: "Unable to load historical activity" }));
   }, []);
 
   const load = useCallback(async () => {
