@@ -4,7 +4,10 @@ const BASE = "https://api.mainnet.minepi.com";
 
 const HORIZON_TIMEOUT_MS = 10_000;
 
-async function horizon(path: string): Promise<any> {
+type HorizonResponse = Record<string, unknown>;
+type HorizonRecord = Record<string, unknown>;
+
+async function horizon(path: string): Promise<HorizonResponse> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), HORIZON_TIMEOUT_MS);
 
@@ -15,7 +18,7 @@ async function horizon(path: string): Promise<any> {
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`Pi Horizon request failed: ${response.status}`);
-    return response.json();
+    return response.json() as Promise<HorizonResponse>;
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") {
       throw new Error("Pi Horizon request timed out after 10 seconds");
@@ -24,6 +27,16 @@ async function horizon(path: string): Promise<any> {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function recordsFromPage(page: HorizonResponse): HorizonRecord[] {
+  const embedded = page._embedded;
+  if (!embedded || typeof embedded !== "object") return [];
+
+  const records = (embedded as HorizonRecord).records;
+  return Array.isArray(records)
+    ? records.filter((record): record is HorizonRecord => Boolean(record) && typeof record === "object")
+    : [];
 }
 
 function stroopsToPi(value: unknown): number | null {
@@ -37,7 +50,7 @@ function numberOrNull(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function mapLedger(raw: any): ZafLedger {
+function mapLedger(raw: HorizonRecord): ZafLedger {
   return {
     sequence: String(raw.sequence),
     hash: String(raw.hash ?? ""),
@@ -52,7 +65,7 @@ function mapLedger(raw: any): ZafLedger {
   };
 }
 
-function mapTransaction(raw: any): ZafTransaction {
+function mapTransaction(raw: HorizonRecord): ZafTransaction {
   return {
     hash: String(raw.hash ?? raw.id ?? ""),
     ledger: raw.ledger != null ? String(raw.ledger) : null,
@@ -65,7 +78,7 @@ function mapTransaction(raw: any): ZafTransaction {
   };
 }
 
-function mapOperation(raw: any): ZafOperation {
+function mapOperation(raw: HorizonRecord): ZafOperation {
   return {
     id: String(raw.id ?? ""),
     ledger: raw.ledger != null ? String(raw.ledger) : null,
@@ -125,23 +138,23 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       horizon("/operations?order=desc&limit=100"),
     ]);
 
-    const recentLedgers = (ledgerPage?._embedded?.records ?? []).map(mapLedger);
-    const transactions = (transactionPage?._embedded?.records ?? []).map(mapTransaction);
-    const operations = (operationPage?._embedded?.records ?? []).map(mapOperation);
+    const recentLedgers = recordsFromPage(ledgerPage).map(mapLedger);
+    const transactions = recordsFromPage(transactionPage).map(mapTransaction);
+    const operations = recordsFromPage(operationPage).map(mapOperation);
 
-    const closeTimes = recentLedgers.map((l: ZafLedger) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a: number, b: number) => a-b);
+    const closeTimes = recentLedgers.map((ledger) => Date.parse(ledger.closedAt)).filter(Number.isFinite).sort((a, b) => a - b);
     const intervals: number[] = [];
-    for (let i = 1; i < closeTimes.length; i++) intervals.push((closeTimes[i] - closeTimes[i-1]) / 1000);
+    for (let i = 1; i < closeTimes.length; i++) intervals.push((closeTimes[i] - closeTimes[i - 1]) / 1000);
 
-    const transactionLedgers = new Set(transactions.map((t) => t.ledger).filter(Boolean));
-    const operationLedgers = new Set(operations.map((o) => o.ledger).filter(Boolean));
+    const transactionLedgers = new Set(transactions.map((transaction) => transaction.ledger).filter(Boolean));
+    const operationLedgers = new Set(operations.map((operation) => operation.ledger).filter(Boolean));
     const ledgerSuccessfulTransactions = recentLedgers.reduce((sum, ledger) => sum + (ledger.successfulTransactionCount ?? 0), 0);
     const ledgerFailedTransactions = recentLedgers.reduce((sum, ledger) => sum + (ledger.failedTransactionCount ?? 0), 0);
     const ledgerTransactionTotal = ledgerSuccessfulTransactions + ledgerFailedTransactions;
     const ledgerOperationTotal = recentLedgers.reduce((sum, ledger) => sum + (ledger.operationCount ?? 0), 0);
-    const successfulTransactions = transactions.filter((t) => t.successful === true).length;
-    const fees = transactions.flatMap((t) => t.feePi == null ? [] : [t.feePi]);
-    const operationCounts = transactions.flatMap((t) => t.operationCount == null ? [] : [t.operationCount]);
+    const successfulTransactions = transactions.filter((transaction) => transaction.successful === true).length;
+    const fees = transactions.flatMap((transaction) => transaction.feePi == null ? [] : [transaction.feePi]);
+    const operationCounts = transactions.flatMap((transaction) => transaction.operationCount == null ? [] : [transaction.operationCount]);
     const avgLedgerCloseSeconds = average(intervals);
     const ledgerIntervalStdDevSeconds = standardDeviation(intervals, avgLedgerCloseSeconds);
     const ledgerIntervalCoefficientVariationPercent = avgLedgerCloseSeconds && ledgerIntervalStdDevSeconds != null
@@ -163,11 +176,11 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
     const ledgerActivityRatePerMinute = ledgerWindowSeconds != null && ledgerWindowSeconds > 0
       ? ((Math.max(0, recentLedgers.length - 1)) / ledgerWindowSeconds) * 60
       : null;
-    const typeCounts = operations.reduce<Record<string, number>>((m, o) => {
-      m[o.type] = (m[o.type] ?? 0) + 1;
+    const typeCounts = operations.reduce<Record<string, number>>((m, operation) => {
+      m[operation.type] = (m[operation.type] ?? 0) + 1;
       return m;
     }, {});
-    const sortedOperationTypes = Object.entries(typeCounts).sort((a,b) => b[1] - a[1]);
+    const sortedOperationTypes = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
     const topOperation = sortedOperationTypes[0];
     const operationTypeDistribution = sortedOperationTypes.slice(0, 6).map(([type, count]) => ({
       type,
@@ -211,8 +224,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
       averageChange < -5 ? "falling" : "stable";
     intelligenceChanges.transactionChangePercent = txChange;
     intelligenceChanges.operationChangePercent = opChange;
-    const transactionSampleWindowMinutes = sampleWindowMinutes(transactions.map((t) => t.createdAt));
-    const operationSampleWindowMinutes = sampleWindowMinutes(operations.map((o) => o.createdAt));
+    const transactionSampleWindowMinutes = sampleWindowMinutes(transactions.map((transaction) => transaction.createdAt));
+    const operationSampleWindowMinutes = sampleWindowMinutes(operations.map((operation) => operation.createdAt));
 
     return {
       network: "Pi Network",
@@ -227,8 +240,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         transactionChangePercent: intelligenceChanges.transactionChangePercent,
         operationChangePercent: intelligenceChanges.operationChangePercent,
         dominantOperationShare,
-        uniqueTransactionSources: uniqueCount(transactions.map((t) => t.sourceAccount)),
-        uniqueOperationSources: uniqueCount(operations.map((o) => o.sourceAccount)),
+        uniqueTransactionSources: uniqueCount(transactions.map((transaction) => transaction.sourceAccount)),
+        uniqueOperationSources: uniqueCount(operations.map((operation) => operation.sourceAccount)),
         notes: [
           "Intelligence is derived only from observable Pi Mainnet blockchain data.",
           "No app-traffic, user-intent, or ecosystem-wide usage inference is made.",
@@ -249,8 +262,8 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
         failedTransactionRatePercent: ledgerTransactionTotal ? (ledgerFailedTransactions / ledgerTransactionTotal) * 100 : (transactions.length ? ((transactions.length - successfulTransactions) / transactions.length) * 100 : null),
         averageTransactionFeePi: average(fees),
         averageOperationsPerTransaction: average(operationCounts),
-        uniqueTransactionSources: uniqueCount(transactions.map((t) => t.sourceAccount)),
-        uniqueOperationSources: uniqueCount(operations.map((o) => o.sourceAccount)),
+        uniqueTransactionSources: uniqueCount(transactions.map((transaction) => transaction.sourceAccount)),
+        uniqueOperationSources: uniqueCount(operations.map((operation) => operation.sourceAccount)),
         topOperationType: topOperation?.[0] ?? null,
         topOperationTypeCount: topOperation?.[1] ?? 0,
         operationTypeDistribution,
