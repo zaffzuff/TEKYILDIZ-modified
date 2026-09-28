@@ -452,7 +452,8 @@ setInterval(() => void recordHistorySample(), HISTORY_INTERVAL_MS);
 
 server.listen(PORT, HOST, () => {
   console.log(`ZAF TECH Node Connector v${VERSION} listening on http://${HOST}:${PORT}/node`);
-  console.log(`History endpoint: http://${HOST}:${PORT}/history`);\n  console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
+  console.log(`History endpoint: http://${HOST}:${PORT}/history`);
+  console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
   console.log("Local-only connector. It does not expose Docker outside this computer.");
   console.log("Built by zaffzuff for ZAF TECH.");
 });
