@@ -9,7 +9,7 @@ on:
       tag:
         description: "Release tag to build and upload"
         required: true
-        default: "v0.3.3"
+        default: "v0.4.0"
         type: string
 
 permissions:
