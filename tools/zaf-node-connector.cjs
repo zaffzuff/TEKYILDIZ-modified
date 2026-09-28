@@ -7,8 +7,27 @@ const path = require("node:path");
 
 const execFileAsync = promisify(execFile);
 
+function decodeWindowsCommandOutput(value) {
+  const buffer = Buffer.isBuffer(value) ? value : Buffer.from(String(value ?? ""), "utf8");
+  if (!buffer.length) return "";
+
+  if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+    return buffer.toString("utf16le");
+  }
+
+  if (buffer.includes(0)) {
+    const utf16 = buffer.toString("utf16le");
+    const nulCount = (utf16.match(/\0/g) || []).length;
+    if (nulCount < Math.max(1, Math.floor(utf16.length * 0.05))) {
+      return utf16;
+    }
+  }
+
+  return buffer.toString("utf8");
+}
+
 const HOST = "127.0.0.1";
-const VERSION = "1.6.4";
+const VERSION = "1.6.5";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const HISTORY_INTERVAL_MS = 60_000;
@@ -97,7 +116,7 @@ async function readHostResources() {
     "  networkReceivedBytes = if ($net.Count) { [int64](($net | Measure-Object -Property ReceivedBytes -Sum).Sum) } else { $null }",
     "  networkSentBytes = if ($net.Count) { [int64](($net | Measure-Object -Property SentBytes -Sum).Sum) } else { $null }",
     "} | ConvertTo-Json -Compress",
-  ].join("\\n"));
+  ].join("\n"));
 
   if (!data) return null;
   const memoryTotalBytes = Number(data.memoryTotalBytes) || null;
@@ -129,10 +148,12 @@ async function readHostResources() {
 async function readWslStatus() {
   try {
     const [status, list] = await Promise.all([
-      execFileAsync("wsl.exe", ["--status"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024 }),
-      execFileAsync("wsl.exe", ["--list", "--verbose"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024 }),
+      execFileAsync("wsl.exe", ["--status"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024, encoding: "buffer" }),
+      execFileAsync("wsl.exe", ["--list", "--verbose"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024, encoding: "buffer" }),
     ]);
-    const lines = String(list.stdout || "").replace(/\0/g, "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const statusText = decodeWindowsCommandOutput(status.stdout);
+    const listText = decodeWindowsCommandOutput(list.stdout);
+    const lines = listText.replace(/\0/g, "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     const distributions = lines
       .filter((line) => !/^NAME\s+STATE\s+VERSION$/i.test(line))
       .map((line) => {
@@ -140,7 +161,7 @@ async function readWslStatus() {
         return match ? { name: match[1].replace(/^\*\s*/, ""), state: match[2].toLowerCase(), version: Number(match[3]) || null } : null;
       })
       .filter(Boolean);
-    return { available: true, distributions, status: String(status.stdout || "").trim().slice(0, 2000) };
+    return { available: true, distributions, status: statusText.trim().slice(0, 2000) };
   } catch {
     return { available: false, distributions: [], status: null };
   }
