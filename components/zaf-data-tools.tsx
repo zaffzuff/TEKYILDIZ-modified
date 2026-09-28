@@ -51,7 +51,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
           {tr("Inspect public Pi Mainnet balance and on-chain claimable balances for a wallet address.", "Bir cüzdan adresinin herkese açık Pi Mainnet bakiyesini ve zincir üzerindeki claimable bakiyelerini inceleyin.")}
         </p>
       </div>
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
             value={address}
@@ -112,7 +112,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
 
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
       <div className="text-[11px] text-muted-foreground">{label}</div>
       <div className="mt-1 text-xl font-semibold tracking-tight text-foreground">{value}</div>
       <div className="mt-1 text-[10px] text-muted-foreground">{detail}</div>
@@ -234,16 +234,16 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
 
   return (
     <section className="mt-7">
-      <div className="mb-3 flex items-end justify-between gap-3">
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{tr("Historical Data Engine", "Tarihsel Veri Motoru")}</h2>
           <p className="text-[11px] text-muted-foreground">{tr("Incremental Pi Mainnet ledger collection with persistent local storage.", "Kalıcı yerel depolama kullanan artımlı Pi Mainnet ledger toplama motoru.")}</p>
         </div>
-        <button type="button" onClick={() => void syncLatest()} disabled={syncing} className="shrink-0 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">
+        <button type="button" onClick={() => void syncLatest()} disabled={syncing} className="w-full shrink-0 rounded-lg border border-border bg-card px-3 py-2 text-center text-xs font-medium text-foreground disabled:opacity-50 sm:w-auto">
           {syncing ? tr("Syncing…", "Senkronize ediliyor…") : tr("Sync Mainnet", "Mainnet'i senkronize et")}
         </button>
       </div>
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
         {all.length ? (
           <>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -266,7 +266,7 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
             </div>
             <div className="mt-4 rounded-lg border border-border px-3 py-3">
               <div className="text-[11px] font-medium text-foreground">{tr("Historical window", "Tarihsel pencere")}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">
+              <div className="mt-1 break-words text-[11px] text-muted-foreground">
                 {historicalStats.oldestClosedAt && historicalStats.newestClosedAt
                   ? `${new Date(historicalStats.oldestClosedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(historicalStats.newestClosedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}`
                   : "—"}
