@@ -8,7 +8,7 @@ import path from "node:path";
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
-const VERSION = "0.3.3";
+const VERSION = "0.4.0";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const HISTORY_INTERVAL_MS = 60_000;
@@ -53,6 +53,129 @@ async function docker(args) {
       stdout: "",
     };
   }
+}
+
+
+function parseByteValue(value) {
+  const match = String(value || "").trim().match(/^([\d.]+)\s*([KMGTPE]?i?B)?$/i);
+  if (!match) return null;
+  const number = Number(match[1]);
+  if (!Number.isFinite(number)) return null;
+  const unit = String(match[2] || "B").toUpperCase();
+  const multipliers = { B: 1, KB: 1000, MB: 1000 ** 2, GB: 1000 ** 3, TB: 1000 ** 4, KIB: 1024, MIB: 1024 ** 2, GIB: 1024 ** 3, TIB: 1024 ** 4 };
+  return Math.round(number * (multipliers[unit] || 1));
+}
+
+function parseBytePair(value) {
+  const parts = String(value || "").split("/").map((part) => parseByteValue(part));
+  return { first: parts[0] ?? null, second: parts[1] ?? null };
+}
+
+async function powershellJson(script) {
+  try {
+    const result = await execFileAsync("powershell.exe", [
+      "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", script,
+    ], { windowsHide: true, timeout: 5000, maxBuffer: 512 * 1024 });
+    return JSON.parse(result.stdout.trim());
+  } catch {
+    return null;
+  }
+}
+
+async function readHostResources() {
+  const data = await powershellJson([
+    "$os = Get-CimInstance -ClassName Win32_OperatingSystem",
+    "$cpu = @(Get-CimInstance -ClassName Win32_Processor | Select-Object -ExpandProperty LoadPercentage)",
+    "$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter \\"DeviceID='C:'\\"",
+    "$net = @(Get-NetAdapterStatistics -ErrorAction SilentlyContinue)",
+    "[pscustomobject]@{",
+    "  cpuPercent = if ($cpu.Count) { [math]::Round((($cpu | Measure-Object -Average).Average), 1) } else { $null }",
+    "  memoryTotalBytes = [int64]$os.TotalVisibleMemorySize * 1KB",
+    "  memoryFreeBytes = [int64]$os.FreePhysicalMemory * 1KB",
+    "  diskTotalBytes = if ($disk) { [int64]$disk.Size } else { $null }",
+    "  diskFreeBytes = if ($disk) { [int64]$disk.FreeSpace } else { $null }",
+    "  networkReceivedBytes = if ($net.Count) { [int64](($net | Measure-Object -Property ReceivedBytes -Sum).Sum) } else { $null }",
+    "  networkSentBytes = if ($net.Count) { [int64](($net | Measure-Object -Property SentBytes -Sum).Sum) } else { $null }",
+    "} | ConvertTo-Json -Compress",
+  ].join("\\n"));
+
+  if (!data) return null;
+  const memoryTotalBytes = Number(data.memoryTotalBytes) || null;
+  const memoryFreeBytes = Number(data.memoryFreeBytes) || null;
+  const diskTotalBytes = Number(data.diskTotalBytes) || null;
+  const diskFreeBytes = Number(data.diskFreeBytes) || null;
+  return {
+    cpuPercent: typeof data.cpuPercent === "number" ? data.cpuPercent : null,
+    memory: {
+      totalBytes: memoryTotalBytes,
+      freeBytes: memoryFreeBytes,
+      usedBytes: memoryTotalBytes != null && memoryFreeBytes != null ? Math.max(0, memoryTotalBytes - memoryFreeBytes) : null,
+      usedPercent: memoryTotalBytes && memoryFreeBytes != null ? Math.max(0, Math.min(100, ((memoryTotalBytes - memoryFreeBytes) / memoryTotalBytes) * 100)) : null,
+    },
+    disk: {
+      drive: "C:",
+      totalBytes: diskTotalBytes,
+      freeBytes: diskFreeBytes,
+      usedBytes: diskTotalBytes != null && diskFreeBytes != null ? Math.max(0, diskTotalBytes - diskFreeBytes) : null,
+      usedPercent: diskTotalBytes && diskFreeBytes != null ? Math.max(0, Math.min(100, ((diskTotalBytes - diskFreeBytes) / diskTotalBytes) * 100)) : null,
+    },
+    network: {
+      receivedBytes: Number(data.networkReceivedBytes) || null,
+      sentBytes: Number(data.networkSentBytes) || null,
+    },
+  };
+}
+
+async function readWslStatus() {
+  try {
+    const [status, list] = await Promise.all([
+      execFileAsync("wsl.exe", ["--status"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024 }),
+      execFileAsync("wsl.exe", ["--list", "--verbose"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024 }),
+    ]);
+    const lines = String(list.stdout || "").replace(/\0/g, "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const distributions = lines
+      .filter((line) => !/^NAME\s+STATE\s+VERSION$/i.test(line))
+      .map((line) => {
+        const match = line.match(/^(.+?)\s+(Running|Stopped)\s+(\d+)$/i);
+        return match ? { name: match[1].replace(/^\*\s*/, ""), state: match[2].toLowerCase(), version: Number(match[3]) || null } : null;
+      })
+      .filter(Boolean);
+    return { available: true, distributions, status: String(status.stdout || "").trim().slice(0, 2000) };
+  } catch {
+    return { available: false, distributions: [], status: null };
+  }
+}
+
+async function readDockerResources(containerId) {
+  if (!containerId) return null;
+  const result = await docker(["stats", "--no-stream", "--format", "{{json .}}", containerId]);
+  if (!result.ok) return null;
+  try {
+    const raw = JSON.parse(result.stdout);
+    const memory = parseBytePair(raw.MemUsage);
+    const network = parseBytePair(raw.NetIO);
+    const block = parseBytePair(raw.BlockIO);
+    const cpuText = String(raw.CPUPerc || "").replace("%", "");
+    const memoryPercentText = String(raw.MemPerc || "").replace("%", "");
+    return {
+      cpuPercent: Number(cpuText) || 0,
+      memory: { usedBytes: memory.first, limitBytes: memory.second, usedPercent: Number(memoryPercentText) || null },
+      network: { receivedBytes: network.first, sentBytes: network.second },
+      blockIO: { readBytes: block.first, writeBytes: block.second },
+      pids: raw.PIDs != null ? Number(raw.PIDs) || null : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function readResources(containerId) {
+  const [host, dockerStats, wsl] = await Promise.all([
+    readHostResources(),
+    readDockerResources(containerId),
+    readWslStatus(),
+  ]);
+  return { observedAt: new Date().toISOString(), host, docker: dockerStats, wsl };
 }
 
 function parseProtocol(image) {
