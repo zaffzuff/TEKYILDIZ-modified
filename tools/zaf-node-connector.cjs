@@ -105,7 +105,7 @@ async function readHostResources() {
   const data = await powershellJson([
     "$os = Get-CimInstance -ClassName Win32_OperatingSystem",
     "$cpu = @(Get-CimInstance -ClassName Win32_Processor | Select-Object -ExpandProperty LoadPercentage)",
-    "$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"",
+    "$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter \"DeviceID='C:'\"",
     "$net = @(Get-NetAdapterStatistics -ErrorAction SilentlyContinue)",
     "[pscustomobject]@{",
     "  cpuPercent = if ($cpu.Count) { [math]::Round((($cpu | Measure-Object -Average).Average), 1) } else { $null }",
