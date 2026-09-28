@@ -25,3 +25,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# ZAF TECH Node Connector build artifacts
+/tools/zaf-node-connector-package/dist/
+/tools/zaf-node-connector-package/node_modules/
+/tools/zaf-node-connector-package/package-lock.json
+
+# Local backup files
+/components/zaf-node-intelligence.backup.tsx
+
+# Root npm lockfile generated locally
+/package-lock.json
