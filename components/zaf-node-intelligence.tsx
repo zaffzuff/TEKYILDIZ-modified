@@ -196,7 +196,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
   return (
     <section className="mt-7">
       <div className="mb-3">
-        <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Node Intelligence", "Node İstihbaratı")}</h2>
+        <h2 className="text-sm font-semibold text-foreground">{tr("Node Intelligence", "Node İstihbaratı")}</h2>
         <p className="text-[11px] text-muted-foreground">
           {tr(
             "A node-operator workspace combining Pi's published ranking signals with live local Node diagnostics.",
@@ -241,7 +241,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="zaf-heading text-sm font-semibold text-foreground">{tr("My Node Identity", "Node Kimliğim")}</h3>
+            <h3 className="text-sm font-semibold text-foreground">{tr("My Node Identity", "Node Kimliğim")}</h3>
             <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Enter the public key shown in Pi Desktop. ZAF TECH keeps it only in this browser and uses it as the identity for future Node intelligence features.",
@@ -310,7 +310,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="mb-3">
-          <h3 className="zaf-heading text-sm font-semibold text-foreground">{tr("Published Node Signals", "Yayımlanan Node Sinyalleri")}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{tr("Published Node Signals", "Yayımlanan Node Sinyalleri")}</h3>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {tr(
               "Pi's ranking page uses five published performance signals. Their current per-Node values are not exposed to ZAF TECH through a verified machine-readable public API, so these cards remain source-aware rather than fabricated.",
@@ -355,7 +355,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="zaf-heading text-sm font-semibold text-foreground">{tr("ZAF TECH Node Connector", "ZAF TECH Node Connector")}</h3>
+            <h3 className="text-sm font-semibold text-foreground">{tr("ZAF TECH Node Connector", "ZAF TECH Node Connector")}</h3>
             <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Install the Windows companion to connect this browser to your own local Pi Node. It runs on localhost and reads Node diagnostics without exposing Docker remotely.",
@@ -394,7 +394,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="zaf-heading text-sm font-semibold text-foreground">{tr("Node Diagnostics", "Node Teşhisi")}</h3>
+            <h3 className="text-sm font-semibold text-foreground">{tr("Node Diagnostics", "Node Teşhisi")}</h3>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Live local diagnostics from this computer. The connector is localhost-only and reads Docker state without exposing Docker remotely.",
@@ -613,7 +613,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       <ZafNodeHistory locale={locale} />
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <h3 className="zaf-heading text-sm font-semibold text-foreground">{tr("Why your Node matters", "Node'unuz neden önemli")}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{tr("Why your Node matters", "Node'unuz neden önemli")}</h3>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
             <div className="font-medium text-foreground">{tr("Blockchain contribution", "Blockchain katkısı")}</div>
