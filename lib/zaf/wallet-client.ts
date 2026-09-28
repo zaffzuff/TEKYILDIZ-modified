@@ -19,10 +19,13 @@ export interface ZafWalletSnapshot {
   error: string | null;
 }
 
+type HorizonResponse = Record<string, unknown>;
+type HorizonRecord = Record<string, unknown>;
+
 const BASE = "https://api.mainnet.minepi.com";
 const HORIZON_TIMEOUT_MS = 10_000;
 
-async function horizon(path: string): Promise<any> {
+async function horizon(path: string): Promise<HorizonResponse> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), HORIZON_TIMEOUT_MS);
   try {
@@ -32,28 +35,44 @@ async function horizon(path: string): Promise<any> {
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`Pi Horizon request failed: ${response.status}`);
-    return response.json();
+    return response.json() as Promise<HorizonResponse>;
   } finally {
     clearTimeout(timeout);
   }
 }
 
-function nativeBalance(account: any): number {
-  const balance = (account?.balances ?? []).find((item: any) => item.asset_type === "native");
+function nativeBalance(account: HorizonResponse): number {
+  const balances = account.balances;
+  if (!Array.isArray(balances)) return 0;
+
+  const balance = balances.find(
+    (item): item is HorizonRecord =>
+      Boolean(item) &&
+      typeof item === "object" &&
+      (item as HorizonRecord).asset_type === "native",
+  );
+
   return Number(balance?.balance ?? 0);
 }
 
-function predicateUnlockAt(predicate: any, createdAt: string | null): string | null {
-  const absolute = predicate?.abs_before;
+function predicateUnlockAt(predicate: unknown, createdAt: string | null): string | null {
+  if (!predicate || typeof predicate !== "object") return null;
+
+  const record = predicate as HorizonRecord;
+  const absolute = record.abs_before;
   if (typeof absolute === "string" && absolute) return absolute;
-  const relative = Number(predicate?.rel_before);
+
+  const relative = Number(record.rel_before);
   if (Number.isFinite(relative) && createdAt) {
-    return new Date(Date.parse(createdAt) + relative * 1000).toISOString();
+    const createdAtMs = Date.parse(createdAt);
+    if (!Number.isFinite(createdAtMs)) return null;
+    return new Date(createdAtMs + relative * 1000).toISOString();
   }
+
   return null;
 }
 
-function canClaim(predicate: any, createdAt: string | null): boolean {
+function canClaim(predicate: unknown, createdAt: string | null): boolean {
   const unlockAt = predicateUnlockAt(predicate, createdAt);
   return unlockAt ? Date.now() >= Date.parse(unlockAt) : false;
 }
@@ -69,16 +88,31 @@ export async function getZafWallet(address: string): Promise<ZafWalletSnapshot> 
     horizon(`/claimable_balances?claimant=${encodeURIComponent(normalized)}&limit=200&order=desc`),
   ]);
 
-  const records = claimablePage?._embedded?.records ?? [];
+  const embedded = claimablePage._embedded;
+  const records = embedded && typeof embedded === "object" && Array.isArray((embedded as HorizonRecord).records)
+    ? ((embedded as HorizonRecord).records as unknown[]).filter(
+        (record): record is HorizonRecord => Boolean(record) && typeof record === "object",
+      )
+    : [];
+
   const lockups = records
-    .filter((record: any) => record.asset === "native" || record.asset_type === "native")
-    .map((record: any) => {
-      const createdAt = record.created_at ?? null;
+    .filter((record) => record.asset === "native" || record.asset_type === "native")
+    .map((record) => {
+      const createdAt = typeof record.created_at === "string" ? record.created_at : null;
       const predicate = record.predicate ?? null;
+      const claimants = Array.isArray(record.claimants)
+        ? record.claimants.map((claimant) => {
+            if (claimant && typeof claimant === "object") {
+              return String((claimant as HorizonRecord).destination ?? "");
+            }
+            return String(claimant ?? "");
+          })
+        : [];
+
       return {
         id: String(record.id ?? record.balance_id ?? ""),
         amountPi: Number(record.amount ?? 0),
-        claimants: (record.claimants ?? []).map((claimant: any) => String(claimant.destination ?? claimant)),
+        claimants,
         canClaimNow: canClaim(predicate, createdAt),
         createdAt,
         unlockAt: predicateUnlockAt(predicate, createdAt),
@@ -87,7 +121,7 @@ export async function getZafWallet(address: string): Promise<ZafWalletSnapshot> 
     });
 
   const availablePi = nativeBalance(account);
-  const claimablePi = lockups.reduce((sum, item) => sum + item.amountPi, 0);
+  const claimablePi = lockups.reduce((sum: number, item: ZafWalletLockup) => sum + item.amountPi, 0);
 
   return {
     address: normalized,
