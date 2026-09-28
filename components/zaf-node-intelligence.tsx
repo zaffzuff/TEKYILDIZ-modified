@@ -60,6 +60,29 @@ type LocalNodeData = {
   error?: string;
 };
 
+
+function formatBytes(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) return "—";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let size = value;
+  let index = 0;
+  while (size >= 1024 && index < units.length - 1) { size /= 1024; index += 1; }
+  return size.toFixed(size >= 10 || index === 0 ? 0 : 1) + " " + units[index];
+}
+
+function formatPercent(value: number | null | undefined, digits = 1) {
+  if (value == null || !Number.isFinite(value)) return "—";
+  return value.toFixed(digits) + "%";
+}
+
+type LocalResourcesData = {
+  connector?: string;
+  observedAt?: string;
+  host?: { cpuPercent?: number | null; memory?: { totalBytes?: number | null; usedBytes?: number | null; usedPercent?: number | null }; disk?: { drive?: string; totalBytes?: number | null; usedBytes?: number | null; usedPercent?: number | null }; network?: { receivedBytes?: number | null; sentBytes?: number | null } } | null;
+  docker?: { cpuPercent?: number | null; memory?: { usedBytes?: number | null; limitBytes?: number | null; usedPercent?: number | null }; network?: { receivedBytes?: number | null; sentBytes?: number | null }; blockIO?: { readBytes?: number | null; writeBytes?: number | null }; pids?: number | null } | null;
+  wsl?: { available?: boolean; distributions?: Array<{ name?: string; state?: string; version?: number | null }>; status?: string | null } | null;
+};
+
 function NodeMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -103,23 +126,25 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
   const [localNode, setLocalNode] = useState<LocalNodeData | null>(null);
   const [localNodeLoading, setLocalNodeLoading] = useState(true);
   const [localNodeError, setLocalNodeError] = useState(false);
+  const [localResources, setLocalResources] = useState<LocalResourcesData | null>(null);
 
   async function refreshLocalNode() {
     setLocalNodeLoading(true);
     try {
       const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 3000);
-      const response = await fetch("http://127.0.0.1:39100/node", {
-        cache: "no-store",
-        signal: controller.signal,
-      });
+      const timeout = window.setTimeout(() => controller.abort(), 5000);
+      const [nodeResponse, resourcesResponse] = await Promise.all([
+        fetch("http://127.0.0.1:39100/node", { cache: "no-store", signal: controller.signal }),
+        fetch("http://127.0.0.1:39100/resources", { cache: "no-store", signal: controller.signal }),
+      ]);
       window.clearTimeout(timeout);
-      if (!response.ok) throw new Error("Local connector unavailable");
-      const payload = (await response.json()) as LocalNodeData;
-      setLocalNode(payload);
+      if (!nodeResponse.ok) throw new Error("Local connector unavailable");
+      setLocalNode((await nodeResponse.json()) as LocalNodeData);
+      setLocalResources(resourcesResponse.ok ? ((await resourcesResponse.json()) as LocalResourcesData) : null);
       setLocalNodeError(false);
     } catch {
       setLocalNode(null);
+      setLocalResources(null);
       setLocalNodeError(true);
     } finally {
       setLocalNodeLoading(false);
@@ -524,6 +549,37 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
                 : tr("Intersection: —", "Intersection: —")}
             </div>
           </div>
+        </div>
+
+
+        <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3">
+          <div className="mb-2">
+            <div className="text-xs font-semibold text-foreground">{tr("Host & Docker resources", "Host ve Docker kaynakları")}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Read-only live resource telemetry from the local Connector.", "Yerel Connector'dan salt-okunur canlı kaynak telemetrisi.")}</div>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Host CPU", "Host CPU")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.host?.cpuPercent)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{tr("RAM", "RAM")}: {formatPercent(localResources?.host?.memory?.usedPercent)} · {formatBytes(localResources?.host?.memory?.usedBytes)} / {formatBytes(localResources?.host?.memory?.totalBytes)}</div>
+            </div>
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("C: disk", "C: disk")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.host?.disk?.usedPercent)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{formatBytes(localResources?.host?.disk?.usedBytes)} / {formatBytes(localResources?.host?.disk?.totalBytes)}</div>
+            </div>
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Node container", "Node container")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.docker?.cpuPercent)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{tr("RAM", "RAM")}: {formatPercent(localResources?.docker?.memory?.usedPercent)} · {formatBytes(localResources?.docker?.memory?.usedBytes)} / {formatBytes(localResources?.docker?.memory?.limitBytes)} · {tr("PIDs", "PID")}: {localResources?.docker?.pids ?? "—"}</div>
+            </div>
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Docker network", "Docker ağı")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">↓ {formatBytes(localResources?.docker?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.docker?.network?.sentBytes)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{tr("WSL", "WSL")}: {localResources?.wsl?.available ? tr("Available", "Hazır") : tr("Unavailable", "Kullanılamıyor")}</div>
+            </div>
+          </div>
+          <div className="mt-2 text-[10px] text-muted-foreground">{tr("Host network", "Host ağı")}: ↓ {formatBytes(localResources?.host?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.host?.network?.sentBytes)} · {tr("Docker block I/O", "Docker block I/O")}: R {formatBytes(localResources?.docker?.blockIO?.readBytes)} / W {formatBytes(localResources?.docker?.blockIO?.writeBytes)}</div>
         </div>
 
         {!localNodeError && localNode?.connector?.version && compareVersions(localNode.connector.version, MIN_CONNECTOR_VERSION) < 0 ? (
