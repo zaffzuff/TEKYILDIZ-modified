@@ -100,7 +100,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Activity Intelligence": "Aktivite İstihbaratı",
     "Recent activity context derived from the latest observed Mainnet ledger window": "Son gözlemlenen Mainnet ledger penceresinden türetilen güncel aktivite bağlamı",
     "Average ledger interval": "Ortalama ledger aralığı",
-    "Average close interval across the latest observed ledgers": "Son gözlemlenen ledger'lar arasındaki ortalama kapanış aralığı",
     "Observed ledger window": "Gözlemlenen ledger penceresi",
     "Recent Mainnet ledgers used for activity intelligence": "Aktivite istihbaratında kullanılan son Mainnet ledger'ları",
     "Activity state": "Aktivite durumu",
@@ -148,29 +147,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "No transactions match the current filters.": "Mevcut filtrelerle eşleşen işlem yok.",
     "Show filtered records": "Filtrelenen kayıtları göster",
     "Filters and search apply to the latest transaction sample returned by Pi Mainnet Horizon.": "Filtreler ve arama, Pi Mainnet Horizon tarafından döndürülen son işlem örneklemine uygulanır.",
-    "Successful": "Başarılı",
-    "Failed": "Başarısız",
-    "No transaction records available.": "İşlem kaydı mevcut değil.",
-    "Recent Operations": "Son operasyonlar",
-    "No operation records available.": "Operasyon kaydı mevcut değil.",
-    "No amount field": "Tutar alanı yok",
-    "Source: Pi Mainnet Horizon. Generated": "Kaynak: Pi Mainnet Horizon. Oluşturulma",
-    "ZAF TECH displays public blockchain activity and does not claim to measure Pi app traffic or ecosystem usage outside observable chain data.": "ZAF TECH herkese açık blockchain aktivitesini gösterir; Pi uygulama trafiğini veya gözlemlenebilir zincir verisi dışındaki ekosistem kullanımını ölçtüğünü iddia etmez.",
-    "rising": "yükseliyor",
-    "falling": "düşüyor",
-    "stable": "sabit",
-    "Ledger": "Ledger",
-    "records": "kayıt",
-    "ago": "önce",
-    "Intelligence is derived only from observable Pi Mainnet blockchain data.": "İstihbarat yalnızca gözlemlenebilir Pi Mainnet blockchain verilerinden türetilir.",
-    "No app-traffic, user-intent, or ecosystem-wide usage inference is made.": "Uygulama trafiği, kullanıcı niyeti veya ekosistem geneli kullanım hakkında çıkarım yapılmaz.",
-    "s": "sn",
-    "m": "dk",
-    "h": "sa",
-    "insufficient-data": "yetersiz veri",
   },
 };
 
-export function t(locale: Locale, key: string): string {
+export function translate(locale: Locale, key: string): string {
   return translations[locale][key] ?? key;
 }
