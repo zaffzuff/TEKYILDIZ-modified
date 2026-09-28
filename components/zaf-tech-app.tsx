@@ -551,7 +551,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("activity")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Activity Signals")}</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Activity Signals")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric label={tr("Transaction success rate")} value={data?.metrics.transactionSuccessRate != null ? `${formatNumber(data.metrics.transactionSuccessRate, 1)}%` : "—"} detail={tr("Latest 100-ledger window")} />
                 <Metric label={tr("Average fee")} value={data?.metrics.averageTransactionFeePi != null ? `${formatNumber(data.metrics.averageTransactionFeePi, 7)} Pi` : "—"} detail={tr("Latest transaction sample")} />
@@ -598,7 +598,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("operations")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
                   <span>{tr("Latest 100 operations")}</span>
@@ -629,7 +629,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("activity")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Observed Activity Rate")}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Metric
                   label={tr("Transactions / hour")}
@@ -885,7 +885,7 @@ export function ZafTechApp() {
             </section>
 
             <section className={`mt-7 ${tabClass("operations")}`}>
-              <h2 className="zaf-heading mb-3 text-sm font-semibold text-foreground">{tr("Recent Operations")}</h2>
+              <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Recent Operations")}</h2>
               <div className="overflow-hidden rounded-xl border border-border bg-card">
                 {data?.operations.length ? (showAllOperations ? data.operations : data.operations.slice(0, RECENT_RECORD_PREVIEW)).map((op) => (
                   <div key={op.id} className="border-b border-border p-3 last:border-b-0">
