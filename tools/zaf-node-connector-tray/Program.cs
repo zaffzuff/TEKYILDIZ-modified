@@ -10,7 +10,7 @@ internal static class Program
 {
     private const string Version = "1.6.0";
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string RunValueName = "ZAF TECH Node Connector";
+    private const string RunValueName = "ZAF-TECH Pi Node Connector";
     private const string ConnectorUrl = "http://127.0.0.1:39100";
     private const string WebsiteUrl = "https://zaf-tech.vercel.app";
 
@@ -75,7 +75,7 @@ internal static class Program
             };
             _startWithWindows.CheckedChanged += (_, _) => SetStartWithWindows(_startWithWindows.Checked);
 
-            var about = new ToolStripMenuItem($"ZAF TECH Node Connector v{Version}");
+            var about = new ToolStripMenuItem($"ZAF-TECH Pi Node Connector v{Version}");
             about.Enabled = false;
 
             var exit = new ToolStripMenuItem("Çıkış");
@@ -99,7 +99,7 @@ internal static class Program
             {
                 Icon = File.Exists(iconPath) ? new Icon(iconPath) : SystemIcons.Application,
                 Visible = true,
-                Text = "ZAF TECH Node Connector",
+                Text = "ZAF-TECH Pi Node Connector",
                 ContextMenuStrip = _menu
             };
             _tray.DoubleClick += (_, _) => OpenUrl(WebsiteUrl);
@@ -123,8 +123,8 @@ internal static class Program
             if (!File.Exists(workerPath))
             {
                 MessageBox.Show(
-                    "ZAF TECH Node Connector Worker bulunamadı. Kurulumu onarın veya Connector'ı yeniden kurun.",
-                    "ZAF TECH Node Connector",
+                    "ZAF-TECH Pi Node Connector Worker bulunamadı. Kurulumu onarın veya Connector'ı yeniden kurun.",
+                    "ZAF-TECH Pi Node Connector",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 return;
@@ -181,7 +181,7 @@ internal static class Program
             {
                 MessageBox.Show(
                     $"Connector başlatılamadı:\n\n{error.Message}",
-                    "ZAF TECH Node Connector",
+                    "ZAF-TECH Pi Node Connector",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -228,7 +228,7 @@ internal static class Program
                     _nodeStatus.ForeColor = Color.DimGray;
                     _startConnector.Enabled = true;
                     _stopConnector.Enabled = false;
-                    _tray.Text = "ZAF TECH Node Connector — Durduruldu";
+                    _tray.Text = "ZAF-TECH Pi Node Connector — Durduruldu";
                     return;
                 }
 
@@ -248,7 +248,7 @@ internal static class Program
                 {
                     _nodeStatus.Text = "● Node: okunamıyor";
                     _nodeStatus.ForeColor = Color.DarkOrange;
-                    _tray.Text = "ZAF TECH Node Connector — Node okunamıyor";
+                    _tray.Text = "ZAF-TECH Pi Node Connector — Node okunamıyor";
                     return;
                 }
 
@@ -259,7 +259,7 @@ internal static class Program
                 {
                     _nodeStatus.Text = "● Node: bulunamadı";
                     _nodeStatus.ForeColor = Color.DarkOrange;
-                    _tray.Text = "ZAF TECH Node Connector — Node bulunamadı";
+                    _tray.Text = "ZAF-TECH Pi Node Connector — Node bulunamadı";
                     return;
                 }
 
@@ -288,19 +288,19 @@ internal static class Program
                 {
                     _nodeStatus.Text = $"● Node: Sağlıklı — {ledgerAge}s — {authenticated} peer";
                     _nodeStatus.ForeColor = Color.DarkGreen;
-                    _tray.Text = $"ZAF TECH Node Connector — Node sağlıklı ({ledgerAge}s)";
+                    _tray.Text = $"ZAF-TECH Pi Node Connector — Node sağlıklı ({ledgerAge}s)";
                 }
                 else if (string.Equals(state, "running", StringComparison.OrdinalIgnoreCase))
                 {
                     _nodeStatus.Text = $"● Node: Çalışıyor — {sync ?? "unknown"}";
                     _nodeStatus.ForeColor = Color.DarkOrange;
-                    _tray.Text = "ZAF TECH Node Connector — Node çalışıyor";
+                    _tray.Text = "ZAF-TECH Pi Node Connector — Node çalışıyor";
                 }
                 else
                 {
                     _nodeStatus.Text = $"● Node: {state ?? "bilinmiyor"}";
                     _nodeStatus.ForeColor = Color.DarkRed;
-                    _tray.Text = "ZAF TECH Node Connector — Node durumu sorunlu";
+                    _tray.Text = "ZAF-TECH Pi Node Connector — Node durumu sorunlu";
                 }
             }
             catch
@@ -311,7 +311,7 @@ internal static class Program
                 _nodeStatus.ForeColor = Color.DimGray;
                 _startConnector.Enabled = false;
                 _stopConnector.Enabled = _worker is { HasExited: false };
-                _tray.Text = "ZAF TECH Node Connector — Bağlantı bekleniyor";
+                _tray.Text = "ZAF-TECH Pi Node Connector — Bağlantı bekleniyor";
             }
             finally
             {
@@ -367,7 +367,7 @@ internal static class Program
             {
                 MessageBox.Show(
                     $"Windows başlangıç ayarı değiştirilemedi:\n\n{error.Message}",
-                    "ZAF TECH Node Connector",
+                    "ZAF-TECH Pi Node Connector",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
             }
