@@ -122,6 +122,10 @@ export async function getZafHistoricalActivity(): Promise<ZafHistoricalActivity>
     return {
       windowHours: 24,
       points: [],
+      change: {
+        transactionsPerHourPercent: null,
+        operationsPerHourPercent: null,
+      },
       error: error instanceof Error ? error.message : "Unable to load historical Pi Mainnet activity",
     };
   }
