@@ -2,8 +2,9 @@ name: Release ZAF TECH Node Connector
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - master
+  workflow_dispatch:
   workflow_dispatch:
     inputs:
       tag:
@@ -68,7 +69,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           INPUT_TAG: ${{ inputs.tag }}
         run: |
-          $tag = if ($env:INPUT_TAG) { $env:INPUT_TAG } else { $env:GITHUB_REF_NAME }
+          $tag = if ($env:INPUT_TAG) { $env:INPUT_TAG } elseif ($env:GITHUB_REF_NAME -eq "master") { "v1.6.6" } else { $env:GITHUB_REF_NAME }
           if (-not $tag) { throw "Release tag could not be determined." }
 
           $releasesJson = gh release list --repo "$env:GITHUB_REPOSITORY" --limit 100 --json tagName | ConvertFrom-Json
