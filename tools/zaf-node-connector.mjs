@@ -1,9 +1,9 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import { createServer } from "node:http";
-import { Socket } from "node:net";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import path from "node:path";
+const { execFile } = require("node:child_process");
+const { promisify } = require("node:util");
+const { createServer } = require("node:http");
+const { Socket } = require("node:net");
+const { mkdir, readFile, rename, writeFile } = require("node:fs/promises");
+const path = require("node:path");
 
 const execFileAsync = promisify(execFile);
 
