@@ -2,13 +2,19 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { createServer } from "node:http";
 import { Socket } from "node:net";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
-const VERSION = "0.2.4";
+const VERSION = "0.3.0";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
+const HISTORY_INTERVAL_MS = 60_000;
+const HISTORY_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+const HISTORY_DIR = path.join(process.env.APPDATA || process.env.LOCALAPPDATA || process.cwd(), "ZAF TECH", "Node Connector");
+const HISTORY_FILE = path.join(HISTORY_DIR, "node-history.json");
 const ALLOWED_ORIGINS = new Set(
   [
     "http://localhost:3000",
@@ -270,6 +276,114 @@ async function readNode() {
   };
 }
 
+
+function historySample(snapshot) {
+  const node = snapshot?.node;
+  const peers = node?.peers;
+  const quorum = node?.quorum;
+  const synced = String(node?.sync || "").toLowerCase() === "synced!";
+  const ledgerAge = node?.ledger?.age ?? null;
+  const available = Boolean(snapshot?.connector?.docker && snapshot?.connector?.core && node?.state === "running");
+  const healthy = Boolean(
+    available &&
+    synced &&
+    ledgerAge != null &&
+    ledgerAge < 10 &&
+    (peers?.authenticated ?? 0) >= 8 &&
+    String(quorum?.phase || "").toUpperCase() === "EXTERNALIZE" &&
+    quorum?.intersection !== false
+  );
+  return {
+    observedAt: snapshot?.observedAt || new Date().toISOString(),
+    available,
+    healthy,
+    sync: node?.sync ?? "unknown",
+    ledgerAge,
+    ledgerNumber: node?.ledger?.number ?? null,
+    authenticated: peers?.authenticated ?? null,
+    inbound: peers?.inbound ?? null,
+    outbound: peers?.outbound ?? null,
+    pending: peers?.pending ?? null,
+    quorumPhase: quorum?.phase ?? null,
+    quorumLagMs: quorum?.lagMs ?? null,
+    intersection: quorum?.intersection ?? null,
+    restarts: node?.restartCount ?? null,
+    listeningPorts: Array.isArray(snapshot?.ports) ? snapshot.ports.filter((item) => item.listeningLocally).length : null,
+  };
+}
+
+let history = [];
+let historyWriteInFlight = Promise.resolve();
+
+async function loadHistory() {
+  try {
+    const raw = await readFile(HISTORY_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    history = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    history = [];
+  }
+  pruneHistory();
+}
+
+function pruneHistory() {
+  const cutoff = Date.now() - HISTORY_WINDOW_MS;
+  history = history.filter((item) => {
+    const time = Date.parse(item.observedAt);
+    return Number.isFinite(time) && time >= cutoff;
+  });
+}
+
+function saveHistory() {
+  historyWriteInFlight = historyWriteInFlight.then(async () => {
+    await mkdir(HISTORY_DIR, { recursive: true });
+    const tempFile = `${HISTORY_FILE}.tmp`;
+    await writeFile(tempFile, JSON.stringify(history), "utf8");
+    await rename(tempFile, HISTORY_FILE);
+  }).catch(() => undefined);
+  return historyWriteInFlight;
+}
+
+async function recordHistory(snapshot) {
+  history.push(historySample(snapshot));
+  pruneHistory();
+  await saveHistory();
+}
+
+function historySummary() {
+  const now = Date.now();
+  const windows = [24, 24 * 7, 24 * 30];
+  const summary = {};
+  for (const hours of windows) {
+    const cutoff = now - hours * 60 * 60 * 1000;
+    const samples = history.filter((item) => Date.parse(item.observedAt) >= cutoff);
+    const available = samples.filter((item) => item.available);
+    const healthy = samples.filter((item) => item.healthy);
+    const avg = (key) => {
+      const values = available.map((item) => item[key]).filter((value) => typeof value === "number" && Number.isFinite(value));
+      return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+    };
+    summary[String(hours)] = {
+      samples: samples.length,
+      availability: samples.length ? (available.length / samples.length) * 100 : null,
+      health: samples.length ? (healthy.length / samples.length) * 100 : null,
+      avgInbound: avg("inbound"),
+      avgOutbound: avg("outbound"),
+      maxInbound: available.reduce((max, item) => Math.max(max, item.inbound ?? 0), 0),
+      maxOutbound: available.reduce((max, item) => Math.max(max, item.outbound ?? 0), 0),
+    };
+  }
+  return summary;
+}
+
+async function recordHistorySample() {
+  try {
+    await recordHistory(await readNode());
+  } catch {
+    await recordHistory({ connector: { docker: false, core: false }, node: null, ports: [], observedAt: new Date().toISOString() });
+  }
+}
+
 const server = createServer(async (req, res) => {
   const origin = req.headers.origin || "";
 
@@ -284,7 +398,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  if (req.method !== "GET" || !["/health", "/node"].includes(req.url)) {
+  if (req.method !== "GET" || !["/health", "/node", "/history"].includes(req.url)) {
     json(res, 404, { error: "Not found" }, origin);
     return;
   }
@@ -297,13 +411,29 @@ const server = createServer(async (req, res) => {
       ok: true,
       host: HOST,
       port: PORT,
+      history: { endpoint: "/history", windowDays: 30, sampleIntervalSeconds: 60 },
+      observedAt: new Date().toISOString(),
+    }, origin);
+    return;
+  }
+
+  if (req.url === "/history") {
+    json(res, 200, {
+      connector: "zaf-node-connector",
+      version: VERSION,
+      windowDays: 30,
+      sampleIntervalSeconds: 60,
+      samples: history,
+      summary: historySummary(),
       observedAt: new Date().toISOString(),
     }, origin);
     return;
   }
 
   try {
-    json(res, 200, await readNode(), origin);
+    const snapshot = await readNode();
+    json(res, 200, snapshot, origin);
+    void recordHistory(snapshot);
   } catch (error) {
     json(
       res,
@@ -317,9 +447,13 @@ const server = createServer(async (req, res) => {
   }
 });
 
+await loadHistory();
+void recordHistorySample();
+setInterval(() => void recordHistorySample(), HISTORY_INTERVAL_MS);
+
 server.listen(PORT, HOST, () => {
   console.log(`ZAF TECH Node Connector v${VERSION} listening on http://${HOST}:${PORT}/node`);
-  console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
+  console.log(`History endpoint: http://${HOST}:${PORT}/history`);\n  console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
   console.log("Local-only connector. It does not expose Docker outside this computer.");
   console.log("Built by zaffzuff for ZAF TECH.");
 });
