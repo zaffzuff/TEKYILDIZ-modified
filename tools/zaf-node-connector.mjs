@@ -8,7 +8,7 @@ import path from "node:path";
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
-const VERSION = "0.3.0";
+const VERSION = "0.3.3";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const HISTORY_INTERVAL_MS = 60_000;
