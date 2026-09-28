@@ -27,7 +27,7 @@ function decodeWindowsCommandOutput(value) {
 }
 
 const HOST = "127.0.0.1";
-const VERSION = "1.6.5";
+const VERSION = "1.6.6";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const HISTORY_INTERVAL_MS = 60_000;
@@ -105,7 +105,7 @@ async function readHostResources() {
   const data = await powershellJson([
     "$os = Get-CimInstance -ClassName Win32_OperatingSystem",
     "$cpu = @(Get-CimInstance -ClassName Win32_Processor | Select-Object -ExpandProperty LoadPercentage)",
-    "$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter \\"DeviceID='C:'\\"",
+    "$disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"",
     "$net = @(Get-NetAdapterStatistics -ErrorAction SilentlyContinue)",
     "[pscustomobject]@{",
     "  cpuPercent = if ($cpu.Count) { [math]::Round((($cpu | Measure-Object -Average).Average), 1) } else { $null }",
