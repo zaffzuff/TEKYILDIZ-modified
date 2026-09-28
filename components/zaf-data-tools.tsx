@@ -88,10 +88,10 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
               <div className="space-y-2">
                 <div className="text-[11px] font-medium text-foreground">{tr("Claimable balances", "Claimable bakiyeler")}</div>
                 {wallet.lockups.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-[11px]">
-                    <span className="font-mono">{item.id.slice(0, 18)}…</span>
-                    <span>{item.amountPi.toLocaleString("en-US", { maximumFractionDigits: 7 })} Pi</span>
-                    <span className="text-muted-foreground">
+                  <div key={item.id} className="flex flex-col items-start gap-1.5 rounded-lg border border-border px-3 py-2 text-[11px] sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                    <span className="max-w-full break-all font-mono">{item.id.slice(0, 18)}…</span>
+                    <span className="shrink-0">{item.amountPi.toLocaleString("en-US", { maximumFractionDigits: 7 })} Pi</span>
+                    <span className="text-left text-muted-foreground sm:text-right">
                       {item.canClaimNow ? tr("Claimable now", "Şimdi alınabilir") : item.unlockAt ? new Date(item.unlockAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : tr("Predicate-based", "Predicate tabanlı")}
                     </span>
                   </div>
