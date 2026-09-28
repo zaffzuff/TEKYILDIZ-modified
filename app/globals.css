@@ -181,6 +181,11 @@
 }
 
 /* Brand text: gold → silver gradient for the wordmark */
+/* Short site headings use title case. */
+.zaf-heading {
+  text-transform: capitalize;
+}
+
 .ty-brand-text {
   font-family: var(--font-michroma), sans-serif;
   font-weight: 400;
