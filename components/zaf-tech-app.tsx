@@ -135,8 +135,8 @@ function InfoBadge({ label, description }: { label: string; description: string 
 
 function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <div className="text-2xl font-bold ty-nums text-foreground">{value}</div>
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
+      <div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div>
       <div className="mt-1 text-xs font-medium text-foreground">{label}</div>
       {detail && <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div>}
     </div>
@@ -301,7 +301,7 @@ export function ZafTechApp() {
               </button>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px] sm:mt-4">
             <InfoBadge
               label={tr("Pi Network")}
               description={tr("Pi Network badge description")}
@@ -359,7 +359,7 @@ export function ZafTechApp() {
               </div>
             )}
 
-            <section className={`mt-7 ${tabClass("network")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("network")}`}>
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
@@ -431,12 +431,12 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("overview")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("overview")}`}>
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Current Activity")}</h2>
                 <p className="text-[11px] text-muted-foreground">{tr("A compact view of the latest observed Mainnet activity")}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
                 <Metric
                   label={tr("Activity state")}
                   value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"}
@@ -472,7 +472,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("activity")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("activity")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
@@ -569,7 +569,7 @@ export function ZafTechApp() {
                   {tr("Recent activity context derived from the latest observed Mainnet ledger window")}
                 </p>
               </div>
-              <div className="rounded-xl border border-border bg-card p-4">
+              <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <Metric label={tr("Activity state")} value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"} detail={tr("Descriptive state from observed chain data")} />
                   <Metric label={tr("Transactions / hour")} value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"} detail={tr("Latest observed ledger window")} />
@@ -597,7 +597,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("operations")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("operations")}`}>
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
@@ -722,7 +722,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("history")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("history")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
@@ -801,7 +801,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("transactions")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("transactions")}`}>
               <div className="mb-3 flex items-end justify-between">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
