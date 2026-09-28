@@ -255,21 +255,21 @@ export function ZafTechApp() {
     <div className="min-h-screen bg-background">
       <main className="mx-auto max-w-3xl px-4 pb-10">
         <header className="border-b border-border pb-5 pt-7">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 min-w-0">
               <img
                 src="/zaf-tech-logo.png"
                 alt="ZAF TECH"
                 className="h-11 w-11 shrink-0 object-contain"
               />
-              <div>
+              <div className="min-w-0">
                 <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                   {tr("Pi Ecosystem Activity Intelligence")}
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
               <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Language")}>
                 {(Object.keys(localeLabels) as Locale[]).map((option) => (
                   <button
@@ -292,10 +292,10 @@ export function ZafTechApp() {
                 {theme === "dark" ? `☀ ${tr("Light")}` : `☾ ${tr("Dark")}`}
               </button>
                           <button
-              type="button"
-              onClick={() => void load()}
-              disabled={refreshing}
-              className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50"
+                type="button"
+                onClick={() => void load()}
+                disabled={refreshing}
+                className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50"
             >
               {refreshing ? tr("Refreshing…") : tr("Refresh")}
             </button>
@@ -315,8 +315,8 @@ export function ZafTechApp() {
               description={tr("Read-only badge description")}
             />
           </div>
-          <nav className="mt-4 overflow-x-auto border-t border-border pt-3" aria-label={tr("Dashboard sections")}>
-            <div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1">
+          <nav className="mt-4 overflow-x-auto border-t border-border pt-3 ty-no-scrollbar" aria-label={tr("Dashboard sections")}>
+            <div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1 sm:flex-wrap sm:min-w-0">
               {([
                 ["overview", "Overview", "Genel Bakış"],
                 ["activity", "Activity", "Aktivite"],
@@ -332,7 +332,7 @@ export function ZafTechApp() {
                   type="button"
                   onClick={() => setActiveTab(id)}
                   aria-current={activeTab === id ? "page" : undefined}
-                  className={`rounded-lg px-3 py-2 text-[11px] font-medium transition-colors ${activeTab === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`min-h-9 shrink-0 rounded-lg px-3 py-2 text-[11px] font-medium transition-colors ${activeTab === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {locale === "tr" ? trLabel : en}
                 </button>
