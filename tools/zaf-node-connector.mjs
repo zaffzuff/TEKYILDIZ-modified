@@ -404,6 +404,7 @@ function historySample(snapshot) {
   const node = snapshot?.node;
   const peers = node?.peers;
   const quorum = node?.quorum;
+  const resources = snapshot?.resources;
   const synced = String(node?.sync || "").toLowerCase() === "synced!";
   const ledgerAge = node?.ledger?.age ?? null;
   const available = Boolean(snapshot?.connector?.docker && snapshot?.connector?.core && node?.state === "running");
@@ -432,6 +433,24 @@ function historySample(snapshot) {
     intersection: quorum?.intersection ?? null,
     restarts: node?.restartCount ?? null,
     listeningPorts: Array.isArray(snapshot?.ports) ? snapshot.ports.filter((item) => item.listeningLocally).length : null,
+    hostCpuPercent: resources?.host?.cpuPercent ?? null,
+    hostMemoryUsedPercent: resources?.host?.memory?.usedPercent ?? null,
+    hostDiskUsedPercent: resources?.host?.disk?.usedPercent ?? null,
+    hostNetworkReceivedBytes: resources?.host?.network?.receivedBytes ?? null,
+    hostNetworkSentBytes: resources?.host?.network?.sentBytes ?? null,
+    dockerCpuPercent: resources?.docker?.cpuPercent ?? null,
+    dockerMemoryUsedBytes: resources?.docker?.memory?.usedBytes ?? null,
+    dockerMemoryLimitBytes: resources?.docker?.memory?.limitBytes ?? null,
+    dockerMemoryUsedPercent: resources?.docker?.memory?.usedPercent ?? null,
+    dockerNetworkReceivedBytes: resources?.docker?.network?.receivedBytes ?? null,
+    dockerNetworkSentBytes: resources?.docker?.network?.sentBytes ?? null,
+    dockerBlockReadBytes: resources?.docker?.blockIO?.readBytes ?? null,
+    dockerBlockWriteBytes: resources?.docker?.blockIO?.writeBytes ?? null,
+    dockerPids: resources?.docker?.pids ?? null,
+    wslAvailable: resources?.wsl?.available ?? null,
+    wslRunningDistros: Array.isArray(resources?.wsl?.distributions)
+      ? resources.wsl.distributions.filter((item) => item?.state === "running").length
+      : null,
   };
 }
 
@@ -501,7 +520,9 @@ function historySummary() {
 
 async function recordHistorySample() {
   try {
-    await recordHistory(await readNode());
+    const snapshot = await readNode();
+    snapshot.resources = await readResources(snapshot?.node?.containerId || null);
+    await recordHistory(snapshot);
   } catch {
     await recordHistory({ connector: { docker: false, core: false }, node: null, ports: [], observedAt: new Date().toISOString() });
   }
@@ -521,7 +542,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  if (req.method !== "GET" || !["/health", "/node", "/history"].includes(req.url)) {
+  if (req.method !== "GET" || !["/health", "/node", "/history", "/resources"].includes(req.url)) {
     json(res, 404, { error: "Not found" }, origin);
     return;
   }
@@ -535,6 +556,7 @@ const server = createServer(async (req, res) => {
       host: HOST,
       port: PORT,
       history: { endpoint: "/history", windowDays: 30, sampleIntervalSeconds: 60 },
+      resources: { endpoint: "/resources", readOnly: true },
       observedAt: new Date().toISOString(),
     }, origin);
     return;
@@ -550,6 +572,25 @@ const server = createServer(async (req, res) => {
       summary: historySummary(),
       observedAt: new Date().toISOString(),
     }, origin);
+    return;
+  }
+
+  if (req.url === "/resources") {
+    try {
+      const node = await readNode();
+      const resources = await readResources(node?.node?.containerId || null);
+      json(res, 200, {
+        connector: "zaf-node-connector",
+        version: VERSION,
+        ...resources,
+      }, origin);
+    } catch (error) {
+      json(res, 500, {
+        connector: "zaf-node-connector",
+        version: VERSION,
+        error: error instanceof Error ? error.message : String(error),
+      }, origin);
+    }
     return;
   }
 
@@ -576,6 +617,7 @@ setInterval(() => void recordHistorySample(), HISTORY_INTERVAL_MS);
 server.listen(PORT, HOST, () => {
   console.log(`ZAF TECH Node Connector v${VERSION} listening on http://${HOST}:${PORT}/node`);
   console.log(`History endpoint: http://${HOST}:${PORT}/history`);
+  console.log(`Resources endpoint: http://${HOST}:${PORT}/resources`);
   console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
   console.log("Local-only connector. It does not expose Docker outside this computer.");
   console.log("Built by zaffzuff for ZAF TECH.");
