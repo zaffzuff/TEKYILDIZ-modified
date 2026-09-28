@@ -1,4 +1,4 @@
-#define MyAppName "ZAF TECH Node Connector"
+#define MyAppName "ZAF-TECH Pi Node Connector"
 #define MyAppVersion "1.6.0"
 #define MyAppPublisher "ZAF TECH — zaffzuff"
 #define MyAppExeName "ZAF-TECH-Node-Connector.exe"
@@ -8,7 +8,7 @@ AppId={{8B7F5C4D-8A2A-4D7B-9F7B-2E0B0D4C7A31}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-AppComments=Created by zaffzuff for ZAF TECH. Runs as a Windows system tray application.
+AppComments=Created by zaffzuff for ZAF TECH. ZAF-TECH Pi Node Connector runs as a Windows system tray application.
 AppCopyright=Copyright © 2026 zaffzuff / ZAF TECH
 DefaultDirName={localappdata}\ZAF TECH\Node Connector
 DefaultGroupName=ZAF TECH
@@ -36,7 +36,7 @@ Source: "zaf-tech-logo.png"; DestDir: "{app}"; Flags: ignoreversion
 Name: "startup"; Description: "Start ZAF TECH Node Connector automatically with Windows"; GroupDescription: "Startup options:"; Flags: checkedonce
 
 [Icons]
-Name: "{group}\ZAF TECH Node Connector"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\zaf-tech-logo.ico"
+Name: "{group}\ZAF-TECH Pi Node Connector"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\zaf-tech-logo.ico"
 Name: "{group}\Uninstall ZAF TECH Node Connector"; Filename: "{uninstallexe}"
 
 [Registry]
