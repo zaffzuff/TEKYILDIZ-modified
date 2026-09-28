@@ -296,9 +296,9 @@ export function ZafTechApp() {
                 onClick={() => void load()}
                 disabled={refreshing}
                 className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50"
-            >
-              {refreshing ? tr("Refreshing…") : tr("Refresh")}
-            </button>
+              >
+                {refreshing ? tr("Refreshing…") : tr("Refresh")}
+              </button>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
@@ -823,7 +823,7 @@ export function ZafTechApp() {
                   aria-label={tr("Search transactions")}
                   className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring"
                 />
-                <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Transaction status filter")}>
+                <div className="flex max-w-full overflow-x-auto rounded-lg border border-border bg-card p-0.5 text-[11px] ty-no-scrollbar" role="group" aria-label={tr("Transaction status filter")}>
                   {([
                     ["all", "All"],
                     ["successful", "Successful"],
@@ -833,7 +833,7 @@ export function ZafTechApp() {
                       key={id}
                       type="button"
                       onClick={() => setTransactionFilter(id)}
-                      className={`rounded-md px-2.5 py-1.5 font-medium ${transactionFilter === id ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+                      className={`shrink-0 whitespace-nowrap rounded-md px-2.5 py-1.5 font-medium ${transactionFilter === id ? "bg-muted text-foreground" : "text-muted-foreground"}`}
                     >
                       {tr(label)}
                     </button>
