@@ -46,7 +46,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
   return (
     <section className="mt-7">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-foreground">{tr("Wallet Intelligence", "Cüzdan İstihbaratı")}</h2>
+        <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Wallet Intelligence", "Cüzdan İstihbaratı")}</h2>
         <p className="text-[11px] text-muted-foreground">
           {tr("Inspect public Pi Mainnet balance and on-chain claimable balances for a wallet address.", "Bir cüzdan adresinin herkese açık Pi Mainnet bakiyesini ve zincir üzerindeki claimable bakiyelerini inceleyin.")}
         </p>
@@ -236,7 +236,7 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
     <section className="mt-7">
       <div className="mb-3 flex items-end justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">{tr("Historical Data Engine", "Tarihsel Veri Motoru")}</h2>
+          <h2 className="zaf-heading text-sm font-semibold text-foreground">{tr("Historical Data Engine", "Tarihsel Veri Motoru")}</h2>
           <p className="text-[11px] text-muted-foreground">{tr("Incremental Pi Mainnet ledger collection with persistent local storage.", "Kalıcı yerel depolama kullanan artımlı Pi Mainnet ledger toplama motoru.")}</p>
         </div>
         <button type="button" onClick={() => void syncLatest()} disabled={syncing} className="shrink-0 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">
