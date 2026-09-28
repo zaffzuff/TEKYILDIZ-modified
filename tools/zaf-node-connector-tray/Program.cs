@@ -157,12 +157,13 @@ internal static class Program
                 };
 
                 _worker.Start();
+                var process = _worker;
 
                 _ = Task.Run(async () =>
                 {
                     try
                     {
-                        await _worker.StandardOutput.ReadToEndAsync();
+                        await process.StandardOutput.ReadToEndAsync();
                     }
                     catch { }
                 });
@@ -171,7 +172,7 @@ internal static class Program
                 {
                     try
                     {
-                        await _worker.StandardError.ReadToEndAsync();
+                        await process.StandardError.ReadToEndAsync();
                     }
                     catch { }
                 });
