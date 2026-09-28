@@ -5,7 +5,7 @@ import type { Locale } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
-const MIN_CONNECTOR_VERSION = "0.2.3";
+const MIN_CONNECTOR_VERSION = "0.2.4";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
