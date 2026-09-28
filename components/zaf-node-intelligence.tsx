@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
+import { ZafNodeHistory } from "@/components/zaf-node-history";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
-const MIN_CONNECTOR_VERSION = "0.2.4";
+const MIN_CONNECTOR_VERSION = "0.3.0";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -552,6 +553,8 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           )}
         </p>
       </div>
+
+      <ZafNodeHistory locale={locale} />
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <h3 className="text-sm font-semibold text-foreground">{tr("Why your Node matters", "Node'unuz neden önemli")}</h3>
