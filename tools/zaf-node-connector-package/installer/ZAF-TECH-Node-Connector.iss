@@ -1,5 +1,5 @@
 #define MyAppName "ZAF TECH Node Connector"
-#define MyAppVersion "0.2.4"
+#define MyAppVersion "0.3.0"
 #define MyAppPublisher "ZAF TECH — zaffzuff"
 #define MyAppExeName "ZAF-TECH-Node-Connector.exe"
 
