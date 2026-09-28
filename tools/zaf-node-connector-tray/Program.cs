@@ -8,7 +8,7 @@ namespace ZafTechNodeConnectorTray;
 
 internal static class Program
 {
-    private const string Version = "1.6.1";
+    private const string Version = "1.6.2";
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
     private const string RunValueName = "ZAF-TECH Pi Node Connector";
     private const string ConnectorUrl = "http://127.0.0.1:39100";
