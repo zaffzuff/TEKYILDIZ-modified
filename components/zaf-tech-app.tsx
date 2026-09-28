@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
 import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
@@ -258,10 +259,13 @@ export function ZafTechApp() {
         <header className="border-b border-border pb-5 pt-7">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3 min-w-0">
-              <img
+              <Image
                 src="/zaf-tech-logo.png"
                 alt="ZAF TECH"
+                width={44}
+                height={44}
                 className="h-11 w-11 shrink-0 object-contain"
+                priority
               />
               <div className="min-w-0">
                 <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
