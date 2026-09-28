@@ -22,6 +22,7 @@ WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
 CloseApplications=yes
 RestartApplications=no
+CloseApplicationsFilter=ZAF-TECH-Node-Connector.exe,ZAF-TECH-Node-Connector-Worker.exe
 SetupIconFile=zaf-tech-logo.ico
 UninstallDisplayIcon={app}\zaf-tech-logo.ico
 
@@ -39,7 +40,7 @@ Name: "{group}\ZAF TECH Node Connector"; Filename: "{app}\{#MyAppExeName}"; Icon
 Name: "{group}\Uninstall ZAF TECH Node Connector"; Filename: "{uninstallexe}"
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ZAF TECH Node Connector"; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletevalue; Tasks: startup
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ZAF TECH Node Connector"; ValueData: """{app}\{#MyAppExeName}"""; Flags: uninsdeletevalue; Tasks: startup
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Start ZAF TECH Node Connector now"; Flags: nowait postinstall skipifsilent
