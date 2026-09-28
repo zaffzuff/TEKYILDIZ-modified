@@ -16,6 +16,20 @@ type Sample = {
   intersection?: boolean | null;
   restarts?: number | null;
   listeningPorts?: number | null;
+  hostCpuPercent?: number | null;
+  hostMemoryUsedPercent?: number | null;
+  hostDiskUsedPercent?: number | null;
+  hostNetworkReceivedBytes?: number | null;
+  hostNetworkSentBytes?: number | null;
+  dockerCpuPercent?: number | null;
+  dockerMemoryUsedBytes?: number | null;
+  dockerMemoryLimitBytes?: number | null;
+  dockerMemoryUsedPercent?: number | null;
+  dockerNetworkReceivedBytes?: number | null;
+  dockerNetworkSentBytes?: number | null;
+  dockerPids?: number | null;
+  wslAvailable?: boolean | null;
+  wslRunningDistros?: number | null;
 };
 
 type Payload = {
@@ -27,6 +41,45 @@ type Payload = {
 };
 
 type WindowHours = 24 | 168 | 720;
+
+type ResourcePayload = {
+  host?: {
+    cpuPercent?: number | null;
+    memory?: { usedPercent?: number | null; usedBytes?: number | null; totalBytes?: number | null };
+    disk?: { usedPercent?: number | null; usedBytes?: number | null; totalBytes?: number | null; freeBytes?: number | null; drive?: string };
+    network?: { receivedBytes?: number | null; sentBytes?: number | null };
+  } | null;
+  docker?: {
+    cpuPercent?: number | null;
+    memory?: { usedPercent?: number | null; usedBytes?: number | null; limitBytes?: number | null };
+    network?: { receivedBytes?: number | null; sentBytes?: number | null };
+    pids?: number | null;
+  } | null;
+  wsl?: { available?: boolean; distributions?: Array<{ name: string; state: string; version: number | null }> } | null;
+};
+
+function formatBytes(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) return "—";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let n = value;
+  let i = 0;
+  while (n >= 1000 && i < units.length - 1) {
+    n /= 1000;
+    i += 1;
+  }
+  return (n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2)) + " " + units[i];
+}
+
+function rateFromSamples(samples: Sample[], rxKey: keyof Sample, txKey: keyof Sample) {
+  if (samples.length < 2) return { rx: null, tx: null };
+  const current = samples.at(-1);
+  const previous = samples.at(-2);
+  if (!current || !previous) return { rx: null, tx: null };
+  const elapsed = (Date.parse(current.observedAt) - Date.parse(previous.observedAt)) / 1000;
+  if (!Number.isFinite(elapsed) || elapsed <= 0) return { rx: null, tx: null };
+  const delta = (a: unknown, b: unknown) => typeof a === "number" && typeof b === "number" ? Math.max(0, a - b) / elapsed : null;
+  return { rx: delta(current[rxKey], previous[rxKey]), tx: delta(current[txKey], previous[txKey]) };
+}
 
 function avg(values: Array<number | null | undefined>) {
   const v = values.filter((x): x is number => typeof x === "number" && Number.isFinite(x));
@@ -40,15 +93,23 @@ function pct(samples: Sample[], key: "available" | "healthy") {
 export function ZafNodeHistory({ locale }: { locale: Locale }) {
   const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
   const [payload, setPayload] = useState<Payload | null>(null);
+  const [resources, setResources] = useState<ResourcePayload | null>(null);
   const [windowHours, setWindowHours] = useState<WindowHours>(24);
 
   async function load() {
-    try {
-      const r = await fetch("http://127.0.0.1:39100/history", { cache: "no-store" });
-      if (!r.ok) throw new Error();
-      setPayload(await r.json());
-    } catch {
+    const [historyResult, resourceResult] = await Promise.allSettled([
+      fetch("http://127.0.0.1:39100/history", { cache: "no-store" }),
+      fetch("http://127.0.0.1:39100/resources", { cache: "no-store" }),
+    ]);
+    if (historyResult.status === "fulfilled" && historyResult.value.ok) {
+      setPayload(await historyResult.value.json());
+    } else {
       setPayload(null);
+    }
+    if (resourceResult.status === "fulfilled" && resourceResult.value.ok) {
+      setResources(await resourceResult.value.json());
+    } else {
+      setResources(null);
     }
   }
 
@@ -105,6 +166,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
     latest.ledgerAge == null || latest.ledgerAge >= 10 ? tr("Ledger age is 10s or higher", "Ledger yaşı 10s veya daha yüksek") : null,
     (latest.authenticated ?? 0) < 8 ? tr("Fewer than 8 authenticated peers", "8'den az authenticated peer") : null,
   ].filter(Boolean) as string[] : [];
+  const hostNetworkRate = rateFromSamples(samples, "hostNetworkReceivedBytes", "hostNetworkSentBytes");
   const chart = samples.slice(-60);
   const maxPeers = Math.max(8, ...chart.flatMap((s) => [s.inbound ?? 0, s.outbound ?? 0]));
   const maxListeners = Math.max(1, ...chart.map((s) => s.listeningPorts ?? 0));
@@ -242,6 +304,63 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               )}
               <div className="mt-1 text-[9px] text-muted-foreground">
                 {tr("Local listener checks only; this is not an Internet reachability test.", "Yalnızca yerel dinleyici kontrolüdür; Internet erişilebilirlik testi değildir.")}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-3">
+            <div className="rounded-lg border border-border p-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Host resources", "Ana bilgisayar kaynakları")}</div>
+              <div className="mt-1 grid grid-cols-3 gap-2">
+                <div><div className="text-[9px] text-muted-foreground">CPU</div><div className="text-sm font-semibold text-foreground">{resources?.host?.cpuPercent != null ? resources.host.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div className="text-[9px] text-muted-foreground">RAM</div><div className="text-sm font-semibold text-foreground">{resources?.host?.memory?.usedPercent != null ? resources.host.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div className="text-[9px] text-muted-foreground">C:</div><div className="text-sm font-semibold text-foreground">{resources?.host?.disk?.usedPercent != null ? resources.host.disk.usedPercent.toFixed(1) + "%" : "—"}</div></div>
+              </div>
+              <div className="mt-2 text-[9px] text-muted-foreground">
+                {resources?.host?.memory?.usedBytes != null && resources?.host?.memory?.totalBytes != null
+                  ? formatBytes(resources.host.memory.usedBytes) + " / " + formatBytes(resources.host.memory.totalBytes) + " RAM"
+                  : tr("Local Windows resource snapshot", "Yerel Windows kaynak anlık görüntüsü")}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border p-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Node container resources", "Node container kaynakları")}</div>
+              <div className="mt-1 grid grid-cols-3 gap-2">
+                <div><div className="text-[9px] text-muted-foreground">CPU</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.cpuPercent != null ? resources.docker.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div className="text-[9px] text-muted-foreground">RAM</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.memory?.usedPercent != null ? resources.docker.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div className="text-[9px] text-muted-foreground">PIDs</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.pids ?? "—"}</div></div>
+              </div>
+              <div className="mt-2 text-[9px] text-muted-foreground">
+                {resources?.docker?.memory?.usedBytes != null && resources?.docker?.memory?.limitBytes != null
+                  ? formatBytes(resources.docker.memory.usedBytes) + " / " + formatBytes(resources.docker.memory.limitBytes) + " RAM"
+                  : tr("Docker stats for the local Node container", "Yerel Node container için Docker istatistikleri")}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border p-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Network I/O & WSL", "Ağ I/O ve WSL")}</div>
+              <div className="mt-1 grid grid-cols-2 gap-2 text-[10px]">
+                <div className="rounded-md border border-border px-2 py-2">
+                  <div className="text-muted-foreground">{tr("Host rate", "Host hızı")}</div>
+                  <div className="mt-0.5 font-medium text-foreground">
+                    {hostNetworkRate.rx != null && hostNetworkRate.tx != null
+                      ? formatBytes(hostNetworkRate.rx) + "/s ↓ · " + formatBytes(hostNetworkRate.tx) + "/s ↑"
+                      : "—"}
+                  </div>
+                </div>
+                <div className="rounded-md border border-border px-2 py-2">
+                  <div className="text-muted-foreground">{tr("Node container", "Node container")}</div>
+                  <div className="mt-0.5 font-medium text-foreground">
+                    {resources?.docker?.network?.receivedBytes != null && resources?.docker?.network?.sentBytes != null
+                      ? formatBytes(resources.docker.network.receivedBytes) + " ↓ · " + formatBytes(resources.docker.network.sentBytes) + " ↑"
+                      : "—"}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 text-[9px] text-muted-foreground">
+                {resources?.wsl?.available
+                  ? tr("WSL active distributions: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0), "WSL çalışan dağıtımlar: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0))
+                  : tr("WSL not detected", "WSL algılanmadı")}
               </div>
             </div>
           </div>
