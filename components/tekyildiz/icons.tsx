@@ -1,4 +1,5 @@
-import type { ImgHTMLAttributes, SVGProps } from "react";
+import Image from "next/image";
+import type { SVGProps } from "react";
 
 export type IconProps = SVGProps<SVGSVGElement>;
 
@@ -230,16 +231,20 @@ export function Logo({
   height = 28,
   alt = "TEKYILDIZ",
   className,
-  ...props
-}: ImgHTMLAttributes<HTMLImageElement>) {
+}: {
+  width?: number;
+  height?: number;
+  alt?: string;
+  className?: string;
+}) {
   return (
-    <img
+    <Image
       src="/tekyildiz-mark.png"
       alt={alt}
       width={width}
       height={height}
       className={className}
-      {...props}
+      unoptimized
     />
   );
 }
