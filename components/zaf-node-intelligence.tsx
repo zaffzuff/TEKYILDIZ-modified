@@ -85,7 +85,7 @@ type LocalResourcesData = {
 
 function NodeMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
       <div className="text-2xl font-bold ty-nums text-foreground">{value}</div>
       <div className="mt-1 text-xs font-medium text-foreground">{label}</div>
       <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div>
@@ -205,7 +205,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
         <NodeMetric
           label={tr("Pi Node runners", "Pi Node çalıştıranlar")}
           value="420,000+"
@@ -238,7 +238,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         />
       </div>
 
-      <div className="mt-4 rounded-xl border border-border bg-card p-4">
+      <div className="mt-3 rounded-xl border border-border bg-card p-3 sm:mt-4 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="text-sm font-semibold text-foreground">{tr("My Node Identity", "Node Kimliğim")}</h3>
