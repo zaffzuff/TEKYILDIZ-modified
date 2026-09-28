@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "tools/zaf-node-connector.mjs"
+      - "tools/zaf-node-connector.cjs"
       - "tools/zaf-node-connector-package/**"
       - "tools/zaf-node-connector-tray/**"
       - ".github/workflows/build-node-connector.yml"
