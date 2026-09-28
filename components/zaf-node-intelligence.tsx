@@ -6,7 +6,7 @@ import type { ZafSnapshot } from "@/lib/zaf/types";
 import { ZafNodeHistory } from "@/components/zaf-node-history";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
-const MIN_CONNECTOR_VERSION = "0.5.0";
+const MIN_CONNECTOR_VERSION = "1.6.0";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
