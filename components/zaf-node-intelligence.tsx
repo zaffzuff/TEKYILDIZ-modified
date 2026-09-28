@@ -394,7 +394,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Node diagnostics", "Node teşhisi")}</h3>
+            <h3 className="zaf-heading zaf-heading text-sm font-semibold text-foreground">{tr("Node Diagnostics", "Node Teşhisi")}</h3>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Live local diagnostics from this computer. The connector is localhost-only and reads Docker state without exposing Docker remotely.",
