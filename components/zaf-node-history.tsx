@@ -175,12 +175,12 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
     <section className="mt-4 rounded-xl border border-border bg-card p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">{tr("Node performance history", "Node performans geçmişi")}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{tr("Node Performance History", "Node Performans Geçmişi")}</h3>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {tr("Local read-only observations stored by the Connector on this Windows computer.", "Connector tarafından bu Windows bilgisayarda saklanan yerel salt-okunur gözlemler.")}
           </p>
         </div>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap justify-end gap-1">
           {([24, 168, 720] as WindowHours[]).map((hours) => (
             <button key={hours} type="button" onClick={() => setWindowHours(hours)}
               className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${windowHours === hours ? "border-foreground bg-foreground text-background" : "border-border text-foreground hover:bg-muted"}`}>
@@ -388,7 +388,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="mt-3 overflow-x-auto rounded-lg border border-border">
+          <div className="mt-3 max-w-full overflow-x-auto rounded-lg border border-border ty-no-scrollbar">
             <table className="w-full min-w-[760px] text-left text-[10px]">
               <thead className="bg-muted/40 text-muted-foreground">
                 <tr>

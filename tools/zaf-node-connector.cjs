@@ -27,7 +27,7 @@ function decodeWindowsCommandOutput(value) {
 }
 
 const HOST = "127.0.0.1";
-const VERSION = "1.6.4";
+const VERSION = "1.6.6";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const HISTORY_INTERVAL_MS = 60_000;
@@ -148,55 +148,25 @@ async function readHostResources() {
 async function readWslStatus() {
   try {
     const [status, list] = await Promise.all([
-      execFileAsync("wsl.exe", ["--status"], {
-        windowsHide: true,
-        timeout: 5000,
-        maxBuffer: 128 * 1024,
-        encoding: "buffer",
-      }),
-      execFileAsync("wsl.exe", ["--list", "--verbose"], {
-        windowsHide: true,
-        timeout: 5000,
-        maxBuffer: 128 * 1024,
-        encoding: "buffer",
-      }),
+      execFileAsync("wsl.exe", ["--status"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024, encoding: "buffer" }),
+      execFileAsync("wsl.exe", ["--list", "--verbose"], { windowsHide: true, timeout: 5000, maxBuffer: 128 * 1024, encoding: "buffer" }),
     ]);
-
-    const statusText = decodeWindowsCommandOutput(status.stdout).replace(/\0/g, "").trim();
-    const listText = decodeWindowsCommandOutput(list.stdout).replace(/\0/g, "");
-
-    const lines = listText
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
-
+    const statusText = decodeWindowsCommandOutput(status.stdout);
+    const listText = decodeWindowsCommandOutput(list.stdout);
+    const lines = listText.replace(/\0/g, "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     const distributions = lines
       .filter((line) => !/^NAME\s+STATE\s+VERSION$/i.test(line))
       .map((line) => {
         const match = line.match(/^(.+?)\s+(Running|Stopped)\s+(\d+)$/i);
-        return match
-          ? {
-              name: match[1].replace(/^\*\s*/, "").trim(),
-              state: match[2].toLowerCase(),
-              version: Number(match[3]) || null,
-            }
-          : null;
+        return match ? { name: match[1].replace(/^\*\s*/, ""), state: match[2].toLowerCase(), version: Number(match[3]) || null } : null;
       })
       .filter(Boolean);
-
-    return {
-      available: true,
-      distributions,
-      status: statusText.slice(0, 2000),
-    };
+    return { available: true, distributions, status: statusText.trim().slice(0, 2000) };
   } catch {
-    return {
-      available: false,
-      distributions: [],
-      status: null,
-    };
+    return { available: false, distributions: [], status: null };
   }
 }
+
 async function readDockerResources(containerId) {
   if (!containerId) return null;
   const result = await docker(["stats", "--no-stream", "--format", "{{json .}}", containerId]);

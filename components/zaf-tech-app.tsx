@@ -135,8 +135,8 @@ function InfoBadge({ label, description }: { label: string; description: string 
 
 function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <div className="text-2xl font-bold ty-nums text-foreground">{value}</div>
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
+      <div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div>
       <div className="mt-1 text-xs font-medium text-foreground">{label}</div>
       {detail && <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div>}
     </div>
@@ -175,6 +175,7 @@ export function ZafTechApp() {
 
   useEffect(() => {
     window.localStorage.setItem("zaf-tech-locale-v1", locale);
+    document.documentElement.lang = locale;
   }, [locale]);
 
   useEffect(() => {
@@ -255,21 +256,21 @@ export function ZafTechApp() {
     <div className="min-h-screen bg-background">
       <main className="mx-auto max-w-3xl px-4 pb-10">
         <header className="border-b border-border pb-5 pt-7">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 min-w-0">
               <img
                 src="/zaf-tech-logo.png"
                 alt="ZAF TECH"
                 className="h-11 w-11 shrink-0 object-contain"
               />
-              <div>
+              <div className="min-w-0">
                 <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                   {tr("Pi Ecosystem Activity Intelligence")}
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
               <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Language")}>
                 {(Object.keys(localeLabels) as Locale[]).map((option) => (
                   <button
@@ -292,16 +293,16 @@ export function ZafTechApp() {
                 {theme === "dark" ? `☀ ${tr("Light")}` : `☾ ${tr("Dark")}`}
               </button>
                           <button
-              type="button"
-              onClick={() => void load()}
-              disabled={refreshing}
-              className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50"
-            >
-              {refreshing ? tr("Refreshing…") : tr("Refresh")}
-            </button>
+                type="button"
+                onClick={() => void load()}
+                disabled={refreshing}
+                className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50"
+              >
+                {refreshing ? tr("Refreshing…") : tr("Refresh")}
+              </button>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px] sm:mt-4">
             <InfoBadge
               label={tr("Pi Network")}
               description={tr("Pi Network badge description")}
@@ -315,20 +316,8 @@ export function ZafTechApp() {
               description={tr("Read-only badge description")}
             />
           </div>
-          <div className="mt-3 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
-            <div className="rounded-lg border border-border bg-card px-3 py-2">
-              <div className="text-muted-foreground">{tr("Data fetched")}</div>
-              <div className="mt-0.5 font-medium text-foreground">{data ? formatAge(data.generatedAt, Date.now(), locale) : "—"}</div>
-              <div className="mt-0.5 text-muted-foreground">{data ? formatDateTime(data.generatedAt, locale) : tr("Waiting for data")}</div>
-            </div>
-            <div className="rounded-lg border border-border bg-card px-3 py-2">
-              <div className="text-muted-foreground">{tr("Latest ledger closed")}</div>
-              <div className="mt-0.5 font-medium text-foreground">{data?.latestLedger ? formatAge(data.latestLedger.closedAt, Date.now(), locale) : "—"}</div>
-              <div className="mt-0.5 text-muted-foreground">{data?.latestLedger ? formatDateTime(data.latestLedger.closedAt, locale) : tr("Waiting for ledger")}</div>
-            </div>
-          </div>
-          <nav className="mt-4 overflow-x-auto border-t border-border pt-3" aria-label={tr("Dashboard sections")}>
-            <div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1">
+          <nav className="mt-4 overflow-x-auto border-t border-border pt-3 ty-no-scrollbar" aria-label={tr("Dashboard sections")}>
+            <div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1 sm:flex-wrap sm:min-w-0">
               {([
                 ["overview", "Overview", "Genel Bakış"],
                 ["activity", "Activity", "Aktivite"],
@@ -344,13 +333,21 @@ export function ZafTechApp() {
                   type="button"
                   onClick={() => setActiveTab(id)}
                   aria-current={activeTab === id ? "page" : undefined}
-                  className={`rounded-lg px-3 py-2 text-[11px] font-medium transition-colors ${activeTab === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`min-h-9 shrink-0 rounded-lg px-3 py-2 text-[11px] font-medium transition-colors ${activeTab === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {locale === "tr" ? trLabel : en}
                 </button>
               ))}
             </div>
           </nav>
+          <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-ty-active" aria-hidden="true" />
+              <span>{tr("Live data")}</span>
+            </span>
+            <span>{tr("Updated")} {data ? formatAge(data.generatedAt, Date.now(), locale) : "—"}</span>
+            <span>{tr("Ledger")} {data?.latestLedger ? formatAge(data.latestLedger.closedAt, Date.now(), locale) : "—"}</span>
+          </div>
         </header>
 
         {loading && !data ? (
@@ -363,7 +360,7 @@ export function ZafTechApp() {
               </div>
             )}
 
-            <section className={`mt-7 ${tabClass("network")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("network")}`}>
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Network Health")}</h2>
                 <p className="text-[11px] text-muted-foreground">
@@ -435,12 +432,12 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("overview")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("overview")}`}>
               <div className="mb-3">
                 <h2 className="text-sm font-semibold text-foreground">{tr("Current Activity")}</h2>
                 <p className="text-[11px] text-muted-foreground">{tr("A compact view of the latest observed Mainnet activity")}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
                 <Metric
                   label={tr("Activity state")}
                   value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"}
@@ -476,7 +473,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("activity")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("activity")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Ledger Activity Timeline")}</h2>
@@ -573,7 +570,7 @@ export function ZafTechApp() {
                   {tr("Recent activity context derived from the latest observed Mainnet ledger window")}
                 </p>
               </div>
-              <div className="rounded-xl border border-border bg-card p-4">
+              <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <Metric label={tr("Activity state")} value={data?.intelligence.activityState ? tr(data.intelligence.activityState) : "—"} detail={tr("Descriptive state from observed chain data")} />
                   <Metric label={tr("Transactions / hour")} value={data?.metrics.observedTransactionsPerHour != null ? formatNumber(data.metrics.observedTransactionsPerHour, 1) : "—"} detail={tr("Latest observed ledger window")} />
@@ -601,7 +598,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("operations")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("operations")}`}>
               <h2 className="mb-3 text-sm font-semibold text-foreground">{tr("Operation Distribution")}</h2>
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="mb-3 flex items-center justify-between text-[11px] text-muted-foreground">
@@ -726,7 +723,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("history")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("history")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
@@ -805,7 +802,7 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <section className={`mt-7 ${tabClass("transactions")}`}>
+            <section className={`mt-5 sm:mt-7 ${tabClass("transactions")}`}>
               <div className="mb-3 flex items-end justify-between">
                 <div>
                   <h2 className="text-sm font-semibold text-foreground">{tr("Recent Transactions")}</h2>
@@ -827,7 +824,7 @@ export function ZafTechApp() {
                   aria-label={tr("Search transactions")}
                   className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring"
                 />
-                <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]" role="group" aria-label={tr("Transaction status filter")}>
+                <div className="flex max-w-full overflow-x-auto rounded-lg border border-border bg-card p-0.5 text-[11px] ty-no-scrollbar" role="group" aria-label={tr("Transaction status filter")}>
                   {([
                     ["all", "All"],
                     ["successful", "Successful"],
@@ -837,7 +834,7 @@ export function ZafTechApp() {
                       key={id}
                       type="button"
                       onClick={() => setTransactionFilter(id)}
-                      className={`rounded-md px-2.5 py-1.5 font-medium ${transactionFilter === id ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+                      className={`shrink-0 whitespace-nowrap rounded-md px-2.5 py-1.5 font-medium ${transactionFilter === id ? "bg-muted text-foreground" : "text-muted-foreground"}`}
                     >
                       {tr(label)}
                     </button>

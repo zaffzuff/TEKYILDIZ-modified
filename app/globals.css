@@ -181,6 +181,7 @@
 }
 
 /* Brand text: gold → silver gradient for the wordmark */
+
 .ty-brand-text {
   font-family: var(--font-michroma), sans-serif;
   font-weight: 400;

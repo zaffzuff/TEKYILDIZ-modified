@@ -60,9 +60,32 @@ type LocalNodeData = {
   error?: string;
 };
 
+
+function formatBytes(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) return "—";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let size = value;
+  let index = 0;
+  while (size >= 1024 && index < units.length - 1) { size /= 1024; index += 1; }
+  return size.toFixed(size >= 10 || index === 0 ? 0 : 1) + " " + units[index];
+}
+
+function formatPercent(value: number | null | undefined, digits = 1) {
+  if (value == null || !Number.isFinite(value)) return "—";
+  return value.toFixed(digits) + "%";
+}
+
+type LocalResourcesData = {
+  connector?: string;
+  observedAt?: string;
+  host?: { cpuPercent?: number | null; memory?: { totalBytes?: number | null; usedBytes?: number | null; usedPercent?: number | null }; disk?: { drive?: string; totalBytes?: number | null; usedBytes?: number | null; usedPercent?: number | null }; network?: { receivedBytes?: number | null; sentBytes?: number | null } } | null;
+  docker?: { cpuPercent?: number | null; memory?: { usedBytes?: number | null; limitBytes?: number | null; usedPercent?: number | null }; network?: { receivedBytes?: number | null; sentBytes?: number | null }; blockIO?: { readBytes?: number | null; writeBytes?: number | null }; pids?: number | null } | null;
+  wsl?: { available?: boolean; distributions?: Array<{ name?: string; state?: string; version?: number | null }>; status?: string | null } | null;
+};
+
 function NodeMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
       <div className="text-2xl font-bold ty-nums text-foreground">{value}</div>
       <div className="mt-1 text-xs font-medium text-foreground">{label}</div>
       <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div>
@@ -103,23 +126,25 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
   const [localNode, setLocalNode] = useState<LocalNodeData | null>(null);
   const [localNodeLoading, setLocalNodeLoading] = useState(true);
   const [localNodeError, setLocalNodeError] = useState(false);
+  const [localResources, setLocalResources] = useState<LocalResourcesData | null>(null);
 
   async function refreshLocalNode() {
     setLocalNodeLoading(true);
     try {
       const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 3000);
-      const response = await fetch("http://127.0.0.1:39100/node", {
-        cache: "no-store",
-        signal: controller.signal,
-      });
+      const timeout = window.setTimeout(() => controller.abort(), 5000);
+      const [nodeResponse, resourcesResponse] = await Promise.all([
+        fetch("http://127.0.0.1:39100/node", { cache: "no-store", signal: controller.signal }),
+        fetch("http://127.0.0.1:39100/resources", { cache: "no-store", signal: controller.signal }),
+      ]);
       window.clearTimeout(timeout);
-      if (!response.ok) throw new Error("Local connector unavailable");
-      const payload = (await response.json()) as LocalNodeData;
-      setLocalNode(payload);
+      if (!nodeResponse.ok) throw new Error("Local connector unavailable");
+      setLocalNode((await nodeResponse.json()) as LocalNodeData);
+      setLocalResources(resourcesResponse.ok ? ((await resourcesResponse.json()) as LocalResourcesData) : null);
       setLocalNodeError(false);
     } catch {
       setLocalNode(null);
+      setLocalResources(null);
       setLocalNodeError(true);
     } finally {
       setLocalNodeLoading(false);
@@ -180,7 +205,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
         <NodeMetric
           label={tr("Pi Node runners", "Pi Node çalıştıranlar")}
           value="420,000+"
@@ -213,10 +238,10 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         />
       </div>
 
-      <div className="mt-4 rounded-xl border border-border bg-card p-4">
+      <div className="mt-3 rounded-xl border border-border bg-card p-3 sm:mt-4 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">{tr("My Node identity", "Node kimliğim")}</h3>
+            <h3 className="text-sm font-semibold text-foreground">{tr("My Node Identity", "Node Kimliğim")}</h3>
             <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Enter the public key shown in Pi Desktop. ZAF TECH keeps it only in this browser and uses it as the identity for future Node intelligence features.",
@@ -228,7 +253,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             href="https://blockexplorer.minepi.com/mainnet/nodes"
             target="_blank"
             rel="noreferrer"
-            className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+            className="w-full shrink-0 rounded-lg border border-border px-3 py-2 text-center text-xs font-medium text-foreground hover:bg-muted sm:w-auto"
           >
             {tr("Open official Node ranking", "Resmi Node sıralamasını aç")}
           </a>
@@ -285,7 +310,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <div className="mb-3">
-          <h3 className="text-sm font-semibold text-foreground">{tr("Published Node signals", "Yayımlanan Node sinyalleri")}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{tr("Published Node Signals", "Yayımlanan Node Sinyalleri")}</h3>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {tr(
               "Pi's ranking page uses five published performance signals. Their current per-Node values are not exposed to ZAF TECH through a verified machine-readable public API, so these cards remain source-aware rather than fabricated.",
@@ -366,10 +391,10 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         </p>
       </div>
 
-      <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mt-4 rounded-xl border border-border bg-card p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">{tr("Node diagnostics", "Node teşhisi")}</h3>
+            <h3 className="text-sm font-semibold text-foreground">{tr("Node Diagnostics", "Node Teşhisi")}</h3>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Live local diagnostics from this computer. The connector is localhost-only and reads Docker state without exposing Docker remotely.",
@@ -381,7 +406,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             type="button"
             onClick={() => void refreshLocalNode()}
             disabled={localNodeLoading}
-            className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50"
+            className="w-full shrink-0 rounded-lg border border-border px-3 py-2 text-center text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50 sm:w-auto"
           >
             {localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : tr("Refresh local Node", "Yerel Node'u yenile")}
           </button>
@@ -418,9 +443,9 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
                       : "—",
             ],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-lg border border-border px-3 py-3">
+            <div key={label} className="min-w-0 rounded-lg border border-border px-3 py-3">
               <div className="text-[10px] text-muted-foreground">{label}</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">{value}</div>
+              <div className="mt-1 min-w-0 break-words text-sm font-semibold text-foreground">{value}</div>
             </div>
           ))}
         </div>
@@ -429,7 +454,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Protocol", "Protokol")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.protocol || "—"}</div>
-            <div className="mt-1 text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
+            <div className="mt-1 min-w-0 break-words text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Protocol support", "Protokol desteği")}</div>
@@ -454,7 +479,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.ports ? localNode.ports.filter((item) => item.listeningLocally).length : 0}/10
             </div>
-            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Listening on this computer; not an Internet reachability test", "Bu bilgisayarda dinleyen portlar; Internet erişilebilirlik testi değildir")}</div>
+            <div className="mt-1 break-words text-[10px] text-muted-foreground">{tr("Listening on this computer; not an Internet reachability test", "Bu bilgisayarda dinleyen portlar; Internet erişilebilirlik testi değildir")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Started", "Başlangıç")}</div>
@@ -524,6 +549,37 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
                 : tr("Intersection: —", "Intersection: —")}
             </div>
           </div>
+        </div>
+
+
+        <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3">
+          <div className="mb-2">
+            <div className="text-xs font-semibold text-foreground">{tr("Host & Docker resources", "Host ve Docker kaynakları")}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Read-only live resource telemetry from the local Connector.", "Yerel Connector'dan salt-okunur canlı kaynak telemetrisi.")}</div>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Host CPU", "Host CPU")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.host?.cpuPercent)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{tr("RAM", "RAM")}: {formatPercent(localResources?.host?.memory?.usedPercent)} · {formatBytes(localResources?.host?.memory?.usedBytes)} / {formatBytes(localResources?.host?.memory?.totalBytes)}</div>
+            </div>
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("C: disk", "C: disk")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.host?.disk?.usedPercent)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{formatBytes(localResources?.host?.disk?.usedBytes)} / {formatBytes(localResources?.host?.disk?.totalBytes)}</div>
+            </div>
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Node container", "Node container")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.docker?.cpuPercent)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{tr("RAM", "RAM")}: {formatPercent(localResources?.docker?.memory?.usedPercent)} · {formatBytes(localResources?.docker?.memory?.usedBytes)} / {formatBytes(localResources?.docker?.memory?.limitBytes)} · {tr("PIDs", "PID")}: {localResources?.docker?.pids ?? "—"}</div>
+            </div>
+            <div className="rounded-lg border border-border px-3 py-3">
+              <div className="text-[10px] text-muted-foreground">{tr("Docker network", "Docker ağı")}</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">↓ {formatBytes(localResources?.docker?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.docker?.network?.sentBytes)}</div>
+              <div className="mt-1 text-[10px] text-muted-foreground">{tr("WSL", "WSL")}: {localResources?.wsl?.available ? tr("Available", "Hazır") : tr("Unavailable", "Kullanılamıyor")}</div>
+            </div>
+          </div>
+          <div className="mt-2 text-[10px] text-muted-foreground">{tr("Host network", "Host ağı")}: ↓ {formatBytes(localResources?.host?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.host?.network?.sentBytes)} · {tr("Docker block I/O", "Docker block I/O")}: R {formatBytes(localResources?.docker?.blockIO?.readBytes)} / W {formatBytes(localResources?.docker?.blockIO?.writeBytes)}</div>
         </div>
 
         {!localNodeError && localNode?.connector?.version && compareVersions(localNode.connector.version, MIN_CONNECTOR_VERSION) < 0 ? (
