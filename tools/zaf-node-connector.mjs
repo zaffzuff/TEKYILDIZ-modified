@@ -433,7 +433,6 @@ const server = createServer(async (req, res) => {
   try {
     const snapshot = await readNode();
     json(res, 200, snapshot, origin);
-    void recordHistory(snapshot);
   } catch (error) {
     json(
       res,
