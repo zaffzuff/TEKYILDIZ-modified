@@ -91,4 +91,19 @@ jobs:
           gh release upload $tag "ZAF-TECH-Node-Connector-SHA256SUMS.txt" --repo "$env:GITHUB_REPOSITORY" --clobber
           if ($LASTEXITCODE -ne 0) { throw "gh release checksum upload failed with exit code $LASTEXITCODE" }
 
+          $releaseNotes = "## ZAF TECH Node Connector $tag`n`nWindows distribution release for the ZAF TECH local Pi Node Connector.`n`n### What is included`n`n* Windows x64 standalone Node Connector executable`n* Windows installer with ZAF TECH branding`n* Windows startup and tray integration`n* Local-only connector architecture`n* Read-only Pi Node, Stellar Core, Docker and WSL diagnostics`n* Live host and Node container resource telemetry`n* Availability and Node history collection`n* Protocol compatibility reporting for Protocol 27 and 28`n* SHA-256 checksum for release verification`n`n### Security and Privacy`n`nThe Connector runs locally and listens only on 127.0.0.1:39100. It does not expose Docker or the Pi Node to the internet.`n`nIt does not request wallet passwords, passphrases, seed phrases, or private keys; send Pi transactions; control the wallet; modify Pi Node configuration; start, stop, or restart the Pi Node; provide remote Docker access; or upload Node diagnostics to a central server by itself.`n`n### Compatibility`n`nThis release is $tag. Supported Pi protocols: 27 and 28.`n`n### Verification`n`nA SHA-256 checksum is provided with the release.`n`n### Release assets`n`n* ZAF-TECH-Node-Connector-Setup.exe - Windows x64 installer`n* ZAF-TECH-Node-Connector-SHA256SUMS.txt - SHA-256 checksum`n`n### Attribution`n`nZAF TECH Node Connector is created and maintained by zaffzuff for the ZAF TECH project."
+          gh release edit $tag --repo "$env:GITHUB_REPOSITORY" --title "ZAF TECH Node Connector $tag" --notes "$releaseNotes"
+          if ($LASTEXITCODE -ne 0) { throw "gh release edit failed with exit code $LASTEXITCODE" }
+
           Write-Host "Release assets uploaded successfully to $tag."
+
+          $allReleases = gh release list --repo "$env:GITHUB_REPOSITORY" --limit 100 --json tagName,isDraft,isPrerelease | ConvertFrom-Json
+          foreach ($release in @($allReleases)) {
+            if ($release.tagName -ne $tag -and -not $release.isDraft -and -not $release.isPrerelease) {
+              Write-Host "Removing obsolete release and tag: $($release.tagName)"
+              gh release delete $release.tagName --repo "$env:GITHUB_REPOSITORY" --yes --cleanup-tag
+              if ($LASTEXITCODE -ne 0) { throw "Failed to remove obsolete release $($release.tagName)." }
+            }
+          }
+
+          Write-Host "Release cleanup complete. Keeping only $tag."
