@@ -1,10 +1,10 @@
 {
   "name": "zaf-node-connector",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "private": true,
   "description": "Windows distribution package for the ZAF-TECH Pi Node Connector.",
   "scripts": {
-    "build:win": "pkg --sea ../zaf-node-connector.mjs --target node22-win-x64 --output dist/ZAF-TECH-Node-Connector-Worker.exe"
+    "build:win": "pkg ../zaf-node-connector.mjs --target node22-win-x64 --no-bytecode --public --output dist/ZAF-TECH-Node-Connector-Worker.exe"
   },
   "devDependencies": {
     "@yao-pkg/pkg": "^6.10.1"
