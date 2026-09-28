@@ -8,7 +8,7 @@ import path from "node:path";
 const execFileAsync = promisify(execFile);
 
 const HOST = "127.0.0.1";
-const VERSION = "0.4.0";
+const VERSION = "0.5.0";
 const SUPPORTED_PROTOCOLS = new Set([27, 28]);
 const PORT = Number(process.env.ZAF_NODE_CONNECTOR_PORT || 39100);
 const HISTORY_INTERVAL_MS = 60_000;
@@ -615,7 +615,7 @@ void recordHistorySample();
 setInterval(() => void recordHistorySample(), HISTORY_INTERVAL_MS);
 
 server.listen(PORT, HOST, () => {
-  console.log(`ZAF TECH Node Connector v${VERSION} listening on http://${HOST}:${PORT}/node`);
+  console.log(`ZAF TECH Node Connector Worker v${VERSION} listening on http://${HOST}:${PORT}/node`);
   console.log(`History endpoint: http://${HOST}:${PORT}/history`);
   console.log(`Resources endpoint: http://${HOST}:${PORT}/resources`);
   console.log(`Health endpoint: http://${HOST}:${PORT}/health`);
