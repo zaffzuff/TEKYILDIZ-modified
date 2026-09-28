@@ -129,7 +129,7 @@ export async function getZafSnapshot(): Promise<ZafSnapshot> {
     const transactions = (transactionPage?._embedded?.records ?? []).map(mapTransaction);
     const operations = (operationPage?._embedded?.records ?? []).map(mapOperation);
 
-    const closeTimes = recentLedgers.map((l: ZafLedger) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a,b) => a-b);
+    const closeTimes = recentLedgers.map((l: ZafLedger) => Date.parse(l.closedAt)).filter(Number.isFinite).sort((a: number, b: number) => a-b);
     const intervals: number[] = [];
     for (let i = 1; i < closeTimes.length; i++) intervals.push((closeTimes[i] - closeTimes[i-1]) / 1000);
 
