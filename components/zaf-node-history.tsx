@@ -13,6 +13,7 @@ type Sample = {
   outbound?: number | null;
   pending?: number | null;
   quorumPhase?: string | null;
+  intersection?: boolean | null;
   restarts?: number | null;
   listeningPorts?: number | null;
 };
@@ -99,7 +100,8 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
   );
   const latestHealthReasons = latest ? [
     !latest.available ? tr("Connector / Node unavailable", "Connector / Node kullanılamıyor") : null,
-    String(latest.healthy ? "" : latest.quorumPhase || "").toUpperCase() !== "EXTERNALIZE" ? tr("SCP is not EXTERNALIZE", "SCP EXTERNALIZE değil") : null,
+    String(latest.quorumPhase || "").toUpperCase() !== "EXTERNALIZE" ? tr("SCP is not EXTERNALIZE", "SCP EXTERNALIZE değil") : null,
+    latest.intersection !== true ? tr("Quorum intersection is not true", "Quorum intersection true değil") : null,
     latest.ledgerAge == null || latest.ledgerAge >= 10 ? tr("Ledger age is 10s or higher", "Ledger yaşı 10s veya daha yüksek") : null,
     (latest.authenticated ?? 0) < 8 ? tr("Fewer than 8 authenticated peers", "8'den az authenticated peer") : null,
   ].filter(Boolean) as string[] : [];
@@ -168,7 +170,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
                 </div>
                 <div className="rounded-md border border-border px-2 py-2">
                   <div className="text-muted-foreground">{tr("Intersection", "Intersection")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{latest?.healthy ? "true" : latest?.quorumPhase ? "check" : "—"}</div>
+                  <div className="mt-0.5 font-medium text-foreground">{latest?.intersection == null ? "—" : String(latest.intersection)}</div>
                 </div>
               </div>
               {!latest?.healthy && latestHealthReasons.length ? (
