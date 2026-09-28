@@ -149,6 +149,8 @@ const translations: Record<Locale, Record<string, string>> = {
   },
 };
 
-export function translate(locale: Locale, key: string): string {
+export function t(locale: Locale, key: string): string {
   return translations[locale][key] ?? key;
 }
+
+export const translate = t;
