@@ -232,7 +232,7 @@ export function ZafTechApp() {
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Card title={tr("Network", "Ağ")} value={snapshot?.network ?? "—"} detail={tr("Observed Source", "Gözlemlenen Kaynak")} />
               <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed Ledger", "Son Gözlemlenen Ledger")} />
-              <Card title={tr("Latest ledger", "Son ledger")} value={snapshot?.latestLedger?.sequence ?? "—"} detail={snapshot?.latestLedger?.closedAt ? age(snapshot.latestLedger.closedAt, locale) : "—"} />
+              <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence ?? "—"} detail={snapshot?.latestLedger?.closedAt ? age(snapshot.latestLedger.closedAt, locale) : "—"} />
               <Card title={tr("Data Status", "Veri Durumu")} value={snapshot?.error ? "ERROR" : snapshot?.latestLedger ? "AVAILABLE" : "UNAVAILABLE"} detail={snapshot?.error ?? tr("Pi Mainnet Horizon response observed.", "Pi Mainnet Horizon yanıtı gözlemlendi.")} />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
