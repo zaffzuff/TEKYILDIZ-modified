@@ -42,3 +42,31 @@ Build:
 Node Connector development:
 
 `npm run node:connector`
+
+## v0.1.0 MVP scope
+
+The first release is intentionally read-only and utility-focused:
+
+- Dashboard / Pi Ecosystem
+- App Directory
+- App Details
+- App URL Checker
+- Mainnet Network view
+- Developer Tools
+- English + Turkish
+- Responsive UI
+- About and Privacy pages
+- GitHub Actions build validation
+
+Pi Login, Pi Payments and AI analysis are outside the v0.1.0 scope.
+
+## Verification boundary
+
+ZAF TECH distinguishes observable data from unverified claims. Pi-specific application capabilities are not presented as verified unless an observable check supports the claim. Network measurements describe the sampled public Mainnet data and are not a subjective network health score.
+
+## Main routes
+
+- `/` — ecosystem dashboard
+- `/ecosystem/[slug]` — application details
+- `/about` — project information
+- `/privacy` — privacy and data scope
