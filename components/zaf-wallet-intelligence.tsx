@@ -77,23 +77,23 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
     {data?.exists ? <div className="mt-3 space-y-3">
       <div className="rounded-xl border border-border bg-card p-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0"><div className="text-[10px] text-muted-foreground">{tr("Public address", "Herkese açık adres")}</div><div className="mt-1 break-all font-mono text-[11px] text-foreground">{data.address}</div></div>
+          <div className="min-w-0"><div className="text-[10px] text-muted-foreground">{tr("Public Address", "Herkese Açık Adres")}</div><div className="mt-1 break-all font-mono text-[11px] text-foreground">{data.address}</div></div>
           <div className="flex shrink-0 gap-2">
             <button type="button" onClick={() => void navigator.clipboard?.writeText(data.address)} className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Copy", "Kopyala")}</button>
             <a href={data.network === "Pi Mainnet" ? `${explorerBase}/accounts/${data.address}` : `https://blockexplorer.minepi.com/testnet/accounts/${data.address}`} target="_blank" rel="noreferrer" className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Explorer", "Explorer")}</a>
           </div>
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5"><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{data.network}</span><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Public data only", "Yalnızca herkese açık veri")}</span></div>
+        <div className="mt-2 flex flex-wrap gap-1.5"><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{data.network}</span><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Public Data Only", "Yalnızca Herkese Açık Veri")}</span></div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <Card title={tr("Account balance", "Hesap bakiyesi")} value={fmt(data.accountBalancePi)} detail="Pi" />
+        <Card title={tr("Account Balance", "Hesap Bakiyesi")} value={fmt(data.accountBalancePi)} detail="Pi" />
         <Card title={tr("Observable claimable", "Gözlemlenebilir talep edilebilir")} value={fmt(data.observableClaimablePi)} detail={tr("Native claimable balances", "Native claimable bakiyeler")} />
-        <Card title={tr("Last activity", "Son aktivite")} value={age(data.lastActivity, locale)} detail={tr("Transactions + operations", "İşlemler + operasyonlar")} />
+        <Card title={tr("Last Activity", "Son Aktivite")} value={age(data.lastActivity, locale)} detail={tr("Transactions + operations", "İşlemler + operasyonlar")} />
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4">
-        <div className="text-xs font-semibold text-foreground">{tr("Account metadata", "Hesap metadatası")}</div>
+        <div className="text-xs font-semibold text-foreground">{tr("Account Metadata", "Hesap Metadatası")}</div>
         <div className="mt-3 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-3">
           <div><div className="text-muted-foreground">{tr("Sequence", "Sequence")}</div><div className="mt-1 break-all text-foreground">{data.account?.sequence ?? "—"}</div></div>
           <div><div className="text-muted-foreground">{tr("Subentries", "Alt kayıtlar")}</div><div className="mt-1 text-foreground">{data.account?.subentryCount ?? "—"}</div></div>
@@ -102,15 +102,15 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4">
-        <div className="flex items-center justify-between gap-2"><div className="text-xs font-semibold text-foreground">{tr("Recent transactions", "Son işlemler")}</div><span className="text-[10px] text-muted-foreground">{data.transactions.length}</span></div>
+        <div className="flex items-center justify-between gap-2"><div className="text-xs font-semibold text-foreground">{tr("Recent Transactions", "Son İşlemler")}</div><span className="text-[10px] text-muted-foreground">{data.transactions.length}</span></div>
         <div className="mt-2 space-y-2">
           {data.transactions.slice(0, 8).map(tx => <div key={tx.hash} className="rounded-lg border border-border p-2.5"><div className="flex items-start justify-between gap-2"><a href={`${explorerBase}/transactions/${tx.hash}`} target="_blank" rel="noreferrer" className="truncate font-mono text-[10px] text-foreground underline underline-offset-2">{tx.hash}</a><span className="shrink-0 text-[9px] text-muted-foreground">{tx.successful === true ? tr("Success", "Başarılı") : tx.successful === false ? tr("Failed", "Başarısız") : "—"}</span></div><div className="mt-1 text-[9px] text-muted-foreground">{tx.createdAt ? new Date(tx.createdAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"} · {tx.operationCount ?? "—"} ops · {fmt(tx.feePi)} Pi</div></div>)}
-          {!data.transactions.length ? <div className="text-[11px] text-muted-foreground">{tr("No recent transactions returned.", "Son işlemler döndürülmedi.")}</div> : null}
+          {!data.transactions.length ? <div className="text-[11px] text-muted-foreground">{tr("No recent transactions returned.", "Son İşlemler döndürülmedi.")}</div> : null}
         </div>
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4">
-        <div className="text-xs font-semibold text-foreground">{tr("Observable claimable balances", "Gözlemlenebilir claimable bakiyeler")}</div>
+        <div className="text-xs font-semibold text-foreground">{tr("Observable Claimable Balances", "Gözlemlenebilir Claimable Bakiyeler")}</div>
         <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{tr("This section reports public native claimable balances returned by Horizon. It does not infer private Pi lockup commitments.", "Bu bölüm Horizon'un döndürdüğü herkese açık native claimable bakiyeleri raporlar. Özel Pi lockup taahhütlerini çıkarımsamaz.")}</p>
         <div className="mt-2 space-y-2">
           {Array.isArray(data.lockup?.items) && data.lockup.items.length ? data.lockup.items.map((item: any) => <div key={String(item.id)} className="rounded-lg border border-border p-2.5 text-[10px]"><div className="flex justify-between gap-2"><span className="font-mono text-foreground">{String(item.id)}</span><span className="text-foreground">{fmt(Number(item.amountPi))} Pi</span></div><div className="mt-1 text-muted-foreground">{item.unlockAt ? `${tr("Unlock", "Açılma")}: ${new Date(String(item.unlockAt)).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}` : tr("Unlock time not observable", "Açılma zamanı gözlemlenemiyor")}</div></div>) : <div className="text-[11px] text-muted-foreground">{tr("No publicly observable native claimable balances were returned.", "Herkese açık gözlemlenebilir native claimable bakiye döndürülmedi.")}</div>}
