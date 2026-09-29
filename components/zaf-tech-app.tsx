@@ -5,11 +5,11 @@ import { useCallback, useEffect, useState } from "react";
 import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
 import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
 import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-data-tools";
-import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
 import { ZafEcosystemOverview } from "@/components/zaf-ecosystem-overview";
 import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 import { ZafDefiData } from "@/components/zaf-defi-data";
 import { ZafAppsData } from "@/components/zaf-apps-data";
+import { ZafNodeCompute } from "@/components/zaf-node-compute";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -975,7 +975,7 @@ export function ZafTechApp() {
 
             {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafHistoricalExplorer locale={locale} /> : null}
             {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafWalletIntelligence locale={locale} /> : null}
-            {activeSection === "node" ? <ZafNodeIntelligence locale={locale} data={data} /> : null}
+            {activeSection === "node" ? <ZafNodeCompute locale={locale} data={data} subtab={activeSubtab} /> : null}
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
