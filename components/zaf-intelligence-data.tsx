@@ -14,6 +14,23 @@ type TrendPoint = {
 };
 
 const STORAGE_KEY = "zaf-tech-intelligence-trends-v1";
+const SIGNAL_STATE_KEY = "zaf-tech-intelligence-signal-state-v1";
+
+type SignalState = Record<string, { fingerprint: string; lastSeenAt: string }>;
+
+function readSignalState(): SignalState {
+  try {
+    const value = JSON.parse(window.localStorage.getItem(SIGNAL_STATE_KEY) || "{}");
+    if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+    return value as SignalState;
+  } catch {
+    return {};
+  }
+}
+
+function signalFingerprint(signal: EcosystemSnapshot["signals"][number]) {
+  return [signal.title, signal.detail, signal.detailTr, signal.sourceUrl ?? ""].join("|");
+}
 
 function copy(locale: Locale, en: string, tr: string) {
   return locale === "tr" ? tr : en;
@@ -76,6 +93,7 @@ export function ZafIntelligenceData({
 }) {
   const [ecosystem, setEcosystem] = useState<EcosystemSnapshot | null>(null);
   const [points, setPoints] = useState<TrendPoint[]>([]);
+  const [signalState, setSignalState] = useState<SignalState>({});
   const [loading, setLoading] = useState(true);
 
   async function loadEcosystem() {
@@ -92,6 +110,7 @@ export function ZafIntelligenceData({
 
   useEffect(() => {
     setPoints(readPoints());
+    setSignalState(readSignalState());
     void loadEcosystem();
     const timer = window.setInterval(() => void loadEcosystem(), 5 * 60_000);
     return () => window.clearInterval(timer);
@@ -125,8 +144,26 @@ export function ZafIntelligenceData({
       });
     }
 
-    return result.slice(0, 12);
-  }, [ecosystem, data?.metrics.observedTransactionsPerHour, locale]);
+    return result.slice(0, 12).map((signal) => {
+      const previous = signalState[signal.id];
+      const fingerprint = [signal.title, signal.detail, signal.detailTr, signal.sourceUrl ?? ""].join("|");
+      const kind = !previous ? "new" : previous.fingerprint !== fingerprint ? "updated" : "observed";
+      return { ...signal, displayKind: kind };
+    });
+  }, [ecosystem, data?.metrics.observedTransactionsPerHour, locale, signalState]);
+
+  useEffect(() => {
+    if (!ecosystem?.signals.length) return;
+    const current = readSignalState();
+    const next = { ...current };
+    for (const signal of ecosystem.signals) {
+      next[signal.id] = { fingerprint: signalFingerprint(signal), lastSeenAt: ecosystem.generatedAt };
+    }
+    const entries = Object.entries(next).slice(-500);
+    const trimmed = Object.fromEntries(entries);
+    try { window.localStorage.setItem(SIGNAL_STATE_KEY, JSON.stringify(trimmed)); } catch {}
+    setSignalState(trimmed);
+  }, [ecosystem]);
 
   if (subtab === "Trends") {
     return (
@@ -171,7 +208,7 @@ export function ZafIntelligenceData({
               <div key={signal.id} className="rounded-xl border border-border p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="text-xs font-medium text-foreground">{signal.title}</div>
-                  <span className="rounded-full border border-border px-2 py-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">{signal.kind}</span>
+                  <span className="rounded-full border border-border px-2 py-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">{signal.displayKind}</span>
                 </div>
                 <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detailTr)}</div>
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-[9px] text-muted-foreground">
