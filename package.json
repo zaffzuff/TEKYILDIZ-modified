@@ -15,7 +15,8 @@
     "geist": "latest",
     "next": "15.5.26",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "postgres": "^3.4.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
