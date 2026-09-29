@@ -160,7 +160,7 @@ export function ZafTechApp() {
               <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={44} height={44} className="h-11 w-11 shrink-0 object-contain" priority />
               <div className="min-w-0">
                 <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tr("Pi Ecosystem Intelligence", "Pi Ekosistem İstihbaratı")}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem İstihbaratı")}</p>
               </div>
             </div>
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
@@ -188,7 +188,7 @@ export function ZafTechApp() {
 
         {!loading && section === "overview" && subtab === "Ecosystem" ? (
           <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Intelligence", "Pi Ekosistem İstihbaratı")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
+            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem İstihbaratı")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Card title={tr("Observed apps", "Gözlemlenen uygulamalar")} value={number(ecosystem?.apps.totalCount)} detail={tr("Current public source response", "Mevcut herkese açık kaynak yanıtı")} />
               <Card title={tr("Recent ledgers", "Son ledger'lar")} value={number(snapshot?.metrics.recentLedgerCount)} detail={tr("Pi Mainnet observation window", "Pi Mainnet gözlem penceresi")} />
@@ -252,7 +252,7 @@ export function ZafTechApp() {
 
         <footer className="mt-8 border-t border-border pt-4 text-[10px] leading-relaxed text-muted-foreground">
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-            <span>ZAF TECH · Pi Ecosystem Intelligence</span>
+            <span>ZAF TECH · Pi Ecosystem Observatory</span>
             <span>{tr("Independent community-developed technology project", "Bağımsız topluluk geliştirimi teknoloji projesi")}</span>
           </div>
           <div className="mt-2 flex flex-wrap gap-3">
