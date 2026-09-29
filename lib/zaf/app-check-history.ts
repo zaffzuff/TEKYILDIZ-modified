@@ -103,3 +103,15 @@ export async function getAppCheckHistory(url: string, limit = 50) {
     LIMIT ${Math.min(Math.max(limit, 1), 200)}
   `;
 }
+
+export async function getAppHealthTrend(url: string, limit = 48) {
+  const records = await getAppCheckHistory(url, limit);
+  return records.reverse().map((record) => ({
+    checkedAt: record.checkedAt,
+    reachable: record.reachable,
+    responseTimeMs: record.responseTimeMs,
+    status: record.status,
+    https: record.https,
+    redirect: record.redirect,
+  }));
+}
