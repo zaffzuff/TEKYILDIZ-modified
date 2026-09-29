@@ -69,7 +69,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
           <option value="mainnet">{tr("Pi Mainnet", "Pi Mainnet")}</option>
           <option value="testnet">{tr("Pi Testnet", "Pi Testnet")}</option>
         </select>
-        <button type="button" onClick={() => void lookup()} disabled={loading} className="rounded-lg bg-foreground px-4 py-2.5 text-xs font-medium text-background disabled:opacity-50">{loading ? tr("Checking…", "Kontrol ediliyor…") : tr("Inspect", "İncele")}</button>
+        <button type="button" onClick={() => void lookup()} disabled={loading} className="rounded-lg bg-foreground px-4 py-2.5 text-xs font-medium text-background disabled:opacity-50">{loading ? tr("Checking…", "Kontrol Ediliyor…") : tr("Inspect", "İncele")}</button>
       </div>
       {error ? <p className="mt-2 text-[11px] text-muted-foreground">{error}</p> : null}
     </div>
@@ -88,16 +88,16 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         <Card title={tr("Account Balance", "Hesap Bakiyesi")} value={fmt(data.accountBalancePi)} detail="Pi" />
-        <Card title={tr("Observable claimable", "Gözlemlenebilir talep edilebilir")} value={fmt(data.observableClaimablePi)} detail={tr("Native claimable balances", "Native claimable bakiyeler")} />
-        <Card title={tr("Last Activity", "Son Aktivite")} value={age(data.lastActivity, locale)} detail={tr("Transactions + operations", "İşlemler + operasyonlar")} />
+        <Card title={tr("Observable Claimable", "Gözlemlenebilir Talep Edilebilir")} value={fmt(data.observableClaimablePi)} detail={tr("Native claimable balances", "Native claimable bakiyeler")} />
+        <Card title={tr("Last Activity", "Son Aktivite")} value={age(data.lastActivity, locale)} detail={tr("Transactions + Operations", "İşlemler + Operasyonlar")} />
       </div>
 
       <div className="rounded-xl border border-border bg-card p-4">
         <div className="text-xs font-semibold text-foreground">{tr("Account Metadata", "Hesap Metadatası")}</div>
         <div className="mt-3 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-3">
           <div><div className="text-muted-foreground">{tr("Sequence", "Sequence")}</div><div className="mt-1 break-all text-foreground">{data.account?.sequence ?? "—"}</div></div>
-          <div><div className="text-muted-foreground">{tr("Subentries", "Alt kayıtlar")}</div><div className="mt-1 text-foreground">{data.account?.subentryCount ?? "—"}</div></div>
-          <div><div className="text-muted-foreground">{tr("Last modified ledger", "Son değişiklik ledger'ı")}</div><div className="mt-1 text-foreground">{data.account?.lastModifiedLedger ?? "—"}</div></div>
+          <div><div className="text-muted-foreground">{tr("Subentries", "Alt Kayıtlar")}</div><div className="mt-1 text-foreground">{data.account?.subentryCount ?? "—"}</div></div>
+          <div><div className="text-muted-foreground">{tr("Last Modified Ledger", "Son Değişiklik Ledger'ı")}</div><div className="mt-1 text-foreground">{data.account?.lastModifiedLedger ?? "—"}</div></div>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
         <div className="flex items-center justify-between gap-2"><div className="text-xs font-semibold text-foreground">{tr("Recent Transactions", "Son İşlemler")}</div><span className="text-[10px] text-muted-foreground">{data.transactions.length}</span></div>
         <div className="mt-2 space-y-2">
           {data.transactions.slice(0, 8).map(tx => <div key={tx.hash} className="rounded-lg border border-border p-2.5"><div className="flex items-start justify-between gap-2"><a href={`${explorerBase}/transactions/${tx.hash}`} target="_blank" rel="noreferrer" className="truncate font-mono text-[10px] text-foreground underline underline-offset-2">{tx.hash}</a><span className="shrink-0 text-[9px] text-muted-foreground">{tx.successful === true ? tr("Success", "Başarılı") : tx.successful === false ? tr("Failed", "Başarısız") : "—"}</span></div><div className="mt-1 text-[9px] text-muted-foreground">{tx.createdAt ? new Date(tx.createdAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"} · {tx.operationCount ?? "—"} ops · {fmt(tx.feePi)} Pi</div></div>)}
-          {!data.transactions.length ? <div className="text-[11px] text-muted-foreground">{tr("No recent transactions returned.", "Son İşlemler döndürülmedi.")}</div> : null}
+          {!data.transactions.length ? <div className="text-[11px] text-muted-foreground">{tr("No Recent Transactions Returned.", "Son İşlemler Döndürülmedi.")}</div> : null}
         </div>
       </div>
 
