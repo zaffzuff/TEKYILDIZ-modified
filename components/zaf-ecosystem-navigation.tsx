@@ -16,7 +16,7 @@ const labels: Record<string, [string, string]> = {
   Apps: ["Apps", "Uygulamalar"], "App Directory": ["App Directory", "Uygulama Dizini"], "App Health": ["App Health", "Uygulama Sağlığı"],
   "Node & Compute": ["Node & Compute", "Node & Compute"], Node: ["Node", "Node"], "Node History": ["Node History", "Node Geçmişi"],
   SoloHost: ["SoloHost", "SoloHost"], Compute: ["Compute", "Hesaplama"], Infrastructure: ["Infrastructure", "Altyapı"],
-  Intelligence: ["Intelligence", "İstihbarat"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"], Wallet: ["Wallet", "Cüzdan"],
+  Intelligence: ["Observatory", "Gözlem Merkezi"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"], Wallet: ["Wallet", "Cüzdan"],
 };
 
 function label(value: string, locale: Locale) {
