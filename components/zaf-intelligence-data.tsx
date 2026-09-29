@@ -265,7 +265,7 @@ export function ZafIntelligenceData({
     );
   }
 
-  if (subtab === "Signal History" || subtab === "Alerts") {
+  if (subtab === "Signal History") {
     const visibleSignals = signals.filter((signal) =>
       (signalFilter === "all" || signal.displayKind === signalFilter) &&
       (categoryFilter === "all" || signal.category === categoryFilter)
