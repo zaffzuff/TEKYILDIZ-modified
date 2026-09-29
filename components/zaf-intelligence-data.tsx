@@ -36,9 +36,14 @@ function readPoints(): TrendPoint[] {
 }
 
 function savePoint(point: TrendPoint) {
-  const next = [...readPoints(), point].slice(-288);
-  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
-  return next;
+  const history = readPoints();
+  const existing = history.findIndex((item) => item.capturedAt === point.capturedAt);
+  const next = existing >= 0
+    ? history.map((item, index) => index === existing ? point : item)
+    : [...history, point];
+  const trimmed = next.slice(-288);
+  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed)); } catch {}
+  return trimmed;
 }
 
 function Sparkline({ values }: { values: Array<number | null> }) {
