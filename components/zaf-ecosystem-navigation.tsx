@@ -16,7 +16,7 @@ const labels: Record<string, [string, string]> = {
   Apps: ["Apps", "Uygulamalar"], "App Directory": ["App Directory", "Uygulama Dizini"], "App Health": ["App Health", "Uygulama Sağlığı"],
   "Node & Compute": ["Node & Compute", "Node & Compute"], Node: ["Node", "Node"], "Node History": ["Node History", "Node Geçmişi"],
   SoloHost: ["SoloHost", "SoloHost"], Compute: ["Compute", "Hesaplama"], Infrastructure: ["Infrastructure", "Altyapı"],
-  Intelligence: ["Observatory", "Gözlem Merkezi"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"], Wallet: ["Wallet", "Cüzdan"],
+  Observatory: ["Observatory", "Gözlem Merkezi"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"], Wallet: ["Wallet", "Cüzdan"],
 };
 
 function label(value: string, locale: Locale) {
@@ -27,7 +27,7 @@ function label(value: string, locale: Locale) {
 export function ZafEcosystemNavigation({ locale, section, subtab, onSectionChange, onSubtabChange }: {
   locale: Locale; section: ZafSection; subtab: string; onSectionChange: (section: ZafSection) => void; onSubtabChange: (subtab: string) => void;
 }) {
-  const sections: Array<[ZafSection, string]> = [["overview", "Overview"], ["apps", "Apps"], ["node", "Node & Compute"], ["intelligence", "Intelligence"]];
+  const sections: Array<[ZafSection, string]> = [["overview", "Overview"], ["apps", "Apps"], ["node", "Node & Compute"], ["intelligence", "Observatory"]];
   const subtabs = ZAF_SECTION_TABS[section];
   return <nav className="mt-4 border-t border-border pt-3" aria-label={locale === "tr" ? "Ekosistem bölümleri" : "Ecosystem sections"}>
     <div className="overflow-x-auto ty-no-scrollbar"><div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1 sm:min-w-0 sm:flex-wrap">
