@@ -10,6 +10,7 @@ import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosys
 import { ZafDefiData } from "@/components/zaf-defi-data";
 import { ZafAppsData } from "@/components/zaf-apps-data";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
+import { ZafPioneerData } from "@/components/zaf-pioneer-data";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -438,16 +439,7 @@ export function ZafTechApp() {
 
             {activeSection === "defi" ? <ZafDefiData locale={locale} subtab={activeSubtab} /> : null}
 
-            {activeSection === "pioneer" ? (
-              <section className="mt-5 sm:mt-7">
-                <div className="rounded-xl border border-border bg-card p-4">
-                  <h2 className="text-sm font-semibold text-foreground">{tr(activeSubtab)}</h2>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                    {tr("This Pioneer layer will organize identity, migration, Pi Browser, Pi Sign-in, and PiVerify signals without exposing private user data.")}
-                  </p>
-                </div>
-              </section>
-            ) : null}
+            {activeSection === "pioneer" ? <ZafPioneerData locale={locale} subtab={activeSubtab} /> : null}
 
             <section className={`mt-5 sm:mt-7 ${tabClass("overview")}`}>
               <div className="mb-3">
