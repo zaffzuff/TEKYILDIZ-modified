@@ -140,9 +140,8 @@ export interface ZafWalletSnapshot {
   address: string;
   network: "Pi Mainnet" | "Pi Testnet";
   exists: boolean | null;
-  totalBalancePi: number | null;
-  availableBalancePi: number | null;
-  lockedBalancePi: number | null;
+  accountBalancePi: number | null;
+  observableClaimablePi: number | null;
   lockup: null | Record<string, unknown>;
   account: {
     sequence: string | null;
