@@ -993,9 +993,9 @@ export function ZafTechApp() {
               ) : null}
             </section>
 
-            {activeTab === "history" ? <ZafHistoricalExplorer locale={locale} /> : null}
-            {activeTab === "wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
-            {activeTab === "node" ? <ZafNodeIntelligence locale={locale} data={data} /> : null}
+            {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafHistoricalExplorer locale={locale} /> : null}
+            {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafWalletIntelligence locale={locale} /> : null}
+            {activeSection === "node" ? <ZafNodeIntelligence locale={locale} data={data} /> : null}
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
