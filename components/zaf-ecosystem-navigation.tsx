@@ -5,14 +5,14 @@ import type { Locale } from "@/lib/zaf/i18n";
 export type ZafSection = "overview" | "apps" | "node" | "intelligence";
 
 export const ZAF_SECTION_TABS: Record<ZafSection, readonly string[]> = {
-  overview: ["Ecosystem", "Tools"],
+  overview: ["Ecosystem", "Network", "Tools"],
   apps: ["App Directory", "App Health"],
   node: ["Node", "Node History", "SoloHost", "Compute", "Infrastructure"],
   intelligence: ["Radar", "Activity Signals", "Explorer"],
 };
 
 const labels: Record<string, [string, string]> = {
-  Overview: ["Overview", "Genel Bakış"], Ecosystem: ["Ecosystem", "Ekosistem"], Tools: ["Tools", "Araçlar"],
+  Overview: ["Overview", "Genel Bakış"], Network: ["Network", "Ağ"], Ecosystem: ["Ecosystem", "Ekosistem"], Tools: ["Tools", "Araçlar"],
   Apps: ["Apps", "Uygulamalar"], "App Directory": ["App Directory", "Uygulama Dizini"], "App Health": ["App Health", "Uygulama Sağlığı"],
   "Node & Compute": ["Node & Compute", "Node & Compute"], Node: ["Node", "Node"], "Node History": ["Node History", "Node Geçmişi"],
   SoloHost: ["SoloHost", "SoloHost"], Compute: ["Compute", "Hesaplama"], Infrastructure: ["Infrastructure", "Altyapı"],
