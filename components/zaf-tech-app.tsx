@@ -99,7 +99,75 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
   );
 }
 
-export function ZafTechApp() {
+
+
+type EcosystemStatisticsPayload = {
+  generatedAt: string;
+  current: {
+    observedApps: number | null;
+    availableSources: number;
+    totalSources: number;
+    observedSignals: number;
+    officialSignals: number;
+    defi: { launchpad: string; dex: string; amm: string; mainnetTrading: string };
+  };
+  history: {
+    configured: boolean;
+    snapshots: number;
+    firstObservedAt: string | null;
+    latestObservedAt: string | null;
+    appCounts: number[];
+  };
+};
+
+function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: string, trText: string) => string }) {
+  const [data, setData] = useState<EcosystemStatisticsPayload | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/zaf/ecosystem/statistics", { cache: "no-store" })
+      .then(response => response.ok ? response.json() : null)
+      .then(value => { if (active) setData(value); })
+      .catch(() => { if (active) setData(null); })
+      .finally(() => { if (active) setLoadingStats(false); });
+    return () => { active = false; };
+  }, []);
+
+  if (loadingStats) return <div className="py-10 text-center text-xs text-muted-foreground">{tr("Loading Statistics…", "İstatistikler Yükleniyor…")}</div>;
+
+  return (
+    <section className="mt-5 sm:mt-7">
+      <div className="mb-3">
+        <h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Statistics", "Ekosistem İstatistikleri")}</h2>
+        <p className="text-[11px] text-muted-foreground">{tr("Current observations and stored historical snapshots from public ecosystem sources.", "Herkese açık ekosistem kaynaklarından mevcut gözlemler ve kaydedilmiş tarihsel snapshot'lar.")}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(data?.current.observedApps)} />
+        <Card title={tr("Available Sources", "Kullanılabilir Kaynaklar")} value={data ? `${data.current.availableSources}/${data.current.totalSources}` : "—"} />
+        <Card title={tr("Observed Signals", "Gözlemlenen Sinyaller")} value={number(data?.current.observedSignals)} />
+        <Card title={tr("Official Signals", "Resmi Sinyaller")} value={number(data?.current.officialSignals)} />
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <Card title="Launchpad" value={data?.current.defi.launchpad.toUpperCase() ?? "—"} />
+        <Card title="DEX" value={data?.current.defi.dex.toUpperCase() ?? "—"} />
+        <Card title="AMM" value={data?.current.defi.amm.toUpperCase() ?? "—"} />
+        <Card title={tr("Mainnet Trading", "Mainnet İşlemleri")} value={data?.current.defi.mainnetTrading.toUpperCase() ?? "—"} />
+      </div>
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Historical Snapshots", "Tarihsel Snapshot'lar")}</div>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Card title={tr("Stored Snapshots", "Kayıtlı Snapshot'lar")} value={number(data?.history.snapshots)} />
+          <Card title={tr("Storage", "Depolama")} value={data?.history.configured ? "ACTIVE" : "NOT CONFIGURED"} detail={tr("DATABASE_URL", "DATABASE_URL")} />
+          <Card title={tr("First Snapshot", "İlk Snapshot")} value={age(data?.history.firstObservedAt, locale)} />
+          <Card title={tr("Latest Snapshot", "Son Snapshot")} value={age(data?.history.latestObservedAt, locale)} />
+        </div>
+        {!data?.history.configured ? <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">{tr("Historical storage is optional. Live observations remain available while DATABASE_URL is not configured.", "Tarihsel depolama isteğe bağlıdır. DATABASE_URL yapılandırılmamış olsa da canlı gözlemler kullanılabilir.")}</p> : null}
+      </div>
+    </section>
+  );
+}
+\nexport function ZafTechApp() {
   const [locale, setLocale] = useState<Locale>("en");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [section, setSection] = useState<ZafSection>("overview");
@@ -217,7 +285,7 @@ export function ZafTechApp() {
 
         {!loading && section === "node" ? <ZafNodeCompute locale={locale} data={snapshot} subtab={subtab} /> : null}
 
-        {!loading && section === "intelligence" && subtab === "Wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
+        {!loading && section === "intelligence" && subtab === "Wallet" ? <ZafWalletIntelligence locale={locale} /> : null}\n\n        {!loading && section === "intelligence" && subtab === "Activity Signals" ? <ObservatoryStatisticsView locale={locale} tr={tr} /> : null}
 
         {!loading && section === "overview" && subtab === "Network" ? (
           <section className="mt-5 sm:mt-7">
