@@ -51,7 +51,7 @@ function absoluteUrl(value: string) {
 }
 
 function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim();
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 async function fetchText(url: string, timeoutMs = 8_000) {
@@ -95,7 +95,7 @@ async function readEcosystemApps() {
   try {
     const html = await fetchText(APP_SOURCE);
     const items = new Map<string, { name: string; url: string }>();
-    const linkPattern = /<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi;
+    const linkPattern = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
     let match: RegExpExecArray | null;
     while ((match = linkPattern.exec(html)) && items.size < 200) {
       const url = absoluteUrl(match[1]);
@@ -131,7 +131,7 @@ async function readOfficialNews() {
   try {
     const html = await fetchText(ECOSYSTEM_SOURCES.officialBlog);
     const items = new Map<string, EcosystemNewsItem>();
-    const pattern = /<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi;
+    const pattern = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(html)) && items.size < 20) {
       const url = absoluteUrl(match[1]);
