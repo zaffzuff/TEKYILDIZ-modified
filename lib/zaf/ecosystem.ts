@@ -235,8 +235,8 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
   if (appData.totalCount != null) {
     changes.push({
       type: "new-app",
-      title: "Ecosystem directory observed",
-      detail: `${appData.totalCount.toLocaleString("en-US")} app records were exposed by the current source response.`,
+      title: "Ecosystem directory snapshot",
+      detail: `${appData.totalCount.toLocaleString("en-US")} app records were exposed by the current source response; this is a snapshot observation, not a confirmed new-app delta.`,
       detectedAt: generatedAt,
     });
   }
@@ -355,7 +355,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     signals.push({
       id: `official-news-${encodeURIComponent(item.url)}`,
       category: isDefi ? "defi" : "official",
-      kind: "new",
+      kind: "observed",
       title: item.title,
       detail: isDefi
         ? "Official Pi publication related to an observable DeFi ecosystem layer."
@@ -372,7 +372,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     signals.push({
       id: "defi-launchpad-updated",
       category: "defi",
-      kind: "updated",
+      kind: "observed",
       title: defi.launchpad.latestUpdate.title,
       detail: "An official Launchpad update is present in the current source response.",
       detailTr: "Mevcut kaynak yanıtında resmi bir Launchpad güncellemesi bulunuyor.",
@@ -385,7 +385,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     signals.push({
       id: "defi-dex-updated",
       category: "defi",
-      kind: "updated",
+      kind: "observed",
       title: defi.dex.latestUpdate.title,
       detail: "An official DEX/AMM-related update is present in the current source response.",
       detailTr: "Mevcut kaynak yanıtında resmi bir DEX/AMM güncellemesi bulunuyor.",
