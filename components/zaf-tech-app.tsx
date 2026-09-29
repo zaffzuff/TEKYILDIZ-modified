@@ -10,6 +10,7 @@ import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosys
 import { ZafDefiData } from "@/components/zaf-defi-data";
 import { ZafAppsData } from "@/components/zaf-apps-data";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
+import { ZafIntelligenceData } from "@/components/zaf-intelligence-data";
 import { ZafPioneerData } from "@/components/zaf-pioneer-data";
 
 function formatNumber(value: number | null, digits = 0) {
@@ -967,7 +968,7 @@ export function ZafTechApp() {
 
             {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafHistoricalExplorer locale={locale} /> : null}
             {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafWalletIntelligence locale={locale} /> : null}
-            {activeSection === "node" ? <ZafNodeCompute locale={locale} data={data} subtab={activeSubtab} /> : null}
+            {activeSection === "node" ? <ZafNodeCompute locale={locale} data={data} subtab={activeSubtab} /> : null}\n            {activeSection === "intelligence" && ["Ecosystem Radar", "Trends", "Alerts", "Ecosystem Graph"].includes(activeSubtab) ? <ZafIntelligenceData locale={locale} subtab={activeSubtab} data={data} /> : null}
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
