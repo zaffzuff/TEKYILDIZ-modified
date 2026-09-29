@@ -25,6 +25,7 @@ export type OfficialEcosystemSignal = {
   title: string;
   value: string;
   detail: string;
+  detailTr: string;
   observedAt: string;
   sourceUrl: string;
 };
@@ -242,6 +243,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
       title: "Pi2Day Ecosystem Quest started",
       value: "2.56M started",
       detail: "Official recap reported more than 2.56 million Pioneers started the 2026 Ecosystem Quest.",
+      detailTr: "Resmi özete göre 2026 Ekosistem Quest'i 2,56 milyondan fazla Pioneer başlattı.",
       observedAt: "2026-08-05",
       sourceUrl: "https://minepi.com/blog/pi2day-2026-recap/",
     },
@@ -250,6 +252,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
       title: "Pi2Day Ecosystem Quest completed",
       value: "1.78M completed",
       detail: "Official recap reported more than 1.78 million Pioneers completed every step of the 2026 Ecosystem Quest.",
+      detailTr: "Resmi özete göre 2026 Ekosistem Quest'in tüm adımlarını 1,78 milyondan fazla Pioneer tamamladı.",
       observedAt: "2026-08-05",
       sourceUrl: "https://minepi.com/blog/pi2day-2026-recap/",
     },
@@ -258,6 +261,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
       title: "SoloHost apps deployed",
       value: "110 apps",
       detail: "Official Pi2Day recap reported 110 community-deployed SoloHost apps at that time.",
+      detailTr: "Resmi Pi2Day özetine göre o tarihte topluluk tarafından 110 SoloHost uygulaması dağıtılmıştı.",
       observedAt: "2026-08-05",
       sourceUrl: "https://minepi.com/blog/pi2day-2026-recap/",
     },
@@ -266,6 +270,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
       title: "Ecosystem staking example",
       value: "3.19M Pi staked",
       detail: "Pi reported that CiDi Games received 3.19 million Pi in staked support and over 1.2 million game plays in under one week.",
+      detailTr: "Pi, CiDi Games'in 3,19 milyon Pi staking desteği aldığını ve bir haftadan kısa sürede 1,2 milyondan fazla oyun oynandığını bildirdi.",
       observedAt: "2026-06-18",
       sourceUrl: "https://minepi.com/blog/ecosystem-directory-staking/",
     },
@@ -274,6 +279,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
       title: "SLICE Testnet commitment",
       value: "15.92M Test-Pi",
       detail: "Pi reported more than 242,000 participants committing 15.92 million Test-Pi toward 10 million SLICE Test tokens.",
+      detailTr: "Pi, 242.000'den fazla katılımcının 10 milyon SLICE Test tokenı için 15,92 milyon Test-Pi taahhüt ettiğini bildirdi.",
       observedAt: "2026-07-24",
       sourceUrl: "https://minepi.com/blog/launchpad-liquidity-pool/",
     },
