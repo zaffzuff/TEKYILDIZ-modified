@@ -49,7 +49,7 @@ function readSnapshotState(): SnapshotState | null {
 }
 
 function signalFingerprint(signal: EcosystemSnapshot["signals"][number]) {
-  return [signal.title, signal.detail, signal.detailTr, signal.sourceUrl ?? ""].join("|");
+  return [signal.id, signal.detail, signal.sourceUrl ?? ""].join("|");
 }
 
 function copy(locale: Locale, en: string, tr: string) {
