@@ -81,8 +81,8 @@ export function ZafDeveloperTools({ locale }: { locale: Locale }) {
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="text-xs font-semibold text-foreground">{tr("Transaction Lookup", "İşlem Sorgulama")}</div>
           <div className="mt-1 text-[10px] text-muted-foreground">{tr("Queries Pi Mainnet Horizon for a transaction hash.", "Pi Mainnet Horizon üzerinden transaction hash sorgular.")}</div>
-          <input value={tx} onChange={e => setTx(e.target.value)} onKeyDown={e => { if (e.key === "Enter") void lookup(); }} placeholder={tr("Transaction hash", "Transaction hash")} className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs font-mono text-foreground outline-none focus:ring-2 focus:ring-ring" />
-          <button type="button" onClick={() => void lookup()} disabled={loadingTx} className="mt-2 rounded-lg border border-border px-3 py-2 text-[10px] font-medium text-foreground disabled:opacity-50">{loadingTx ? tr("Looking up…", "Sorgulanıyor…") : tr("Lookup", "Sorgula")}</button>
+          <input value={tx} onChange={e => setTx(e.target.value)} onKeyDown={e => { if (e.key === "Enter") void lookup(); }} placeholder={tr("Transaction Hash", "Transaction Hash")} className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs font-mono text-foreground outline-none focus:ring-2 focus:ring-ring" />
+          <button type="button" onClick={() => void lookup()} disabled={loadingTx} className="mt-2 rounded-lg border border-border px-3 py-2 text-[10px] font-medium text-foreground disabled:opacity-50">{loadingTx ? tr("Looking Up…", "Sorgulanıyor…") : tr("Lookup", "Sorgula")}</button>
           {txResult ? <pre className="mt-2 max-h-40 overflow-auto rounded-lg border border-border bg-background p-2 text-[9px] text-muted-foreground">{JSON.stringify(txResult, null, 2)}</pre> : null}
         </div>
 
@@ -91,7 +91,7 @@ export function ZafDeveloperTools({ locale }: { locale: Locale }) {
           <div className="mt-1 text-[10px] text-muted-foreground">{tr("Checks a public application URL for reachability, HTTPS, HTTP status and response time.", "Herkese açık bir uygulama URL'sini erişilebilirlik, HTTPS, HTTP durumu ve yanıt süresi açısından kontrol eder.")}</div>
           <div className="mt-3 flex flex-col gap-2 sm:flex-row">
             <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => { if (e.key === "Enter") void checkUrl(); }} placeholder="https://example.com" className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring" />
-            <button type="button" onClick={() => void checkUrl()} disabled={loadingUrl} className="rounded-lg bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50">{loadingUrl ? tr("Checking…", "Kontrol ediliyor…") : tr("Check URL", "URL'yi kontrol et")}</button>
+            <button type="button" onClick={() => void checkUrl()} disabled={loadingUrl} className="rounded-lg bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50">{loadingUrl ? tr("Checking…", "Kontrol Ediliyor…") : tr("Check URL", "URL'yi kontrol et")}</button>
           </div>
           {urlResult ? (
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -102,7 +102,7 @@ export function ZafDeveloperTools({ locale }: { locale: Locale }) {
             </div>
           ) : null}
           {urlResult?.error ? <div className="mt-3 text-[10px] text-muted-foreground">{urlResult.error}</div> : null}
-          {urlResult ? <div className="mt-2 text-[10px] text-muted-foreground">{tr("Redirect detected:", "Yönlendirme:")} {urlResult.redirect ? tr("yes", "evet") : tr("no", "hayır")}</div> : null}
+          {urlResult ? <div className="mt-2 text-[10px] text-muted-foreground">{tr("Redirect Detected:", "Yönlendirme:")} {urlResult.redirect ? tr("Yes", "Evet") : tr("No", "Hayır")}</div> : null}
         </div>
       </div>
     </section>
