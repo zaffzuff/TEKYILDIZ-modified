@@ -7,6 +7,8 @@ import type { Locale } from "@/lib/zaf/i18n";
 import { localeLabels } from "@/lib/zaf/i18n";
 import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
+import { ZafAppHealth } from "@/components/zaf-app-health";
+import { ZafDeveloperTools } from "@/components/zaf-developer-tools";
 
 type AppItem = { name: string; url: string };
 type EcosystemPayload = {
@@ -136,7 +138,9 @@ export function ZafTechApp() {
           </section>
         ) : null}
 
-        {!loading && section === "apps" ? (
+        {!loading && section === "apps" && subtab === "App Health" ? <ZafAppHealth locale={locale} /> : null}
+
+        {!loading && section === "apps" && subtab === "App Directory" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi App Directory", "Pi Uygulama Dizini")}</h2><p className="text-[11px] text-muted-foreground">{tr("Applications observed from the public Pi ecosystem source. Technical claims are shown only when verifiable.", "Herkese açık Pi ekosistem kaynağında gözlemlenen uygulamalar. Teknik iddialar yalnızca doğrulanabildiğinde gösterilir.")}</p></div>
             <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Observed", "Gözlemlenen")} value={number(apps.length)} /><Card title={tr("Source", "Kaynak")} value={sourceOnline ? "ONLINE" : "OFFLINE"} /><Card title={tr("Last check", "Son kontrol")} value={age(ecosystem?.generatedAt, locale)} /></div>
