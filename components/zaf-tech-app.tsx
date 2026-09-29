@@ -112,7 +112,7 @@ export function ZafTechApp() {
   const [showAllOperations, setShowAllOperations] = useState(false);
   const [showAllLedgers, setShowAllLedgers] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("light");
   const [activeSection, setActiveSection] = useState<ZafSection>("overview");
   const [activeSubtab, setActiveSubtab] = useState("Ecosystem Radar");
   const tr = (key: string) => t(locale, key);
