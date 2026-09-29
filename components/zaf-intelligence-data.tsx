@@ -243,7 +243,7 @@ export function ZafIntelligenceData({
                       <div className="text-[11px] font-medium text-foreground">{signal.title}</div>
                       <span className="shrink-0 text-[10px] font-semibold text-foreground">{signal.value}</span>
                     </div>
-                    <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detail)}</div>
+                    <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detailTr)}</div>
                     <div className="mt-2 text-[9px] text-muted-foreground">{signal.observedAt} · Official source ↗</div>
                   </a>
                 ))}
