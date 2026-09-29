@@ -26,54 +26,7 @@ function short(value: string | null, length = 12) {
   return value.length > length ? `${value.slice(0, length)}…` : value;
 }
 
-const TREND_STORAGE_KEY = "zaf-tech-observation-history-v1";
-const MAX_TREND_POINTS = 1440;
 const RECENT_RECORD_PREVIEW = 10;
-
-interface TrendPoint {
-  capturedAt: string;
-  ledger: string | null;
-  transactionsPerHour: number | null;
-  operationsPerHour: number | null;
-  successRate: number | null;
-}
-
-function loadTrendHistory(): TrendPoint[] {
-  try {
-    const raw = window.localStorage.getItem(TREND_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((point): point is TrendPoint =>
-      point &&
-      typeof point.capturedAt === "string" &&
-      (point.ledger === null || typeof point.ledger === "string") &&
-      (point.transactionsPerHour === null || typeof point.transactionsPerHour === "number") &&
-      (point.operationsPerHour === null || typeof point.operationsPerHour === "number") &&
-      (point.successRate === null || typeof point.successRate === "number")
-    ).slice(-MAX_TREND_POINTS);
-  } catch {
-    return [];
-  }
-}
-
-function saveTrendPoint(snapshot: ZafSnapshot) {
-  try {
-    const history = loadTrendHistory();
-    const point: TrendPoint = {
-      capturedAt: snapshot.generatedAt,
-      ledger: snapshot.latestLedger?.sequence ?? null,
-      transactionsPerHour: snapshot.metrics.observedTransactionsPerHour,
-      operationsPerHour: snapshot.metrics.observedOperationsPerHour,
-      successRate: snapshot.metrics.transactionSuccessRate,
-    };
-    const next = [...history, point].slice(-MAX_TREND_POINTS);
-    window.localStorage.setItem(TREND_STORAGE_KEY, JSON.stringify(next));
-    return next;
-  } catch {
-    return [];
-  }
-}
 
 function formatDateTime(value: string | null, locale: Locale = "en") {
   if (!value) return "—";
@@ -152,13 +105,11 @@ export function ZafTechApp() {
   const [data, setData] = useState<ZafSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [trendHistory, setTrendHistory] = useState<TrendPoint[]>([]);
   const [historicalActivity, setHistoricalActivity] = useState<ZafHistoricalActivity | null>(null);
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [transactionFilter, setTransactionFilter] = useState<"all" | "successful" | "failed">("all");
   const [transactionSearch, setTransactionSearch] = useState("");
   const [showAllOperations, setShowAllOperations] = useState(false);
-  const [showAllLedgers, setShowAllLedgers] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [activeSection, setActiveSection] = useState<ZafSection>("overview");
@@ -195,7 +146,6 @@ export function ZafTechApp() {
   }, [locale]);
 
   useEffect(() => {
-    setTrendHistory(loadTrendHistory());
     void fetch("/api/zaf/history", { cache: "no-store" })
       .then((response) => response.json())
       .then((history) => setHistoricalActivity(history as ZafHistoricalActivity))
@@ -208,7 +158,6 @@ export function ZafTechApp() {
       const response = await fetch("/api/zaf", { cache: "no-store" });
       const snapshot = (await response.json()) as ZafSnapshot;
       setData(snapshot);
-      setTrendHistory(saveTrendPoint(snapshot));
     } catch (error) {
       setData((current) => current ?? {
         network: "Pi Network",
