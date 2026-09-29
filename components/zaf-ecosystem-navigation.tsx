@@ -8,7 +8,7 @@ export const ZAF_SECTION_TABS: Record<ZafSection, readonly string[]> = {
   overview: ["Ecosystem", "Network", "Tools"],
   apps: ["App Directory", "App Health"],
   node: ["Node", "Node History", "SoloHost", "Compute", "Infrastructure"],
-  intelligence: ["Radar", "Activity Signals", "Explorer"],
+  intelligence: ["Radar", "Activity Signals", "Explorer", "Wallet"],
 };
 
 const labels: Record<string, [string, string]> = {
@@ -16,7 +16,7 @@ const labels: Record<string, [string, string]> = {
   Apps: ["Apps", "Uygulamalar"], "App Directory": ["App Directory", "Uygulama Dizini"], "App Health": ["App Health", "Uygulama Sağlığı"],
   "Node & Compute": ["Node & Compute", "Node & Compute"], Node: ["Node", "Node"], "Node History": ["Node History", "Node Geçmişi"],
   SoloHost: ["SoloHost", "SoloHost"], Compute: ["Compute", "Hesaplama"], Infrastructure: ["Infrastructure", "Altyapı"],
-  Intelligence: ["Intelligence", "İstihbarat"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"],
+  Intelligence: ["Intelligence", "İstihbarat"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"], Wallet: ["Wallet", "Cüzdan"],
 };
 
 function label(value: string, locale: Locale) {
