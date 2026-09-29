@@ -40,7 +40,18 @@ export async function runEcosystemHealthChecks(): Promise<EcosystemHealthRun> {
     // Persistence is best-effort; an unavailable database must not break live checks.
   }
 
-  try {\n    await saveEcosystemSnapshot({\n      generatedAt: new Date().toISOString(),\n      sourceAvailable: ecosystem.apps.sourceAvailable,\n      observedAppCount: ecosystem.apps.totalCount,\n      payload: ecosystem,\n    });\n  } catch {\n    // Snapshot persistence is best-effort.\n  }\n\n  const reachable = results.filter((item) => item.check.reachable).length;
+  try {
+    await saveEcosystemSnapshot({
+      generatedAt: new Date().toISOString(),
+      sourceAvailable: ecosystem.apps.sourceAvailable,
+      observedAppCount: ecosystem.apps.totalCount,
+      payload: ecosystem,
+    });
+  } catch {
+    // Snapshot persistence is best-effort.
+  }
+
+  const reachable = results.filter((item) => item.check.reachable).length;
   const online = results.filter((item) => item.check.ok).length;
 
   return {
