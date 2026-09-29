@@ -233,6 +233,26 @@ export function ZafIntelligenceData({
 
         <div className="mt-4 space-y-2">
           {loading && !ecosystem ? <div className="text-xs text-muted-foreground">{copy(locale, "Reading official ecosystem sources…", "Resmi ekosistem kaynakları okunuyor…")}</div> : null}
+          {ecosystem?.officialSignals.length ? (
+            <div className="rounded-xl border border-border p-3">
+              <div className="mb-2 text-xs font-semibold text-foreground">{copy(locale, "Official Signals", "Resmi Sinyaller")}</div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {ecosystem.officialSignals.map((signal) => (
+                  <a key={signal.id} href={signal.sourceUrl} target="_blank" rel="noreferrer" className="rounded-lg border border-border p-3 hover:bg-muted/40">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="text-[11px] font-medium text-foreground">{signal.title}</div>
+                      <span className="shrink-0 text-[10px] font-semibold text-foreground">{signal.value}</span>
+                    </div>
+                    <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detail)}</div>
+                    <div className="mt-2 text-[9px] text-muted-foreground">{signal.observedAt} · Official source ↗</div>
+                  </a>
+                ))}
+              </div>
+              <p className="mt-2 text-[9px] leading-relaxed text-muted-foreground">
+                {copy(locale, "These are dated figures reported by Pi Network, not live ZAF TECH measurements or current network-wide counts.", "Bunlar Pi Network tarafından belirli tarihlerde açıklanan rakamlardır; canlı ZAF TECH ölçümü veya güncel ağ geneli sayımı değildir.")}
+              </p>
+            </div>
+          ) : null}
           {recentChanges.map((change, index) => (
             <div key={index} className="rounded-xl border border-border p-3">
               <div className="text-xs font-medium text-foreground">{change.title}</div>
