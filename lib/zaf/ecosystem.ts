@@ -32,7 +32,13 @@ export type EcosystemSnapshot = {
     note: string;
   };
   news: EcosystemNewsItem[];
-  defi: {\n    launchpad: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };\n    dex: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };\n    amm: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };\n    mainnetTrading: { status: "restricted"; detail: string };\n  };\n  changes: Array<{
+  defi: {
+    launchpad: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
+    dex: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
+    amm: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
+    mainnetTrading: { status: "restricted"; detail: string };
+  };
+  changes: Array<{
     type: "new-app" | "news" | "source";
     title: string;
     detail: string;
@@ -40,7 +46,12 @@ export type EcosystemSnapshot = {
   }>;
 };
 
-const APP_SOURCE = ECOSYSTEM_SOURCES.ecosystemAppPlatform;\nconst DEFI_SOURCES = {\n  launchpad: "https://minepi.com/blog/pi-launchpad/",\n  dexAmm: "https://minepi.com/blog/dex-amm-token-creation/",\n  dexUpdate: "https://minepi.com/blog/dex-amm-update/",\n} as const;
+const APP_SOURCE = ECOSYSTEM_SOURCES.ecosystemAppPlatform;
+const DEFI_SOURCES = {
+  launchpad: "https://minepi.com/blog/pi-launchpad/",
+  dexAmm: "https://minepi.com/blog/dex-amm-token-creation/",
+  dexUpdate: "https://minepi.com/blog/dex-amm-update/",
+} as const;
 
 function absoluteUrl(value: string) {
   try {
