@@ -4,7 +4,10 @@ const BASE = "https://api.mainnet.minepi.com";
 const HORIZON_TIMEOUT_MS = 10_000;
 const PAGE_LIMIT = 200;
 
-async function horizon(path: string): Promise<any> {
+type HorizonRecord = Record<string, unknown>;
+type HorizonResponse = { _embedded?: { records?: HorizonRecord[] } } & Record<string, unknown>;
+
+async function horizon(path: string): Promise<HorizonResponse> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), HORIZON_TIMEOUT_MS);
   try {
@@ -14,13 +17,13 @@ async function horizon(path: string): Promise<any> {
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`Pi Horizon request failed: ${response.status}`);
-    return response.json();
+    return response.json() as Promise<HorizonResponse>;
   } finally {
     clearTimeout(timeout);
   }
 }
 
-function mapLedger(raw: any): ZafLedger {
+function mapLedger(raw: HorizonRecord): ZafLedger {
   return {
     sequence: String(raw.sequence),
     hash: String(raw.hash ?? ""),

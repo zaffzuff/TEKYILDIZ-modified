@@ -652,6 +652,51 @@ export function ZafTechApp() {
               </p>
             </section>
 
+            <section className={`mt-5 sm:mt-7 ${tabClass("overview")}`}>
+              <div className="mb-3">
+                <h2 className="text-sm font-semibold text-foreground">{tr("Activity Intelligence")}</h2>
+                <p className="text-[11px] text-muted-foreground">
+                  {tr("A compact interpretation of the latest observed Pi Mainnet activity window")}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <Metric
+                  label={tr("Activity state")}
+                  value={data?.intelligence.activityState ? data.intelligence.activityState.replaceAll("-", " ") : "—"}
+                  detail={tr("Derived from the latest observed transaction and operation rates")}
+                />
+                <Metric
+                  label={tr("Transaction change")}
+                  value={data?.intelligence.transactionChangePercent != null ? `${data.intelligence.transactionChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.transactionChangePercent, 1)}%` : "—"}
+                  detail={tr("Recent observed rate change")}
+                />
+                <Metric
+                  label={tr("Operation change")}
+                  value={data?.intelligence.operationChangePercent != null ? `${data.intelligence.operationChangePercent >= 0 ? "+" : ""}${formatNumber(data.intelligence.operationChangePercent, 1)}%` : "—"}
+                  detail={tr("Recent observed rate change")}
+                />
+                <Metric
+                  label={tr("Top operation share")}
+                  value={data?.intelligence.dominantOperationShare != null ? `${formatNumber(data.intelligence.dominantOperationShare, 1)}%` : "—"}
+                  detail={data?.metrics.topOperationType ? `${tr("Dominant type")}: ${data.metrics.topOperationType}` : tr("Based on the latest operation sample")}
+                />
+              </div>
+              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-border bg-card p-3 text-[11px]">
+                  <div className="font-medium text-foreground">{tr("Observed sources")}</div>
+                  <div className="mt-1 text-muted-foreground">
+                    {tr("Transaction sources")} {formatNumber(data?.intelligence.uniqueTransactionSources ?? null)} · {tr("Operation sources")} {formatNumber(data?.intelligence.uniqueOperationSources ?? null)}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border bg-card p-3 text-[11px]">
+                  <div className="font-medium text-foreground">{tr("Interpretation")}</div>
+                  <div className="mt-1 leading-relaxed text-muted-foreground">
+                    {data?.intelligence.notes?.length ? data.intelligence.notes[0] : tr("Signals are descriptive observations from public Mainnet data, not forecasts or ecosystem-wide usage estimates.")}
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <section className={`mt-7 ${tabClass("overview")}`}>
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
