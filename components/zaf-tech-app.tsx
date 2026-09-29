@@ -10,6 +10,7 @@ import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosys
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
 import { ZafAppHealth } from "@/components/zaf-app-health";
 import { ZafDeveloperTools } from "@/components/zaf-developer-tools";
+import { ZafWalletIntelligence } from "@/components/zaf-wallet-intelligence";
 import { APP_CATEGORIES, toDirectoryApp, type AppCategory } from "@/lib/zaf/app-directory";
 import { useMemo } from "react";
 
@@ -206,7 +207,7 @@ export function ZafTechApp() {
 
         {!loading && section === "apps" && subtab === "App Directory" ? <AppDirectoryView apps={apps} sourceOnline={sourceOnline} generatedAt={ecosystem?.generatedAt} note={ecosystem?.apps.note} locale={locale} tr={tr} /> : null}
 
-        {!loading && section === "intelligence" ? (
+        {!loading && section === "intelligence" && subtab !== "Wallet" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Intelligence", "Ekosistem İstihbaratı")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity state", "Aktivite durumu")} value={snapshot?.intelligence.activityState ?? "—"} detail={tr("Descriptive, not predictive", "Tanımlayıcı, tahmin edici değil")} /><Card title={tr("Tx / hour", "İşlem / saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / hour", "Operasyon / saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
@@ -215,6 +216,8 @@ export function ZafTechApp() {
         ) : null}
 
         {!loading && section === "node" ? <ZafNodeCompute locale={locale} data={snapshot} subtab={subtab} /> : null}
+
+        {!loading && section === "intelligence" && subtab === "Wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
 
         {!loading && section === "overview" && subtab === "Network" ? (
           <section className="mt-5 sm:mt-7">
