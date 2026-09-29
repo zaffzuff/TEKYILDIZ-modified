@@ -110,6 +110,7 @@ export function ZafTechApp() {
   const [transactionFilter, setTransactionFilter] = useState<"all" | "successful" | "failed">("all");
   const [transactionSearch, setTransactionSearch] = useState("");
   const [showAllOperations, setShowAllOperations] = useState(false);
+  const [showAllLedgers, setShowAllLedgers] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [activeSection, setActiveSection] = useState<ZafSection>("overview");
@@ -722,85 +723,6 @@ export function ZafTechApp() {
                 ) : (
                   <div className="py-8 text-center text-xs text-muted-foreground">
                     {tr("Historical ledger data is not available right now.")}
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className={`mt-5 sm:mt-7 ${tabClass("history")}`}>
-              <div className="mb-3 flex items-end justify-between gap-3">
-                <div>
-                  <h2 className="text-sm font-semibold text-foreground">{tr("Observation History")}</h2>
-                  <p className="text-[11px] text-muted-foreground">
-                    {tr("Local history collected from real Pi Mainnet snapshots on this device")}
-                  </p>
-                </div>
-                <div className="text-right text-[11px] text-muted-foreground">
-                  {trendHistory.length} {tr("samples")}
-                </div>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-4">
-                {trendHistory.length < 2 ? (
-                  <div className="py-8 text-center text-xs text-muted-foreground">
-                    {tr("History will appear after at least two automatic or manual refreshes.")}
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div>
-                      <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                        <span>{tr("Transactions / hour")}</span>
-                        <span>{formatNumber(trendHistory[trendHistory.length - 1].transactionsPerHour, 1)}</span>
-                      </div>
-                      <div className="h-16 w-full">
-                        <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" role="img" aria-label={tr("Transactions / hour")}>
-                          {(() => {
-                            const values = trendHistory.map((point) => point.transactionsPerHour).filter((value): value is number => value != null);
-                            if (values.length < 2) return null;
-                            const min = Math.min(...values);
-                            const max = Math.max(...values);
-                            const span = max - min || 1;
-                            const points = trendHistory.map((point, index) => {
-                              const value = point.transactionsPerHour ?? min;
-                              const x = (index / Math.max(trendHistory.length - 1, 1)) * 600;
-                              const y = 58 - ((value - min) / span) * 52;
-                              return `${x.toFixed(1)},${y.toFixed(1)}`;
-                            }).join(" ");
-                            return <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />;
-                          })()}
-                        </svg>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                        <span>{tr("Operations / hour")}</span>
-                        <span>{formatNumber(trendHistory[trendHistory.length - 1].operationsPerHour, 1)}</span>
-                      </div>
-                      <div className="h-16 w-full">
-                        <svg viewBox="0 0 600 64" className="h-full w-full" preserveAspectRatio="none" role="img" aria-label={tr("Operations / hour")}>
-                          {(() => {
-                            const values = trendHistory.map((point) => point.operationsPerHour).filter((value): value is number => value != null);
-                            if (values.length < 2) return null;
-                            const min = Math.min(...values);
-                            const max = Math.max(...values);
-                            const span = max - min || 1;
-                            const points = trendHistory.map((point, index) => {
-                              const value = point.operationsPerHour ?? min;
-                              const x = (index / Math.max(trendHistory.length - 1, 1)) * 600;
-                              const y = 58 - ((value - min) / span) * 52;
-                              return `${x.toFixed(1)},${y.toFixed(1)}`;
-                            }).join(" ");
-                            return <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />;
-                          })()}
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                      <span>{tr("Success rate")}</span>
-                      <span>{formatNumber(trendHistory[trendHistory.length - 1].successRate, 1)}%</span>
-                    </div>
-                    <p className="text-[11px] leading-relaxed text-muted-foreground">
-                      {tr("This history is stored locally in the browser. It contains only snapshots actually observed by this ZAF TECH instance; it is not a prefilled historical dataset.")}
-                    </p>
                   </div>
                 )}
               </div>
