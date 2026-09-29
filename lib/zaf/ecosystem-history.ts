@@ -4,7 +4,7 @@ export type EcosystemSnapshotRecord = {
   generatedAt: string;
   sourceAvailable: boolean;
   observedAppCount: number | null;
-  payload: unknown;
+  payload: Record<string, unknown>;
 };
 
 function getClient() {
