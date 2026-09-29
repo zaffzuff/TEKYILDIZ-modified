@@ -15,7 +15,22 @@ type Result = {
   checkedAt: string;
 };
 
-type HistoryRecord = Result & { appName: string };
+type HistoryRecord = Result & { appName: string };\n\ntype TrendPoint = { checkedAt:string; reachable:boolean; responseTimeMs:number; status:number|null; https:boolean; redirect:boolean };
+
+function AppTrend({points,locale,tr}:{points:TrendPoint[];locale:Locale;tr:(en:string,tr:string)=>string}){
+ if(!points.length) return <div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored trend data is available yet.","Henüz kaydedilmiş trend verisi bulunmuyor.")}</div>;
+ const max=Math.max(...points.map(p=>p.responseTimeMs),1);
+ return <div className="mt-4 rounded-lg border border-border p-3">
+  <div className="text-xs font-semibold text-foreground">{tr("Response Time Trend","Yanıt Süresi Trendi")}</div>
+  <p className="mt-1 text-[10px] text-muted-foreground">{tr("Historical response-time observations for this application.","Bu uygulama için tarihsel yanıt süresi gözlemleri.")}</p>
+  <div className="mt-3 flex h-24 items-end gap-1 overflow-x-auto">
+   {points.map(p=><div key={p.checkedAt} title={`${p.responseTimeMs} ms · ${new Date(p.checkedAt).toLocaleString(locale==="tr"?"tr-TR":"en-US")}`} className="min-w-[7px] flex-1 rounded-t-sm bg-foreground/70" style={{height:`${Math.max(8,(p.responseTimeMs/max)*100)}%`}} />)}
+  </div>
+  <div className="mt-2 flex justify-between text-[9px] text-muted-foreground"><span>{new Date(points[0].checkedAt).toLocaleString(locale==="tr"?"tr-TR":"en-US")}</span><span>{new Date(points[points.length-1].checkedAt).toLocaleString(locale==="tr"?"tr-TR":"en-US")}</span></div>
+ </div>;
+}
+
+
 
 type BatchResult = {
   generatedAt: string;
@@ -34,7 +49,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
  const [batchLoading,setBatchLoading]=useState(false);
  const [history,setHistory]=useState<HistoryRecord[]|null>(null);
  const [historyUrl,setHistoryUrl]=useState("");
- const [historyLoading,setHistoryLoading]=useState(false);
+ const [historyLoading,setHistoryLoading]=useState(false);\n const [trend,setTrend]=useState<TrendPoint[]|null>(null);\n const [trendLoading,setTrendLoading]=useState(false);
 
  async function check(){
    if(!url.trim()) return;
@@ -45,16 +60,16 @@ export function ZafAppHealth({locale}:{locale:Locale}){
  }
 
  async function loadHistory(target:string){
-   setHistoryLoading(true); setHistory(null); setHistoryUrl(target);
+   setHistoryLoading(true); setHistory(null); setHistoryUrl(target); setTrend(null); setTrendLoading(true);
    try{
      const r=await fetch("/api/apps/health/history?url="+encodeURIComponent(target),{cache:"no-store"});
      if(!r.ok) throw new Error("History request failed");
      const data=await r.json();
-     setHistory(data.records ?? []);
+     setHistory(data.records ?? []);\n     const trendResponse=await fetch("/api/apps/health/trend?url="+encodeURIComponent(target),{cache:"no-store"});\n     if(trendResponse.ok){ const trendData=await trendResponse.json(); setTrend(trendData.points ?? []); }
    }catch{
-     setHistory([]);
+     setHistory([]); setTrend([]);
    }finally{
-     setHistoryLoading(false);
+     setHistoryLoading(false); setTrendLoading(false);
    }
  }
 
@@ -118,7 +133,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
               <span className="text-foreground">{new Date(item.checkedAt).toLocaleString(locale==="tr"?"tr-TR":"en-US")}</span>
               <span className="shrink-0 text-muted-foreground">{item.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.responseTimeMs} ms</span>
             </div>)}
-          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored history is available yet.","Henüz kaydedilmiş geçmiş bulunmuyor.")}</div>}
+          {trendLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading Trend…","Trend Yükleniyor…")}</div>:<AppTrend points={trend ?? []} locale={locale} tr={tr}/>}\n          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored history is available yet.","Henüz kaydedilmiş geçmiş bulunmuyor.")}</div>}
         </div>:null}
       </div>:null}
     </div>
