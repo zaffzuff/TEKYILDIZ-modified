@@ -86,11 +86,9 @@ export function ZafDefiData({ locale, subtab }: { locale: Locale; subtab: string
           </div>
         ))}
       </div>
-      {!supported ? null : (
-        <div className="mt-4 rounded-xl border border-border p-3 text-[11px] leading-relaxed text-muted-foreground">
-          {text(locale, "No price, volume, liquidity amount, market-cap, or Mainnet trading figures are inferred from Testnet documentation. When an official machine-readable source exposes these fields, this module can surface them directly.", "Testnet belgelerinden fiyat, hacim, likidite miktarı, piyasa değeri veya Mainnet işlem rakamları çıkarılmaz. Resmi makine-okunabilir kaynak bu alanları sunduğunda modül doğrudan gösterebilir.")}
-        </div>
-      )}
+      <div className="mt-4 rounded-xl border border-border p-3 text-[11px] leading-relaxed text-muted-foreground">
+        {text(locale, "No price, volume, liquidity amount, market-cap, or Mainnet trading figures are inferred from Testnet documentation. When an official machine-readable source exposes these fields, this module can surface them directly.", "Testnet belgelerinden fiyat, hacim, likidite miktarı, piyasa değeri veya Mainnet işlem rakamları çıkarılmaz. Resmi makine-okunabilir kaynak bu alanları sunduğunda modül doğrudan gösterebilir.")}
+      </div>
       <div className="mt-4 text-[10px] text-muted-foreground">
         {text(locale, "Official sources: Pi Launchpad, Pi DEX/AMM documentation and Pi Network updates.", "Resmi kaynaklar: Pi Launchpad, Pi DEX/AMM belgeleri ve Pi Network güncellemeleri.")}
       </div>
