@@ -55,7 +55,7 @@ export function ZafAppsData({ locale, subtab }: { locale: Locale; subtab: string
     };
   }, []);
 
-  const apps = snapshot?.apps.items ?? [];
+  const apps = useMemo(() => snapshot?.apps.items ?? [], [snapshot?.apps.items]);
   const selected = isSameSubtab(subtab) ? subtab : "All Apps";
 
   const visibleApps = useMemo(() => {
