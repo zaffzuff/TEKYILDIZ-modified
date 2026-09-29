@@ -8,6 +8,7 @@ import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-d
 import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
 import { ZafEcosystemOverview } from "@/components/zaf-ecosystem-overview";
 import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosystem-navigation";
+import { ZafAppsData } from "@/components/zaf-apps-data";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -432,17 +433,7 @@ export function ZafTechApp() {
 
             {activeSection === "overview" ? <ZafEcosystemOverview locale={locale} /> : null}
 
-            {activeSection === "apps" ? (
-              <section className="mt-5 sm:mt-7">
-                <ZafEcosystemOverview locale={locale} />
-                <div className="mt-4 rounded-xl border border-border bg-card p-4">
-                  <h2 className="text-sm font-semibold text-foreground">{tr(activeSubtab)}</h2>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                    {tr("This layer is reserved for structured app discovery and observed ecosystem signals. ZAF TECH will only display records supported by an accessible Pi source.")}
-                  </p>
-                </div>
-              </section>
-            ) : null}
+            {activeSection === "apps" ? <ZafAppsData locale={locale} subtab={activeSubtab} /> : null}
 
             {activeSection === "defi" ? (
               <section className="mt-5 sm:mt-7">
