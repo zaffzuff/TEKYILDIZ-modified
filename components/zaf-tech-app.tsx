@@ -7,6 +7,7 @@ import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
 import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-data-tools";
 import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
 import { ZafEcosystemOverview } from "@/components/zaf-ecosystem-overview";
+import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -24,8 +25,6 @@ function short(value: string | null, length = 12) {
 const TREND_STORAGE_KEY = "zaf-tech-observation-history-v1";
 const MAX_TREND_POINTS = 1440;
 const RECENT_RECORD_PREVIEW = 10;
-
-type ZafTab = "overview" | "activity" | "transactions" | "operations" | "history" | "wallet" | "network" | "node";
 
 interface TrendPoint {
   capturedAt: string;
@@ -158,9 +157,20 @@ export function ZafTechApp() {
   const [showAllLedgers, setShowAllLedgers] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [activeTab, setActiveTab] = useState<ZafTab>("overview");
+  const [activeSection, setActiveSection] = useState<ZafSection>("overview");
+  const [activeSubtab, setActiveSubtab] = useState("Ecosystem Radar");
   const tr = (key: string) => t(locale, key);
-  const tabClass = (tab: ZafTab) => activeTab === tab ? "" : "hidden";
+  const tabClass = (tab: string) => {
+    const visible =
+      tab === "overview" ? activeSection === "overview" :
+      tab === "network" ? activeSection === "overview" || (activeSection === "intelligence" && activeSubtab === "Activity Signals") :
+      tab === "activity" ? activeSection === "intelligence" && (activeSubtab === "Activity Signals" || activeSubtab === "Ecosystem Radar") :
+      tab === "transactions" || tab === "operations" || tab === "history" || tab === "wallet"
+        ? activeSection === "intelligence" && activeSubtab === "Explorer"
+        : tab === "node" ? activeSection === "node" && (activeSubtab === "Node" || activeSubtab === "Node History" || activeSubtab === "Infrastructure")
+        : false;
+    return visible ? "" : "hidden";
+  };
 
   useEffect(() => {
     const savedLocale = window.localStorage.getItem("zaf-tech-locale-v1");
@@ -321,30 +331,13 @@ export function ZafTechApp() {
               description={tr("Read-only badge description")}
             />
           </div>
-          <nav className="mt-4 overflow-x-auto border-t border-border pt-3 ty-no-scrollbar" aria-label={tr("Dashboard sections")}>
-            <div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1 sm:flex-wrap sm:min-w-0">
-              {([
-                ["overview", "Overview", "Genel Bakış"],
-                ["activity", "Activity", "Aktivite"],
-                ["transactions", "Transactions", "İşlemler"],
-                ["operations", "Operations", "Operasyonlar"],
-                ["history", "History", "Geçmiş"],
-                ["wallet", "Wallet", "Cüzdan"],
-                ["network", "Network", "Ağ"],
-                ["node", "Node", "Node"],
-              ] as const).map(([id, en, trLabel]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setActiveTab(id)}
-                  aria-current={activeTab === id ? "page" : undefined}
-                  className={`min-h-9 shrink-0 rounded-lg px-3 py-2 text-[11px] font-medium transition-colors ${activeTab === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  {locale === "tr" ? trLabel : en}
-                </button>
-              ))}
-            </div>
-          </nav>
+          <ZafEcosystemNavigation
+            locale={locale}
+            section={activeSection}
+            subtab={activeSubtab}
+            onSectionChange={setActiveSection}
+            onSubtabChange={setActiveSubtab}
+          />
           <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-ty-active" aria-hidden="true" />
@@ -437,7 +430,44 @@ export function ZafTechApp() {
               </div>
             </section>
 
-            <ZafEcosystemOverview locale={locale} />
+            {activeSection === "overview" ? <ZafEcosystemOverview locale={locale} /> : null}
+
+            {activeSection === "apps" ? (
+              <section className="mt-5 sm:mt-7">
+                <ZafEcosystemOverview locale={locale} />
+                <div className="mt-4 rounded-xl border border-border bg-card p-4">
+                  <h2 className="text-sm font-semibold text-foreground">{tr(activeSubtab)}</h2>
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                    {tr("This layer is reserved for structured app discovery and observed ecosystem signals. ZAF TECH will only display records supported by an accessible Pi source.")}
+                  </p>
+                </div>
+              </section>
+            ) : null}
+
+            {activeSection === "defi" ? (
+              <section className="mt-5 sm:mt-7">
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <h2 className="text-sm font-semibold text-foreground">{tr(activeSubtab)}</h2>
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                    {tr("This DeFi layer is being connected to Pi Launchpad, token, DEX, liquidity, and trading sources. Testnet and Mainnet records will remain explicitly separated.")}
+                  </p>
+                  <div className="mt-3 rounded-lg border border-border px-3 py-3 text-[11px] text-muted-foreground">
+                    {tr("No unverified token, liquidity, volume, price, or trading figures are shown here.")}
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
+            {activeSection === "pioneer" ? (
+              <section className="mt-5 sm:mt-7">
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <h2 className="text-sm font-semibold text-foreground">{tr(activeSubtab)}</h2>
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                    {tr("This Pioneer layer will organize identity, migration, Pi Browser, Pi Sign-in, and PiVerify signals without exposing private user data.")}
+                  </p>
+                </div>
+              </section>
+            ) : null}
 
             <section className={`mt-5 sm:mt-7 ${tabClass("overview")}`}>
               <div className="mb-3">
@@ -963,9 +993,9 @@ export function ZafTechApp() {
               ) : null}
             </section>
 
-            {activeTab === "history" ? <ZafHistoricalExplorer locale={locale} /> : null}
-            {activeTab === "wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
-            {activeTab === "node" ? <ZafNodeIntelligence locale={locale} data={data} /> : null}
+            {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafHistoricalExplorer locale={locale} /> : null}
+            {activeSection === "intelligence" && activeSubtab === "Explorer" ? <ZafWalletIntelligence locale={locale} /> : null}
+            {activeSection === "node" ? <ZafNodeIntelligence locale={locale} data={data} /> : null}
 
             <footer className="mt-7 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
               {tr("Source: Pi Mainnet Horizon. Generated")} {data ? new Date(data.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}.
