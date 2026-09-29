@@ -121,7 +121,7 @@ export function ZafTechApp() {
       tab === "overview" ? activeSection === "overview" :
       tab === "network" ? activeSection === "overview" || (activeSection === "intelligence" && activeSubtab === "Activity Signals") :
       tab === "activity" ? activeSection === "intelligence" && (activeSubtab === "Activity Signals" || activeSubtab === "Ecosystem Radar") :
-      tab === "transactions" || tab === "operations" || tab === "history" || tab === "wallet"
+      tab === "transactions" || tab === "operations" || tab === "wallet"
         ? activeSection === "intelligence" && activeSubtab === "Explorer"
         : tab === "node" ? activeSection === "node" && (activeSubtab === "Node" || activeSubtab === "Node History" || activeSubtab === "Infrastructure")
         : false;
