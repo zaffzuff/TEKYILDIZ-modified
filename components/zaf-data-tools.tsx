@@ -225,13 +225,7 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
     new Map(all.map((ledger) => [ledger.sequence, ledger])).values()
   );
 
-  const elapsedHours = historicalStats.oldestClosedAt && historicalStats.newestClosedAt
-    ? Math.max(0, (Date.parse(historicalStats.newestClosedAt) - Date.parse(historicalStats.oldestClosedAt)) / 3_600_000)
-    : 0;
-  const historicalTxPerHour = elapsedHours > 0 ? historicalStats.transactionCount / elapsedHours : null;
-  const historicalOpsPerHour = elapsedHours > 0 ? historicalStats.operationCount / elapsedHours : null;
-  const averageTxPerLedger = historicalStats.count ? historicalStats.transactionCount / historicalStats.count : null;
-  const averageOpsPerLedger = historicalStats.count ? historicalStats.operationCount / historicalStats.count : null;
+
   const windowCutoff = Date.now() - historicalWindowHours * 3_600_000;
   const windowLedgers = uniqueVisibleLedgers.filter((ledger) => Date.parse(ledger.closedAt) >= windowCutoff);
   const windowTransactionCount = windowLedgers.reduce((sum, ledger) => sum + ledger.transactionCount, 0);
@@ -286,12 +280,12 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
             <div className="mt-4 rounded-lg border border-border px-3 py-3">
               <div className="text-[11px] font-medium text-foreground">{tr("Historical window", "Tarihsel pencere")}</div>
               <div className="mt-1 break-words text-[11px] text-muted-foreground">
-                {historicalStats.oldestClosedAt && historicalStats.newestClosedAt
-                  ? `${new Date(historicalStats.oldestClosedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(historicalStats.newestClosedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}`
+                {windowOldest && windowNewest
+                  ? `${new Date(windowOldest).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(windowNewest).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}`
                   : "—"}
               </div>
               <div className="mt-1 text-[10px] text-muted-foreground">
-                {elapsedHours > 0 ? tr(`${elapsedHours.toFixed(1)} hours observed across all stored records`, `${elapsedHours.toFixed(1)} saat tüm saklanan kayıtlar genelinde`) : tr("Waiting for enough time-separated records", "Yeterli zaman ayrışmasına sahip kayıt bekleniyor")}
+                {windowElapsedHours > 0 ? tr(`${windowElapsedHours.toFixed(1)} hours represented in the selected window`, `${windowElapsedHours.toFixed(1)} saat seçilen pencerede temsil ediliyor`) : tr("Waiting for enough time-separated records", "Yeterli zaman ayrışmasına sahip kayıt bekleniyor")}
               </div>
             </div>
                         <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
