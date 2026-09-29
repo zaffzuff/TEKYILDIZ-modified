@@ -231,7 +231,7 @@ export function ZafIntelligenceData({
     setSignalStatuses(statuses);
     setSignalState(next);
     setSignalHistory(nextHistory.slice(-500));
-  }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour]);
+  }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour, locale]);
 
   if (subtab === "Trends") {
     return (
