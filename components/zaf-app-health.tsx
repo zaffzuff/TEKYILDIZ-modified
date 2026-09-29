@@ -15,9 +15,9 @@ type Result = {
   checkedAt: string;
 };
 
-type HistoryRecord = Result & { appName: string };\n\ntype TrendPoint = { checkedAt:string; reachable:boolean; responseTimeMs:number; status:number|null; https:boolean; redirect:boolean };
+type HistoryRecord = Result & { appName: string };\n\ntype TrendPoint = { checkedAt:string; reachable:boolean; responseTimeMs:number; status:number|null; https:boolean; redirect:boolean };\ntype TrendSummary = { checks:number; reachable:number; offline:number; reachabilityRate:number|null; online:number; onlineRate:number|null; averageResponseTimeMs:number|null; transitions:number; firstCheckedAt:string|null; lastCheckedAt:string|null };
 
-function AppTrend({points,locale,tr}:{points:TrendPoint[];locale:Locale;tr:(en:string,tr:string)=>string}){
+function AppTrend({points,summary,locale,tr}:{points:TrendPoint[];summary:TrendSummary|null;locale:Locale;tr:(en:string,tr:string)=>string}){
  if(!points.length) return <div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored trend data is available yet.","Henüz kaydedilmiş trend verisi bulunmuyor.")}</div>;
  const max=Math.max(...points.map(p=>p.responseTimeMs),1);
  return <div className="mt-4 rounded-lg border border-border p-3">
@@ -49,7 +49,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
  const [batchLoading,setBatchLoading]=useState(false);
  const [history,setHistory]=useState<HistoryRecord[]|null>(null);
  const [historyUrl,setHistoryUrl]=useState("");
- const [historyLoading,setHistoryLoading]=useState(false);\n const [trend,setTrend]=useState<TrendPoint[]|null>(null);\n const [trendLoading,setTrendLoading]=useState(false);
+ const [historyLoading,setHistoryLoading]=useState(false);\n const [trend,setTrend]=useState<TrendPoint[]|null>(null);\n const [trendSummary,setTrendSummary]=useState<TrendSummary|null>(null);\n const [trendLoading,setTrendLoading]=useState(false);
 
  async function check(){
    if(!url.trim()) return;
@@ -60,14 +60,14 @@ export function ZafAppHealth({locale}:{locale:Locale}){
  }
 
  async function loadHistory(target:string){
-   setHistoryLoading(true); setHistory(null); setHistoryUrl(target); setTrend(null); setTrendLoading(true);
+   setHistoryLoading(true); setHistory(null); setHistoryUrl(target); setTrend(null); setTrendSummary(null); setTrendLoading(true);
    try{
      const r=await fetch("/api/apps/health/history?url="+encodeURIComponent(target),{cache:"no-store"});
      if(!r.ok) throw new Error("History request failed");
      const data=await r.json();
-     setHistory(data.records ?? []);\n     const trendResponse=await fetch("/api/apps/health/trend?url="+encodeURIComponent(target),{cache:"no-store"});\n     if(trendResponse.ok){ const trendData=await trendResponse.json(); setTrend(trendData.points ?? []); }
+     setHistory(data.records ?? []);\n     const trendResponse=await fetch("/api/apps/health/trend?url="+encodeURIComponent(target),{cache:"no-store"});\n     if(trendResponse.ok){ const trendData=await trendResponse.json(); setTrend(trendData.points ?? []); setTrendSummary(trendData.summary ?? null); }
    }catch{
-     setHistory([]); setTrend([]);
+     setHistory([]); setTrend([]); setTrendSummary(null);
    }finally{
      setHistoryLoading(false); setTrendLoading(false);
    }
@@ -133,7 +133,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
               <span className="text-foreground">{new Date(item.checkedAt).toLocaleString(locale==="tr"?"tr-TR":"en-US")}</span>
               <span className="shrink-0 text-muted-foreground">{item.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.responseTimeMs} ms</span>
             </div>)}
-          {trendLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading Trend…","Trend Yükleniyor…")}</div>:<AppTrend points={trend ?? []} locale={locale} tr={tr}/>}\n          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored history is available yet.","Henüz kaydedilmiş geçmiş bulunmuyor.")}</div>}
+          {trendLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading Trend…","Trend Yükleniyor…")}</div>:<AppTrend points={trend ?? []} summary={trendSummary} locale={locale} tr={tr}/>}\n          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored history is available yet.","Henüz kaydedilmiş geçmiş bulunmuyor.")}</div>}
         </div>:null}
       </div>:null}
     </div>
