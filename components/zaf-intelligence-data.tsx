@@ -306,7 +306,7 @@ export function ZafIntelligenceData({
               <button key={value} type="button" onClick={() => setCategoryFilter(value as typeof categoryFilter)} className={"rounded-md border px-2.5 py-1.5 text-[10px] " + (categoryFilter === value ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground")}>{value === "all" ? copy(locale, "All categories", "Tüm kategoriler") : value}</button>
             ))}
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 spac<div className="mt-4 space-y-2">
             {visibleSignals.length ? visibleSignals.map((signal) => {
               const state = signalState[signal.id];
               return (
@@ -331,7 +331,7 @@ export function ZafIntelligenceData({
           </div>
           <div className="mt-5 border-t border-border pt-4">
             <div className="text-xs font-semibold text-foreground">{copy(locale, "Recent signal events", "Son sinyal olayları")}</div>
-            <div className="mt-2 space-y-2">
+            <div className="mt-2 spac<div className="mt-4 space-y-2">
               {signalHistory.slice().reverse().slice(0, 12).map((entry, index) => (
                 <div key={entry.id + entry.detectedAt + index} className="rounded-lg border border-border p-2.5">
                   <div className="flex flex-wrap items-center justify-between gap-2 text-[10px]">
@@ -411,7 +411,7 @@ export function ZafIntelligenceData({
           })}
         </div>
 
-e-y-2">
+<div className="mt-4 space-y-2">
           {loading && !ecosystem ? <div className="text-xs text-muted-foreground">{copy(locale, "Reading official ecosystem sources…", "Resmi ekosistem kaynakları okunuyor…")}</div> : null}
           {ecosystem?.officialSignals.length ? (
             <div className="rounded-xl border border-border p-3">
