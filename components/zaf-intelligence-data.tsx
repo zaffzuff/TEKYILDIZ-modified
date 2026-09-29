@@ -109,25 +109,24 @@ export function ZafIntelligenceData({
   }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour]);
 
   const recentChanges = ecosystem?.changes.slice(0, 8) ?? [];
-  const alerts = useMemo(() => {
-    const result: Array<{ title: string; detail: string }> = [];
-    if (ecosystem?.defi.launchpad.latestUpdate) {
+  const signals = useMemo(() => {
+    const result = [...(ecosystem?.signals ?? [])];
+
+    if (data?.metrics.observedTransactionsPerHour != null) {
       result.push({
-        title: ecosystem.defi.launchpad.latestUpdate.title,
-        detail: copy(locale, "Official Launchpad update observed.", "Resmi Launchpad güncellemesi gözlemlendi."),
+        id: "mainnet-transactions-observed",
+        category: "mainnet" as const,
+        kind: "observed" as const,
+        title: copy(locale, "Mainnet activity observed", "Mainnet aktivitesi gözlemlendi"),
+        detail: `${data.metrics.observedTransactionsPerHour.toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} transactions/hour in the current observation window.`,
+        detailTr: `Mevcut gözlem penceresinde saatte ${data.metrics.observedTransactionsPerHour.toLocaleString("tr-TR")} işlem.`,
+        detectedAt: ecosystem?.generatedAt ?? new Date().toISOString(),
+        sourceUrl: null,
       });
     }
-    if (ecosystem?.apps.totalCount != null) {
-      result.push({
-        title: copy(locale, "Ecosystem directory observed", "Ekosistem dizini gözlemlendi"),
-        detail: copy(locale, `${ecosystem.apps.totalCount.toLocaleString("en-US")} app records are exposed by the current source response.`, `${ecosystem.apps.totalCount.toLocaleString("tr-TR")} uygulama kaydı mevcut kaynak yanıtında açığa çıkıyor.`),
-      });
-    }
-    for (const item of ecosystem?.news.slice(0, 3) ?? []) {
-      result.push({ title: item.title, detail: copy(locale, "Official Pi publication observed.", "Resmi Pi yayını gözlemlendi.") });
-    }
-    return result.slice(0, 8);
-  }, [ecosystem, locale]);
+
+    return result.slice(0, 12);
+  }, [ecosystem, data?.metrics.observedTransactionsPerHour, locale]);
 
   if (subtab === "Trends") {
     return (
@@ -165,15 +164,24 @@ export function ZafIntelligenceData({
     return (
       <section className="mt-5 space-y-4">
         <div className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-foreground">{copy(locale, "Observed Alerts", "Gözlemlenen Uyarılar")}</h2>
-          <p className="mt-1 text-[11px] text-muted-foreground">{copy(locale, "Events derived from official ecosystem sources and observed Mainnet signals.", "Resmi ekosistem kaynakları ve gözlemlenen Mainnet sinyallerinden türetilen olaylar.")}</p>
+          <h2 className="text-sm font-semibold text-foreground">{copy(locale, "Observed Signals", "Gözlemlenen Sinyaller")}</h2>
+          <p className="mt-1 text-[11px] text-muted-foreground">{copy(locale, "Structured change signals derived from official ecosystem sources and observed Mainnet activity.", "Resmi ekosistem kaynakları ve gözlemlenen Mainnet aktivitesinden türetilen yapılandırılmış değişim sinyalleri.")}</p>
           <div className="mt-4 space-y-2">
-            {alerts.length ? alerts.map((alert, index) => (
-              <div key={index} className="rounded-xl border border-border p-3">
-                <div className="text-xs font-medium text-foreground">{alert.title}</div>
-                <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{alert.detail}</div>
+            {signals.length ? signals.map((signal) => (
+              <div key={signal.id} className="rounded-xl border border-border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-xs font-medium text-foreground">{signal.title}</div>
+                  <span className="rounded-full border border-border px-2 py-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">{signal.kind}</span>
+                </div>
+                <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detailTr)}</div>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[9px] text-muted-foreground">
+                  <span>{signal.category}</span>
+                  <span>·</span>
+                  <span>{new Date(signal.detectedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</span>
+                  {signal.sourceUrl ? <a href={signal.sourceUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">{copy(locale, "Source ↗", "Kaynak ↗")}</a> : null}
+                </div>
               </div>
-            )) : <div className="text-xs text-muted-foreground">{copy(locale, "No alert signals observed.", "Uyarı sinyali gözlemlenmedi.")}</div>}
+            )) : <div className="text-xs text-muted-foreground">{copy(locale, "No signals observed.", "Sinyal gözlemlenmedi.")}</div>}
           </div>
         </div>
       </section>

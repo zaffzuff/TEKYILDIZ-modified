@@ -30,6 +30,17 @@ export type OfficialEcosystemSignal = {
   sourceUrl: string;
 };
 
+export type EcosystemSignal = {
+  id: string;
+  category: "apps" | "defi" | "official" | "mainnet";
+  kind: "new" | "updated" | "observed" | "changed" | "unavailable";
+  title: string;
+  detail: string;
+  detailTr: string;
+  detectedAt: string;
+  sourceUrl: string | null;
+};
+
 export type EcosystemSnapshot = {
   generatedAt: string;
   sources: EcosystemSourceStatus[];
@@ -43,6 +54,7 @@ export type EcosystemSnapshot = {
   };
   news: EcosystemNewsItem[];
   officialSignals: OfficialEcosystemSignal[];
+  signals: EcosystemSignal[];
   defi: {
     launchpad: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
     dex: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
@@ -285,5 +297,88 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     },
   ];
 
-  return { generatedAt, sources, apps: appData, news, officialSignals, defi, changes };
+  const signals: EcosystemSignal[] = [];
+
+  if (appData.totalCount != null) {
+    signals.push({
+      id: "apps-directory-observed",
+      category: "apps",
+      kind: "observed",
+      title: "Ecosystem directory observed",
+      detail: `${appData.totalCount.toLocaleString("en-US")} app records are exposed by the current source response.`,
+      detailTr: `${appData.totalCount.toLocaleString("tr-TR")} uygulama kaydı mevcut kaynak yanıtında açığa çıkıyor.`,
+      detectedAt: generatedAt,
+      sourceUrl: APP_SOURCE,
+    });
+  } else if (!appData.sourceAvailable) {
+    signals.push({
+      id: "apps-directory-unavailable",
+      category: "apps",
+      kind: "unavailable",
+      title: "Ecosystem app source unavailable",
+      detail: "The current ecosystem app source could not be read.",
+      detailTr: "Mevcut ekosistem uygulama kaynağı okunamadı.",
+      detectedAt: generatedAt,
+      sourceUrl: APP_SOURCE,
+    });
+  }
+
+  for (const item of news.slice(0, 4)) {
+    const isDefi = /launchpad|dex|amm|liquidity|token/i.test(item.title);
+    signals.push({
+      id: `official-news-${encodeURIComponent(item.url)}`,
+      category: isDefi ? "defi" : "official",
+      kind: "new",
+      title: item.title,
+      detail: isDefi
+        ? "Official Pi publication related to an observable DeFi ecosystem layer."
+        : "Official Pi publication observed from the public blog source.",
+      detailTr: isDefi
+        ? "Gözlemlenebilir DeFi ekosistem katmanıyla ilgili resmi Pi yayını."
+        : "Herkese açık resmi blog kaynağında resmi Pi yayını gözlemlendi.",
+      detectedAt: generatedAt,
+      sourceUrl: item.url,
+    });
+  }
+
+  if (defi.launchpad.latestUpdate) {
+    signals.push({
+      id: "defi-launchpad-updated",
+      category: "defi",
+      kind: "updated",
+      title: defi.launchpad.latestUpdate.title,
+      detail: "An official Launchpad update is present in the current source response.",
+      detailTr: "Mevcut kaynak yanıtında resmi bir Launchpad güncellemesi bulunuyor.",
+      detectedAt: generatedAt,
+      sourceUrl: defi.launchpad.latestUpdate.url,
+    });
+  }
+
+  if (defi.dex.latestUpdate) {
+    signals.push({
+      id: "defi-dex-updated",
+      category: "defi",
+      kind: "updated",
+      title: defi.dex.latestUpdate.title,
+      detail: "An official DEX/AMM-related update is present in the current source response.",
+      detailTr: "Mevcut kaynak yanıtında resmi bir DEX/AMM güncellemesi bulunuyor.",
+      detectedAt: generatedAt,
+      sourceUrl: defi.dex.latestUpdate.url,
+    });
+  }
+
+  for (const signal of officialSignals) {
+    signals.push({
+      id: `official-${signal.id}`,
+      category: "official",
+      kind: "observed",
+      title: signal.title,
+      detail: signal.detail,
+      detailTr: signal.detailTr,
+      detectedAt: signal.observedAt,
+      sourceUrl: signal.sourceUrl,
+    });
+  }
+
+  return { generatedAt, sources, apps: appData, news, officialSignals, signals, defi, changes };
 }
