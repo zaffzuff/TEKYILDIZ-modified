@@ -153,7 +153,6 @@ export function ZafIntelligenceData({
     }));
   }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour, locale]);
 
-  const recentChanges = ecosystem?.changes.slice(0, 8) ?? [];
   const signals = useMemo(() => {
     const result = [...(ecosystem?.signals ?? [])];
 
