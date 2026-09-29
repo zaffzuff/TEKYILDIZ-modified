@@ -7,19 +7,19 @@ type Locale = "en" | "tr";
 
 const copy = {
   en: {
-    back: "← Back to ZAF TECH", title: "Privacy", subtitle: "ZAF TECH Pi Intelligence v0.1.0",
-    scope: "Data scope", scopeText: "ZAF TECH is designed as a read-only technology project. It reads public Pi ecosystem and Mainnet sources and may run public URL checks requested by the user.",
-    wallet: "No wallet access", walletText: "The Developer Tools address inspector performs local format validation only. It does not access private keys, wallets, seed phrases or sign blockchain transactions.",
+    back: "← Back to ZAF TECH", title: "Privacy", subtitle: "ZAF TECH Pi Ecosystem Observatory",
+    scope: "Data scope", scopeText: "ZAF TECH is an independent, read-only technology layer. It reads observable public Pi ecosystem, Network, Mainnet/Testnet and Node-related sources, and may run public URL checks requested by the user. The Wallet Intelligence feature only uses a public Pi wallet address for observable blockchain data.",
+    wallet: "No wallet access", walletText: "The Developer Tools address inspector performs local format validation only. Wallet Intelligence does not access private keys, seed phrases or wallet credentials, does not connect to a user wallet, and does not sign blockchain transactions. Wallet lookups are based on publicly observable blockchain data.",
     local: "Local preferences", localText: "Language and theme preferences may be stored locally in the browser. They are used to preserve the user's interface settings.",
-    public: "Public sources", publicText: "Network and ecosystem information is derived from public sources. ZAF TECH does not claim that its observations represent the entire Pi Network.",
+    public: "Public sources", publicText: "Network, ecosystem, Node and wallet observations are derived from public or explicitly observable sources. ZAF TECH distinguishes observed data from unverified claims and does not claim that its observations represent the entire Pi Network. Where a source does not directly expose a value, ZAF TECH does not infer it as fact; for example, private Pi lockup commitments are not presented as publicly verified locked balances.",
     boundary: "Important boundary", boundaryText: "ZAF TECH is an independent community-developed project and is not an official Pi Core Team product.",
   },
   tr: {
-    back: "← ZAF TECH'e dön", title: "Gizlilik", subtitle: "ZAF TECH Pi Intelligence v0.1.0",
-    scope: "Veri kapsamı", scopeText: "ZAF TECH salt-okunur bir teknoloji projesi olarak tasarlanmıştır. Herkese açık Pi ekosistemi ve Mainnet kaynaklarını okur ve kullanıcı tarafından istenen herkese açık URL kontrollerini çalıştırabilir.",
-    wallet: "Cüzdan erişimi yok", walletText: "Developer Tools adres denetleyicisi yalnızca yerel format doğrulaması yapar. Özel anahtarlara, cüzdanlara veya seed phrase'lere erişmez ve blockchain işlemlerini imzalamaz.",
+    back: "← ZAF TECH'e dön", title: "Gizlilik", subtitle: "ZAF TECH Pi Ekosistem Gözlem Merkezi",
+    scope: "Veri kapsamı", scopeText: "ZAF TECH bağımsız, salt-okunur bir teknoloji katmanıdır. Gözlemlenebilir herkese açık Pi ekosistemi, Network, Mainnet/Testnet ve Node kaynaklarını okur ve kullanıcı tarafından istenen herkese açık URL kontrollerini çalıştırabilir. Wallet Intelligence özelliği yalnızca herkese açık Pi cüzdan adresi üzerinden gözlemlenebilir blockchain verilerini kullanır.",
+    wallet: "Cüzdan erişimi yok", walletText: "Developer Tools adres denetleyicisi yalnızca yerel format doğrulaması yapar. Wallet Intelligence özel anahtarlara, seed phrase'lere veya cüzdan kimlik bilgilerine erişmez; kullanıcı cüzdanına bağlanmaz ve blockchain işlemlerini imzalamaz. Cüzdan sorguları herkese açık olarak gözlemlenebilir blockchain verilerine dayanır.",
     local: "Yerel tercihler", localText: "Dil ve tema tercihleri tarayıcıda yerel olarak saklanabilir. Bunlar kullanıcı arayüzü ayarlarını korumak için kullanılır.",
-    public: "Herkese açık kaynaklar", publicText: "Ağ ve ekosistem bilgileri herkese açık kaynaklardan elde edilir. ZAF TECH, gözlemlerinin Pi Network'ün tamamını temsil ettiğini iddia etmez.",
+    public: "Herkese açık kaynaklar", publicText: "Network, ekosistem, Node ve cüzdan gözlemleri herkese açık veya açıkça gözlemlenebilir kaynaklardan elde edilir. ZAF TECH, gözlemlenen verileri doğrulanmamış iddialardan ayırır ve gözlemlerinin Pi Network'ün tamamını temsil ettiğini iddia etmez. Bir kaynak bir değeri doğrudan sunmuyorsa ZAF TECH bunu gerçekmiş gibi çıkarmaz; örneğin özel Pi lockup taahhütleri herkese açık olarak doğrulanmış kilitli bakiye şeklinde sunulmaz.",
     boundary: "Önemli sınır", boundaryText: "ZAF TECH bağımsız, topluluk tarafından geliştirilen bir projedir ve resmi Pi Core Team ürünü değildir.",
   },
 };
