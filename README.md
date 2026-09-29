@@ -1,4 +1,4 @@
-# ZAF TECH — Pi Ecosystem Intelligence
+# ZAF TECH — Pi Ecosystem Observatory
 
 Independent, read-only technology project for exploring observable Pi Network ecosystem data, applications, Mainnet activity and local Node infrastructure.
 
@@ -8,12 +8,13 @@ ZAF TECH is being evolved from a blockchain activity dashboard into a broader Pi
 
 - Pi App Directory
 - App Health monitoring
-- Mainnet activity intelligence
+- Historical App Health checks
+- Mainnet activity observations
 - Pi Developer Tools
 - Local Pi Node diagnostics
 - Node performance history
 - Future Pi SDK / authentication integration
-- Future API and AI ecosystem analysis
+- Future ecosystem statistics and AI ecosystem analysis
 
 ## Architecture
 
@@ -43,7 +44,7 @@ Node Connector development:
 
 `npm run node:connector`
 
-## v0.1.0 MVP scope
+## Current Product Scope
 
 The first release is intentionally read-only and utility-focused:
 
@@ -58,7 +59,7 @@ The first release is intentionally read-only and utility-focused:
 - About and Privacy pages
 - GitHub Actions build validation
 
-Pi Login, Pi Payments and AI analysis are outside the v0.1.0 scope.
+Pi Login, Pi Payments and AI analysis remain outside the current read-only observatory scope.
 
 ## Verification boundary
 
@@ -70,3 +71,15 @@ ZAF TECH distinguishes observable data from unverified claims. Pi-specific appli
 - `/ecosystem/[slug]` — application details
 - `/about` — project information
 - `/privacy` — privacy and data scope
+
+## Phase 3 Data foundation
+
+The current Data phase introduces the first persistence layer for App Health observations:
+
+- Shared server-side App Health checker
+- Batch ecosystem health checks
+- PostgreSQL-compatible historical storage via `DATABASE_URL`
+- `zaf_app_checks` table and indexed history queries
+- Historical App Health view
+
+Historical storage is optional until a PostgreSQL-compatible `DATABASE_URL` is configured. The live health checker remains functional without a database.
