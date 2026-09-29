@@ -14,7 +14,7 @@ ZAF TECH is being evolved from a blockchain activity dashboard into a broader Pi
 - Local Pi Node diagnostics
 - Node performance history
 - Future Pi SDK / authentication integration
-- Future ecosystem statistics and AI ecosystem analysis
+- Future ecosystem statistics and ZAF AI ecosystem analysis
 
 ## Architecture
 
