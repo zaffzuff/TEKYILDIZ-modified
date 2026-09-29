@@ -175,25 +175,25 @@ export function ZafTechApp() {
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Pi Network", "Pi Network")}</span>
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Mainnet", "Mainnet")}</span>
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Read-only", "Salt-okunur")}</span>
-            <span className={`rounded-full border px-2.5 py-1 ${sourceOnline ? "border-ty-active/40 text-foreground" : "border-border text-muted-foreground"}`}>{sourceOnline ? tr("Ecosystem source online", "Ekosistem kaynağı çevrimiçi") : tr("Source unavailable", "Kaynak kullanılamıyor")}</span>
+            <span className={`rounded-full border px-2.5 py-1 ${sourceOnline ? "border-ty-active/40 text-foreground" : "border-border text-muted-foreground"}`}>{sourceOnline ? tr("Ecosystem Source Online", "Ekosistem Kaynağı Çevrimiçi") : tr("Source Unavailable", "Kaynak Kullanılamıyor")}</span>
           </div>
           <ZafEcosystemNavigation locale={locale} section={section} subtab={subtab} onSectionChange={(next) => { setSection(next); const first = { overview: "Ecosystem", apps: "App Directory", node: "Node", intelligence: "Radar" }[next] ?? ""; if (first) setSubtab(first); }} onSubtabChange={setSubtab} />
           <div className="mt-2 flex items-center justify-end gap-3 text-[10px] text-muted-foreground">
-            <span><span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-ty-active" />{tr("Live observations", "Canlı gözlemler")}</span>
+            <span><span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-ty-active" />{tr("Live Observations", "Canlı Gözlemler")}</span>
             <span>{tr("Updated", "Güncellendi")} {age(snapshot?.generatedAt, locale)}</span>
           </div>
         </header>
 
-        {loading ? <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading ecosystem observatory…", "Ekosistem gözlemleri yükleniyor…")}</div> : null}
+        {loading ? <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading Ecosystem Observatory…", "Ekosistem Gözlemleri Yükleniyor…")}</div> : null}
 
         {!loading && section === "overview" && subtab === "Ecosystem" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Card title={tr("Observed apps", "Gözlemlenen uygulamalar")} value={number(ecosystem?.apps.totalCount)} detail={tr("Current public source response", "Mevcut herkese açık kaynak yanıtı")} />
-              <Card title={tr("Recent ledgers", "Son ledger'lar")} value={number(snapshot?.metrics.recentLedgerCount)} detail={tr("Pi Mainnet observation window", "Pi Mainnet gözlem penceresi")} />
-              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current sample", "Mevcut örnek")} />
-              <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest observed ledger", "Son gözlemlenen ledger")} />
+              <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(ecosystem?.apps.totalCount)} detail={tr("Current Public Source Response", "Mevcut Herkese Açık Kaynak Yanıtı")} />
+              <Card title={tr("Recent Ledgers", "Son Ledger'lar")} value={number(snapshot?.metrics.recentLedgerCount)} detail={tr("Pi Mainnet Observation Window", "Pi Mainnet Gözlem Penceresi")} />
+              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current Sample", "Mevcut Örnek")} />
+              <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed Ledger", "Son Gözlemlenen Ledger")} />
             </div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
               <div className="text-xs font-semibold text-foreground">{tr("What ZAF TECH does", "ZAF TECH ne yapar")}</div>
@@ -210,8 +210,8 @@ export function ZafTechApp() {
         {!loading && section === "intelligence" && subtab !== "Wallet" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Observatory", "Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity state", "Aktivite durumu")} value={snapshot?.intelligence.activityState ?? "—"} detail={tr("Descriptive, not predictive", "Tanımlayıcı, tahmin edici değil")} /><Card title={tr("Tx / hour", "İşlem / saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / hour", "Operasyon / saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
-            <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement boundary", "Ölçüm sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.", "Bu sinyaller yalnızca örneklenen herkese açık blockchain verisini tanımlar. Pi Network için puan değildir, kullanıcı niyeti çıkarmaz ve gelecekteki ağ davranışını tahmin etmez.")}</p></div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={snapshot?.intelligence.activityState ?? "—"} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
+            <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.", "Bu sinyaller yalnızca örneklenen herkese açık blockchain verisini tanımlar. Pi Network için puan değildir, kullanıcı niyeti çıkarmaz ve gelecekteki ağ davranışını tahmin etmez.")}</p></div>
           </section>
         ) : null}
 
@@ -226,19 +226,19 @@ export function ZafTechApp() {
               <p className="text-[11px] text-muted-foreground">{tr("Observable Mainnet data from Pi Mainnet Horizon. This is a read-only view, not a claim of full-network coverage.", "Pi Mainnet Horizon üzerinden gözlemlenen Mainnet verileri. Bu salt-okunur görünüm tüm ağın eksiksiz temsili olduğu iddiasında değildir.")}</p>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Card title={tr("Network", "Ağ")} value={snapshot?.network ?? "—"} detail={tr("Observed source", "Gözlemlenen kaynak")} />
-              <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest observed ledger", "Son gözlemlenen ledger")} />
+              <Card title={tr("Network", "Ağ")} value={snapshot?.network ?? "—"} detail={tr("Observed Source", "Gözlemlenen Kaynak")} />
+              <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed Ledger", "Son Gözlemlenen Ledger")} />
               <Card title={tr("Latest ledger", "Son ledger")} value={snapshot?.latestLedger?.sequence ?? "—"} detail={snapshot?.latestLedger?.closedAt ? age(snapshot.latestLedger.closedAt, locale) : "—"} />
-              <Card title={tr("Data status", "Veri durumu")} value={snapshot?.error ? "ERROR" : snapshot?.latestLedger ? "AVAILABLE" : "UNAVAILABLE"} detail={snapshot?.error ?? tr("Pi Mainnet Horizon response observed.", "Pi Mainnet Horizon yanıtı gözlemlendi.")} />
+              <Card title={tr("Data Status", "Veri Durumu")} value={snapshot?.error ? "ERROR" : snapshot?.latestLedger ? "AVAILABLE" : "UNAVAILABLE"} detail={snapshot?.error ?? tr("Pi Mainnet Horizon response observed.", "Pi Mainnet Horizon yanıtı gözlemlendi.")} />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current sample", "Mevcut örnek")} />
-              <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations)} detail={tr("Current sample", "Mevcut örnek")} />
-              <Card title={tr("Tx / hour", "İşlem / saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} />
-              <Card title={tr("Ops / hour", "Operasyon / saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} />
+              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current Sample", "Mevcut Örnek")} />
+              <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations)} detail={tr("Current Sample", "Mevcut Örnek")} />
+              <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} />
+              <Card title={tr("Ops / hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} />
             </div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
-              <div className="text-xs font-semibold text-foreground">{tr("Network measurement boundary", "Ağ ölçüm sınırı")}</div>
+              <div className="text-xs font-semibold text-foreground">{tr("Network Measurement Boundary", "Ağ Ölçüm Sınırı")}</div>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("ZAF TECH reads public Mainnet Horizon data and reports the observed sample. It does not use a private node as the authority for the entire Pi Network and does not assign a subjective network health score.", "ZAF TECH herkese açık Mainnet Horizon verisini okur ve gözlemlenen örneği raporlar. Özel bir node'u tüm Pi Network için otorite olarak kullanmaz ve öznel bir ağ sağlık puanı üretmez.")}</p>
               <div className="mt-3 flex flex-wrap gap-3 text-[11px]">
                 <External href="https://api.mainnet.minepi.com">{tr("Pi Mainnet Horizon", "Pi Mainnet Horizon")}</External>
