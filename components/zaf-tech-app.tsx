@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 import type { Locale } from "@/lib/zaf/i18n";
@@ -121,7 +122,7 @@ export function ZafTechApp() {
 
         {loading ? <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading ecosystem intelligence…", "Ekosistem istihbaratı yükleniyor…")}</div> : null}
 
-        {!loading && section === "overview" ? (
+        {!loading && section === "overview" && subtab === "Ecosystem" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Intelligence", "Pi Ekosistem İstihbaratı")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -159,18 +160,7 @@ export function ZafTechApp() {
 
         {!loading && section === "node" ? <ZafNodeCompute locale={locale} data={snapshot} subtab={subtab} /> : null}
 
-        {!loading && section === "overview" ? (
-          <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Developer Tools", "Geliştirici Araçları")}</h2><p className="text-[11px] text-muted-foreground">{tr("Free tools planned as the next ZAF TECH utility layer.", "Bir sonraki ZAF TECH utility katmanı olarak planlanan ücretsiz araçlar.")}</p></div>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              {[
-                [tr("Pi App Checker", "Pi App Checker"), tr("Check HTTPS, reachability and response time.", "HTTPS, erişilebilirlik ve yanıt süresini kontrol et.")],
-                [tr("Transaction Lookup", "Transaction Lookup"), tr("Inspect observable Mainnet transaction data.", "Gözlemlenebilir Mainnet işlem verisini incele.")],
-                [tr("Address Inspector", "Adres İnceleyici"), tr("Validate Pi address format locally.", "Pi adres formatını yerel olarak doğrula.")],
-              ].map(([title, detail]) => <div key={title} className="rounded-xl border border-border bg-card p-3"><div className="text-xs font-semibold text-foreground">{title}</div><div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{detail}</div></div>)}
-            </div>
-          </section>
-        ) : null}
+        {!loading && section === "overview" && subtab === "Tools" ? <ZafDeveloperTools locale={locale} /> : null}
 
         <footer className="mt-8 border-t border-border pt-4 text-[10px] leading-relaxed text-muted-foreground">
           <div className="flex flex-wrap justify-between gap-2"><span>ZAF TECH · Pi Ecosystem Intelligence</span><span>{tr("Independent community-developed technology project", "Bağımsız topluluk geliştirimi teknoloji projesi")}</span></div>
