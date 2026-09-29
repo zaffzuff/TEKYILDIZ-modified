@@ -85,7 +85,29 @@ export function ZafAppsData({ locale, subtab }: { locale: Locale; subtab: string
     );
   }
 
-  const unsupported = selected !== "All Apps" && selected !== "New Apps";
+  const supported = selected === "All Apps" || selected === "New Apps";
+  const detailByTab: Record<string, [string, string]> = {
+    Mainnet: [
+      "The current public ecosystem response does not expose a reliable network field for each observed app. ZAF TECH does not classify apps from names or URLs.",
+      "Mevcut herkese açık ekosistem yanıtı her uygulama için güvenilir bir ağ alanı açığa çıkarmıyor. ZAF TECH isim veya URL'den uygulama ağı sınıflandırmaz.",
+    ],
+    Testnet: [
+      "Testnet classification requires an explicit source field. It is not inferred from application URLs or titles.",
+      "Testnet sınıflandırması açık bir kaynak alanı gerektirir. Uygulama URL veya başlıklarından tahmin edilmez.",
+    ],
+    "App Activity": [
+      "The current source exposes app records but not a standardized per-app activity metric. Blockchain activity shown elsewhere is not attributed to individual apps.",
+      "Mevcut kaynak uygulama kayıtlarını açığa çıkarıyor ancak standartlaştırılmış uygulama başına aktivite metriği sunmuyor. Diğer bölümlerdeki blockchain aktivitesi tek tek uygulamalara atfedilmez.",
+    ],
+    "App Categories": [
+      "Categories are shown only when the source exposes them explicitly. The current response does not provide a reliable category field.",
+      "Kategoriler yalnızca kaynak bunları açıkça sunduğunda gösterilir. Mevcut yanıt güvenilir bir kategori alanı sağlamıyor.",
+    ],
+    "Ecosystem Staking": [
+      "Staking requires explicit per-app staking data. Current observed app records do not expose those amounts.",
+      "Staking için uygulama başına açık staking verisi gerekir. Mevcut gözlemlenen uygulama kayıtları bu miktarları açığa çıkarmıyor.",
+    ],
+  };
 
   return (
     <section className="mt-5 sm:mt-7 rounded-2xl border border-border bg-card p-4 sm:p-5">
@@ -107,7 +129,7 @@ export function ZafAppsData({ locale, subtab }: { locale: Locale; subtab: string
         </div>
       </div>
 
-      {unsupported ? (
+      {!supported ? (
         <div className="mt-4 rounded-xl border border-border p-4 text-[11px] leading-relaxed text-muted-foreground">
           {text(
             locale,
