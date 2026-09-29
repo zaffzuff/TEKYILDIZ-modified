@@ -11,24 +11,16 @@ function text(locale: Locale, en: string, tr: string) {
 function selectedDetail(locale: Locale, subtab: string) {
   const details: Record<string, [string, string]> = {
     Launchpad: [
-      "Launchpad is currently represented here by official Testnet status and release updates. Participation, allocation, and token mechanics are not treated as live Mainnet market data.",
-      "Launchpad burada resmi Testnet durumu ve yayın güncellemeleriyle temsil edilir. Katılım, dağıtım ve token mekanikleri canlı Mainnet piyasa verisi olarak yorumlanmaz.",
+      "Pi Launchpad is currently a Testnet product. Official updates describe it as a mechanism for testing ecosystem-token launches, participation, liquidity, and utility before a Mainnet version.",
+      "Pi Launchpad şu anda Testnet ürünüdür. Resmi güncellemeler, Mainnet sürümünden önce ekosistem token lansmanları, katılım, likidite ve faydayı test eden bir mekanizma olarak tanımlıyor.",
     ],
-    Tokens: [
-      "Token-level balances, prices, market caps, and holders require a public machine-readable source. ZAF TECH does not infer them from documentation or page text.",
-      "Token bazlı bakiye, fiyat, piyasa değeri ve holder verileri herkese açık makine-okunabilir kaynak gerektirir. ZAF TECH bunları belge veya sayfa metninden tahmin etmez.",
+    "DEX & AMM": [
+      "Pi DEX and AMM liquidity pools are currently documented as Testnet functionality. Official updates cover liquidity organization, domain verification, token ranking by liquidity, and swap mechanics.",
+      "Pi DEX ve AMM likidite havuzları şu anda Testnet işlevleri olarak belgeleniyor. Resmi güncellemeler likidite düzeni, domain doğrulama, likiditeye göre token sıralaması ve swap mekaniklerini kapsıyor.",
     ],
-    DEX: [
-      "The official DEX/AMM material currently documents Testnet functionality. Mainnet trading figures are therefore not presented here.",
-      "Resmi DEX/AMM materyali mevcut durumda Testnet işlevlerini belgeliyor. Bu nedenle Mainnet işlem rakamları burada gösterilmez.",
-    ],
-    Liquidity: [
-      "Liquidity-pool mechanics and official updates can be tracked, but live pool balances are not exposed through the current ZAF TECH source layer.",
-      "Likidite havuzu mekanikleri ve resmi güncellemeler izlenebilir; ancak canlı havuz bakiyeleri mevcut ZAF TECH kaynak katmanında açığa çıkmıyor.",
-    ],
-    "Trading Activity": [
-      "Observed Pi Mainnet blockchain activity is available under Intelligence → Explorer. It should not be interpreted as DEX-specific trading volume.",
-      "Gözlemlenen Pi Mainnet blockchain aktivitesi Intelligence → Explorer altında bulunur. Bu veri DEX'e özel işlem hacmi olarak yorumlanmamalıdır.",
+    "Official Context": [
+      "This section keeps DeFi interpretation tied to official Pi sources. ZAF TECH does not turn Testnet activity into Mainnet market data and does not infer prices, volume, liquidity balances, or market capitalization.",
+      "Bu bölüm DeFi yorumunu resmi Pi kaynaklarıyla sınırlar. ZAF TECH Testnet aktivitesini Mainnet piyasa verisine dönüştürmez; fiyat, hacim, likidite bakiyesi veya piyasa değeri tahmin etmez.",
     ],
   };
   const pair = details[subtab] ?? details.Launchpad;
@@ -62,12 +54,23 @@ export function ZafDefiData({ locale, subtab }: { locale: Locale; subtab: string
   if (!snapshot) return <section className="mt-5 rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">{text(locale, "Official DeFi sources are temporarily unavailable.", "Resmi DeFi kaynakları şu anda erişilemiyor.")}</section>;
 
   const d = snapshot.defi;
-  const cards = [
-    [text(locale, "Launchpad", "Launchpad"), text(locale, "Testnet", "Testnet"), d.launchpad.latestUpdate?.title ?? text(locale, "Official status source", "Resmi durum kaynağı")],
-    [text(locale, "DEX", "DEX"), text(locale, "Testnet", "Testnet"), d.dex.latestUpdate?.title ?? text(locale, "Official status source", "Resmi durum kaynağı")],
-    [text(locale, "AMM & Liquidity", "AMM ve Likidite"), text(locale, "Testnet", "Testnet"), d.amm.latestUpdate?.title ?? text(locale, "Official status source", "Resmi durum kaynağı")],
-    [text(locale, "Mainnet Trading", "Mainnet İşlemleri"), text(locale, "Restricted", "Kısıtlı"), d.mainnetTrading.detail],
-  ] as const;
+  const cards = subtab === "Launchpad"
+    ? [
+        [text(locale, "Launchpad status", "Launchpad durumu"), text(locale, "Testnet", "Testnet"), d.launchpad.latestUpdate?.title ?? text(locale, "Official status source", "Resmi durum kaynağı")],
+        [text(locale, "Purpose", "Amaç"), text(locale, "Product testing", "Ürün testi"), text(locale, "Testing token launches, participation, and utility before Mainnet.", "Mainnet öncesinde token lansmanı, katılım ve faydayı test etmek.")],
+        [text(locale, "Latest official update", "Son resmi güncelleme"), d.launchpad.latestUpdate?.title ?? "—", text(locale, "Source-backed update", "Kaynak destekli güncelleme")],
+      ] as const
+    : subtab === "DEX & AMM"
+      ? [
+          [text(locale, "DEX status", "DEX durumu"), text(locale, "Testnet", "Testnet"), d.dex.latestUpdate?.title ?? text(locale, "Official status source", "Resmi durum kaynağı")],
+          [text(locale, "AMM status", "AMM durumu"), text(locale, "Testnet", "Testnet"), d.amm.latestUpdate?.title ?? text(locale, "Official status source", "Resmi durum kaynağı")],
+          [text(locale, "Mainnet trading", "Mainnet işlemleri"), text(locale, "Restricted", "Kısıtlı"), d.mainnetTrading.detail],
+        ] as const
+      : [
+          [text(locale, "Network", "Ağ"), text(locale, "Testnet", "Testnet"), text(locale, "Current official DeFi functionality is documented on Testnet.", "Mevcut resmi DeFi işlevleri Testnet üzerinde belgeleniyor.")],
+          [text(locale, "Live market data", "Canlı piyasa verisi"), "—", text(locale, "No reliable public machine-readable source is exposed to ZAF TECH for price, volume, or liquidity balances.", "ZAF TECH için fiyat, hacim veya likidite bakiyelerine ilişkin güvenilir herkese açık makine-okunabilir kaynak bulunmuyor.")],
+          [text(locale, "Mainnet trading", "Mainnet işlemleri"), text(locale, "Restricted", "Kısıtlı"), d.mainnetTrading.detail],
+        ] as const;
 
   return (
     <section className="mt-5 sm:mt-7 rounded-2xl border border-border bg-card p-4 sm:p-5">
