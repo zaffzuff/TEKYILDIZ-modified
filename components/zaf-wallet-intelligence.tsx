@@ -1,0 +1,124 @@
+"use client";
+
+import { useState } from "react";
+import type { Locale } from "@/lib/zaf/i18n";
+import type { ZafWalletSnapshot } from "@/lib/zaf/types";
+
+function fmt(value: number | null) {
+  return value == null || !Number.isFinite(value)
+    ? "—"
+    : value.toLocaleString("en-US", { maximumFractionDigits: 7 });
+}
+
+function age(value: string | null, locale: Locale) {
+  if (!value) return "—";
+  const ms = Date.now() - Date.parse(value);
+  if (!Number.isFinite(ms)) return "—";
+  const min = Math.floor(ms / 60000);
+  if (locale === "tr") return min < 1 ? "az önce" : min < 60 ? `${min} dk önce` : `${Math.floor(min / 60)} sa önce`;
+  return min < 1 ? "just now" : min < 60 ? `${min}m ago` : `${Math.floor(min / 60)}h ago`;
+}
+
+function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
+  return <div className="rounded-xl border border-border bg-card p-3 sm:p-4"><div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div><div className="mt-1 text-xs font-medium text-foreground">{title}</div>{detail ? <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div> : null}</div>;
+}
+
+export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
+  const [address, setAddress] = useState("");
+  const [network, setNetwork] = useState<"mainnet" | "testnet">("mainnet");
+  const [data, setData] = useState<ZafWalletSnapshot | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+
+  async function lookup() {
+    const normalized = address.trim().toUpperCase();
+    if (!/^G[A-Z2-7]{55}$/.test(normalized)) {
+      setError(tr("Enter a valid public Pi wallet address.", "Geçerli bir herkese açık Pi cüzdan adresi girin."));
+      setData(null);
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(`/api/zaf/wallet?address=${encodeURIComponent(normalized)}&network=${network}`, { cache: "no-store" });
+      const body = await response.json();
+      if (!response.ok && body?.exists !== false) throw new Error(body?.error ?? tr("Wallet lookup failed.", "Cüzdan sorgusu başarısız."));
+      setData(body);
+      if (body?.exists === false) setError(tr("No account was found for this address on the selected network.", "Seçilen ağda bu adres için hesap bulunamadı."));
+    } catch (err) {
+      setData(null);
+      setError(err instanceof Error ? err.message : tr("Wallet lookup failed.", "Cüzdan sorgusu başarısız."));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return <section className="mt-5 sm:mt-7">
+    <div className="mb-3">
+      <h2 className="text-sm font-semibold text-foreground">{tr("Wallet Intelligence", "Cüzdan İstihbaratı")}</h2>
+      <p className="text-[11px] text-muted-foreground">{tr("Public, read-only wallet observations from Pi Horizon. No wallet connection or signing is required.", "Pi Horizon üzerinden herkese açık, salt-okunur cüzdan gözlemleri. Cüzdan bağlantısı veya imzalama gerekmez.")}</p>
+    </div>
+
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
+      <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+        <input value={address} onChange={e => setAddress(e.target.value)} onKeyDown={e => { if (e.key === "Enter") void lookup(); }} placeholder={tr("Public Pi wallet address (G...)", "Herkese açık Pi cüzdan adresi (G...)")} className="min-w-0 rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring" />
+        <select value={network} onChange={e => setNetwork(e.target.value as "mainnet" | "testnet")} className="rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground">
+          <option value="mainnet">{tr("Pi Mainnet", "Pi Mainnet")}</option>
+          <option value="testnet">{tr("Pi Testnet", "Pi Testnet")}</option>
+        </select>
+        <button type="button" onClick={() => void lookup()} disabled={loading} className="rounded-lg bg-foreground px-4 py-2.5 text-xs font-medium text-background disabled:opacity-50">{loading ? tr("Checking…", "Kontrol ediliyor…") : tr("Inspect", "İncele")}</button>
+      </div>
+      {error ? <p className="mt-2 text-[11px] text-muted-foreground">{error}</p> : null}
+    </div>
+
+    {data?.exists ? <div className="mt-3 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0"><div className="text-[10px] text-muted-foreground">{tr("Public address", "Herkese açık adres")}</div><div className="mt-1 break-all font-mono text-[11px] text-foreground">{data.address}</div></div>
+          <div className="flex shrink-0 gap-2">
+            <button type="button" onClick={() => void navigator.clipboard?.writeText(data.address)} className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Copy", "Kopyala")}</button>
+            <a href={data.network === "Pi Mainnet" ? `https://blockexplorer.minepi.com/mainnet/accounts/${data.address}` : `https://blockexplorer.minepi.com/testnet/accounts/${data.address}`} target="_blank" rel="noreferrer" className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Explorer", "Explorer")}</a>
+          </div>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5"><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{data.network}</span><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Public data only", "Yalnızca herkese açık veri")}</span></div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <Card title={tr("Account balance", "Hesap bakiyesi")} value={fmt(data.accountBalancePi)} detail="Pi" />
+        <Card title={tr("Observable claimable", "Gözlemlenebilir talep edilebilir")} value={fmt(data.observableClaimablePi)} detail={tr("Native claimable balances", "Native claimable bakiyeler")} />
+        <Card title={tr("Last activity", "Son aktivite")} value={age(data.lastActivity, locale)} detail={tr("Transactions + operations", "İşlemler + operasyonlar")} />
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Account metadata", "Hesap metadatası")}</div>
+        <div className="mt-3 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-3">
+          <div><div className="text-muted-foreground">{tr("Sequence", "Sequence")}</div><div className="mt-1 break-all text-foreground">{data.account?.sequence ?? "—"}</div></div>
+          <div><div className="text-muted-foreground">{tr("Subentries", "Alt kayıtlar")}</div><div className="mt-1 text-foreground">{data.account?.subentryCount ?? "—"}</div></div>
+          <div><div className="text-muted-foreground">{tr("Last modified ledger", "Son değişiklik ledger'ı")}</div><div className="mt-1 text-foreground">{data.account?.lastModifiedLedger ?? "—"}</div></div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between gap-2"><div className="text-xs font-semibold text-foreground">{tr("Recent transactions", "Son işlemler")}</div><span className="text-[10px] text-muted-foreground">{data.transactions.length}</span></div>
+        <div className="mt-2 space-y-2">
+          {data.transactions.slice(0, 8).map(tx => <div key={tx.hash} className="rounded-lg border border-border p-2.5"><div className="flex items-start justify-between gap-2"><a href={`https://blockexplorer.minepi.com/mainnet/transactions/${tx.hash}`} target="_blank" rel="noreferrer" className="truncate font-mono text-[10px] text-foreground underline underline-offset-2">{tx.hash}</a><span className="shrink-0 text-[9px] text-muted-foreground">{tx.successful === true ? tr("Success", "Başarılı") : tx.successful === false ? tr("Failed", "Başarısız") : "—"}</span></div><div className="mt-1 text-[9px] text-muted-foreground">{tx.createdAt ? new Date(tx.createdAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"} · {tx.operationCount ?? "—"} ops · {fmt(tx.feePi)} Pi</div></div>)}
+          {!data.transactions.length ? <div className="text-[11px] text-muted-foreground">{tr("No recent transactions returned.", "Son işlemler döndürülmedi.")}</div> : null}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Observable claimable balances", "Gözlemlenebilir claimable bakiyeler")}</div>
+        <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{tr("This section reports public native claimable balances returned by Horizon. It does not infer private Pi lockup commitments.", "Bu bölüm Horizon'un döndürdüğü herkese açık native claimable bakiyeleri raporlar. Özel Pi lockup taahhütlerini çıkarımsamaz.")}</p>
+        <div className="mt-2 space-y-2">
+          {Array.isArray(data.lockup?.items) && data.lockup.items.length ? data.lockup.items.map((item: any) => <div key={String(item.id)} className="rounded-lg border border-border p-2.5 text-[10px]"><div className="flex justify-between gap-2"><span className="font-mono text-foreground">{String(item.id)}</span><span className="text-foreground">{fmt(Number(item.amountPi))} Pi</span></div><div className="mt-1 text-muted-foreground">{item.unlockAt ? `${tr("Unlock", "Açılma")}: ${new Date(String(item.unlockAt)).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}` : tr("Unlock time not observable", "Açılma zamanı gözlemlenemiyor")}</div></div>) : <div className="text-[11px] text-muted-foreground">{tr("No publicly observable native claimable balances were returned.", "Herkese açık gözlemlenebilir native claimable bakiye döndürülmedi.")}</div>}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-3 text-[10px] leading-relaxed text-muted-foreground">
+        {tr("Security boundary: ZAF TECH never asks for a seed phrase, private key, wallet connection or transaction signature. Only a public wallet address is used for lookup.", "Güvenlik sınırı: ZAF TECH seed phrase, private key, cüzdan bağlantısı veya işlem imzası istemez. Sorgu için yalnızca herkese açık cüzdan adresi kullanılır.")}
+      </div>
+    </div> : null}
+  </section>;
+}
