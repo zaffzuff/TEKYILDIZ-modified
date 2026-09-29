@@ -14,7 +14,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
         <header className="border-b border-border pb-5 pt-7">
           <div className="flex items-center justify-between gap-3">
             <Link href="/" className="text-xs font-medium text-muted-foreground hover:text-foreground">← Back to ZAF TECH</Link>
-            <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={38} height={38} className="h-9 w-9 object-contain" />
+            <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={38} height={38} className="h-9 w-9 object-contain" priority />
           </div>
           <div className="mt-6">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Pi App Directory</div>
@@ -40,7 +40,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
               ["Pi Payments", verification(app.piPayments)],
               ["PiNet", verification(app.piNet)],
               ["Network", app.network === "unknown" ? "Not Verified" : app.network],
-              ["Status", app.status === "unknown" ? "Not checked" : app.status],
+              ["Status", app.status === "unknown" ? "Not Checked" : app.status],
               ["Last Checked", new Date(app.lastChecked).toLocaleString("en-GB")],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl border border-border bg-card p-3">
