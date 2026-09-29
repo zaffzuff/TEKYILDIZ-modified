@@ -306,7 +306,7 @@ export function ZafIntelligenceData({
               <button key={value} type="button" onClick={() => setCategoryFilter(value as typeof categoryFilter)} className={"rounded-md border px-2.5 py-1.5 text-[10px] " + (categoryFilter === value ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground")}>{value === "all" ? copy(locale, "All categories", "Tüm kategoriler") : value}</button>
             ))}
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 spac<div className="mt-4 space-y-2">
             {visibleSignals.length ? visibleSignals.map((signal) => {
               const state = signalState[signal.id];
               return (
