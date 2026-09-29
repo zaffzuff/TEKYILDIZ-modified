@@ -22,7 +22,7 @@ function SoloHost({locale}:{locale:Locale}){
  const tr=locale==="tr";
  return <section className="mt-7"><div className="mb-3"><h2 className="text-sm font-semibold text-foreground">SoloHost</h2><p className="text-[11px] text-muted-foreground">{tr?"Pi Desktop üzerindeki self-hosted uygulama katmanının resmi durumunu ve doğrulanmış kullanım alanlarını gösterir.":"Official status and documented use cases of the self-hosted application layer in Pi Desktop."}</p></div>
  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
- <Card title={tr?"Platform durumu":"Platform status"} value="Beta" detail={tr?"SoloHost, Pi2Day 2026 ile açık ve permissionless bir framework olarak tanıtıldı.":"SoloHost was introduced at Pi2Day 2026 as an open, permissionless framework."}/>
+ <Card title={tr?"Platform Durumu":"Platform Status"} value="Beta" detail={tr?"SoloHost, Pi2Day 2026 ile açık ve permissionless bir framework olarak tanıtıldı.":"SoloHost was introduced at Pi2Day 2026 as an open, permissionless framework."}/>
  <Card title="Pi Desktop" value="0.6.3" detail={tr?"9 Eylül 2026 güncellemesi keşif, güvenilirlik ve geliştirici araçlarını geliştirdi.":"The September 9, 2026 update improved discovery, reliability, and developer tooling."}/>
  <Card title={tr?"Çalıştırma modeli":"Execution model"} value={tr?"Yerel":"Local"} detail={tr?"Uygulamalar kullanıcının kendi bilgisayarında çalışır; mobil erişim Pi Browser üzerinden desteklenir.":"Apps run on the user's own computer, with mobile access through Pi Browser."}/>
  <Card title={tr?"Keşif sinyali":"Discovery signal"} value="Running counts" detail={tr?"0.6.3 ile uygulamalar mevcut çalıştırılma sayılarına göre sıralanabiliyor.":"Version 0.6.3 introduced ranking by current running counts."}/>
