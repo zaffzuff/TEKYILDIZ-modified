@@ -1,136 +1,228 @@
-export interface ZafWalletLockup {
-  id: string;
-  amountPi: number;
-  claimants: string[];
-  canClaimNow: boolean;
-  createdAt: string | null;
-  unlockAt: string | null;
-  predicate: unknown;
-}
+import type { ZafWalletOperation, ZafWalletSnapshot, ZafWalletTransaction } from "./types";
 
-export interface ZafWalletSnapshot {
-  address: string;
-  availablePi: number;
-  claimablePi: number;
-  totalObservedPi: number;
-  lockups: ZafWalletLockup[];
-  fetchedAt: string;
-  source: "Pi Mainnet Horizon";
-  error: string | null;
-}
+const NETWORKS = {
+  mainnet: { label: "Pi Mainnet" as const, base: "https://api.mainnet.minepi.com" },
+  testnet: { label: "Pi Testnet" as const, base: "https://api.testnet.minepi.com" },
+};
+
+const HORIZON_TIMEOUT_MS = 10_000;
+const ADDRESS_RE = /^G[A-Z2-7]{55}$/;
 
 type HorizonResponse = Record<string, unknown>;
 type HorizonRecord = Record<string, unknown>;
 
-const BASE = "https://api.mainnet.minepi.com";
-const HORIZON_TIMEOUT_MS = 10_000;
-
-async function horizon(path: string): Promise<HorizonResponse> {
+async function horizon(base: string, path: string): Promise<HorizonResponse> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), HORIZON_TIMEOUT_MS);
+
   try {
-    const response = await fetch(`${BASE}${path}`, {
+    const response = await fetch(`${base}${path}`, {
       cache: "no-store",
       headers: { Accept: "application/json" },
       signal: controller.signal,
     });
-    if (!response.ok) throw new Error(`Pi Horizon request failed: ${response.status}`);
-    return response.json() as Promise<HorizonResponse>;
+    const body = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const error = new Error(
+        typeof body?.title === "string" ? body.title : `Pi Horizon request failed: ${response.status}`,
+      );
+      (error as Error & { status?: number }).status = response.status;
+      throw error;
+    }
+
+    return body as HorizonResponse;
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("Pi Horizon request timed out after 10 seconds");
+    }
+    throw error;
   } finally {
     clearTimeout(timeout);
   }
 }
 
-function nativeBalance(account: HorizonResponse): number {
-  const balances = account.balances;
-  if (!Array.isArray(balances)) return 0;
+function recordsFromPage(page: HorizonResponse): HorizonRecord[] {
+  const embedded = page._embedded;
+  if (!embedded || typeof embedded !== "object") return [];
+  const records = (embedded as HorizonRecord).records;
+  return Array.isArray(records)
+    ? records.filter((record): record is HorizonRecord => Boolean(record) && typeof record === "object")
+    : [];
+}
 
-  const balance = balances.find(
+function stringOrNull(value: unknown): string | null {
+  return value == null ? null : String(value);
+}
+
+function stroopsToPi(value: unknown): number | null {
+  if (typeof value !== "string" && typeof value !== "number") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number / 10_000_000 : null;
+}
+
+function decimalPi(value: unknown): number | null {
+  if (typeof value !== "string" && typeof value !== "number") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function nativeBalance(account: HorizonResponse): number | null {
+  const balances = account.balances;
+  if (!Array.isArray(balances)) return null;
+
+  const native = balances.find(
     (item): item is HorizonRecord =>
-      Boolean(item) &&
-      typeof item === "object" &&
-      (item as HorizonRecord).asset_type === "native",
+      Boolean(item) && typeof item === "object" && item.asset_type === "native",
   );
 
-  return Number(balance?.balance ?? 0);
+  return native ? decimalPi(native.balance) : null;
 }
 
-function predicateUnlockAt(predicate: unknown, createdAt: string | null): string | null {
+function mapTransaction(raw: HorizonRecord): ZafWalletTransaction {
+  const operationCount = Number(raw.operation_count);
+  return {
+    hash: String(raw.hash ?? raw.id ?? ""),
+    ledger: stringOrNull(raw.ledger),
+    createdAt: stringOrNull(raw.created_at),
+    successful: typeof raw.successful === "boolean" ? raw.successful : null,
+    sourceAccount: stringOrNull(raw.source_account),
+    feePi: stroopsToPi(raw.fee_charged),
+    operationCount: Number.isFinite(operationCount) ? operationCount : null,
+    memo: stringOrNull(raw.memo),
+  };
+}
+
+function mapOperation(raw: HorizonRecord): ZafWalletOperation {
+  return {
+    id: String(raw.id ?? ""),
+    ledger: stringOrNull(raw.ledger),
+    createdAt: stringOrNull(raw.created_at),
+    type: String(raw.type ?? "unknown"),
+    successful: typeof raw.transaction_successful === "boolean" ? raw.transaction_successful : null,
+    sourceAccount: stringOrNull(raw.source_account),
+    transactionHash: stringOrNull(raw.transaction_hash),
+    amountPi: decimalPi(raw.amount),
+    from: stringOrNull(raw.from),
+    to: stringOrNull(raw.to),
+  };
+}
+
+function unlockAt(predicate: unknown, createdAt: string | null): string | null {
   if (!predicate || typeof predicate !== "object") return null;
-
   const record = predicate as HorizonRecord;
-  const absolute = record.abs_before;
-  if (typeof absolute === "string" && absolute) return absolute;
 
-  const relative = Number(record.rel_before);
-  if (Number.isFinite(relative) && createdAt) {
-    const createdAtMs = Date.parse(createdAt);
-    if (!Number.isFinite(createdAtMs)) return null;
-    return new Date(createdAtMs + relative * 1000).toISOString();
-  }
+  if (typeof record.abs_before === "string" && record.abs_before) return record.abs_before;
 
-  return null;
+  const relativeSeconds = Number(record.rel_before);
+  if (!Number.isFinite(relativeSeconds) || !createdAt) return null;
+
+  const createdAtMs = Date.parse(createdAt);
+  return Number.isFinite(createdAtMs)
+    ? new Date(createdAtMs + relativeSeconds * 1000).toISOString()
+    : null;
 }
 
-function canClaim(predicate: unknown, createdAt: string | null): boolean {
-  const unlockAt = predicateUnlockAt(predicate, createdAt);
-  return unlockAt ? Date.now() >= Date.parse(unlockAt) : false;
-}
+export async function getZafWallet(
+  address: string,
+  network: "mainnet" | "testnet" = "mainnet",
+): Promise<ZafWalletSnapshot> {
+  const normalized = address.trim().toUpperCase();
+  const selected = NETWORKS[network];
+  const generatedAt = new Date().toISOString();
 
-export async function getZafWallet(address: string): Promise<ZafWalletSnapshot> {
-  const normalized = address.trim();
-  if (!/^G[A-Z2-7]{55}$/.test(normalized)) {
+  if (!ADDRESS_RE.test(normalized)) {
     throw new Error("Invalid Pi wallet address");
   }
 
-  const [account, claimablePage] = await Promise.all([
-    horizon(`/accounts/${encodeURIComponent(normalized)}`),
-    horizon(`/claimable_balances?claimant=${encodeURIComponent(normalized)}&limit=200&order=desc`),
-  ]);
+  try {
+    const [account, claimablePage, transactionPage, operationPage] = await Promise.all([
+      horizon(selected.base, `/accounts/${encodeURIComponent(normalized)}`),
+      horizon(selected.base, `/claimable_balances?claimant=${encodeURIComponent(normalized)}&limit=200&order=desc`),
+      horizon(selected.base, `/accounts/${encodeURIComponent(normalized)}/transactions?order=desc&limit=20&include_failed=true`),
+      horizon(selected.base, `/accounts/${encodeURIComponent(normalized)}/operations?order=desc&limit=20`),
+    ]);
 
-  const embedded = claimablePage._embedded;
-  const records = embedded && typeof embedded === "object" && Array.isArray((embedded as HorizonRecord).records)
-    ? ((embedded as HorizonRecord).records as unknown[]).filter(
-        (record): record is HorizonRecord => Boolean(record) && typeof record === "object",
-      )
-    : [];
+    const transactions = recordsFromPage(transactionPage).map(mapTransaction);
+    const operations = recordsFromPage(operationPage).map(mapOperation);
 
-  const lockups = records
-    .filter((record) => record.asset === "native" || record.asset_type === "native")
-    .map((record) => {
-      const createdAt = typeof record.created_at === "string" ? record.created_at : null;
-      const predicate = record.predicate ?? null;
-      const claimants = Array.isArray(record.claimants)
-        ? record.claimants.map((claimant) => {
-            if (claimant && typeof claimant === "object") {
-              return String((claimant as HorizonRecord).destination ?? "");
-            }
-            return String(claimant ?? "");
-          })
-        : [];
+    const lockups = recordsFromPage(claimablePage)
+      .filter((record) => record.asset === "native" || record.asset_type === "native")
+      .map((record) => {
+        const createdAt = stringOrNull(record.created_at);
+        const predicate = record.predicate ?? null;
+        const unlockAtValue = unlockAt(predicate, createdAt);
+        return {
+          id: String(record.id ?? record.balance_id ?? ""),
+          amountPi: decimalPi(record.amount) ?? 0,
+          claimants: Array.isArray(record.claimants)
+            ? record.claimants.map((claimant) =>
+                claimant && typeof claimant === "object"
+                  ? String((claimant as HorizonRecord).destination ?? "")
+                  : String(claimant ?? ""),
+              )
+            : [],
+          canClaimNow: unlockAtValue ? Date.now() >= Date.parse(unlockAtValue) : false,
+          createdAt,
+          unlockAt: unlockAtValue,
+          predicate,
+        };
+      });
 
-      return {
-        id: String(record.id ?? record.balance_id ?? ""),
-        amountPi: Number(record.amount ?? 0),
-        claimants,
-        canClaimNow: canClaim(predicate, createdAt),
-        createdAt,
-        unlockAt: predicateUnlockAt(predicate, createdAt),
-        predicate,
-      } satisfies ZafWalletLockup;
-    });
+    const totalBalancePi = nativeBalance(account);
+    const observableClaimablePi = lockups.reduce((sum, item) => sum + item.amountPi, 0);
+    const timestamps = [
+      ...transactions.map((item) => item.createdAt),
+      ...operations.map((item) => item.createdAt),
+    ]
+      .filter((value): value is string => Boolean(value))
+      .map(Date.parse)
+      .filter(Number.isFinite);
 
-  const availablePi = nativeBalance(account);
-  const claimablePi = lockups.reduce((sum: number, item: ZafWalletLockup) => sum + item.amountPi, 0);
+    return {
+      address: normalized,
+      network: selected.label,
+      exists: true,
+      totalBalancePi,
+      availableBalancePi: totalBalancePi,
+      lockedBalancePi: observableClaimablePi,
+      lockup: {
+        observableClaimablePi,
+        items: lockups,
+        note: "These are publicly observable native claimable balances. ZAF TECH does not infer private Pi lockup commitments from unavailable data.",
+      },
+      account: {
+        sequence: stringOrNull(account.sequence),
+        subentryCount: Number.isFinite(Number(account.subentry_count)) ? Number(account.subentry_count) : null,
+        lastModifiedLedger: stringOrNull(account.last_modified_ledger),
+      },
+      lastActivity: timestamps.length ? new Date(Math.max(...timestamps)).toISOString() : null,
+      transactions,
+      operations,
+      source: `${selected.label} Horizon`,
+      generatedAt,
+      error: null,
+    };
+  } catch (error) {
+    const status = error instanceof Error && "status" in error
+      ? Number((error as Error & { status?: number }).status)
+      : null;
 
-  return {
-    address: normalized,
-    availablePi,
-    claimablePi,
-    totalObservedPi: availablePi + claimablePi,
-    lockups,
-    fetchedAt: new Date().toISOString(),
-    source: "Pi Mainnet Horizon",
-    error: null,
-  };
+    return {
+      address: normalized,
+      network: selected.label,
+      exists: status !== 404 ? null : false,
+      totalBalancePi: null,
+      availableBalancePi: null,
+      lockedBalancePi: null,
+      lockup: null,
+      account: null,
+      lastActivity: null,
+      transactions: [],
+      operations: [],
+      source: `${selected.label} Horizon`,
+      generatedAt,
+      error: error instanceof Error ? error.message : "Pi wallet request failed",
+    };
+  }
 }
