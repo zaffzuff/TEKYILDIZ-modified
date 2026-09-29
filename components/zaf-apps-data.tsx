@@ -108,7 +108,7 @@ export function ZafAppsData({ locale, subtab }: { locale: Locale; subtab: string
     };
   }, []);
 
-  const apps = snapshot?.apps.items ?? [];
+  const apps = useMemo(() => snapshot?.apps.items ?? [], [snapshot?.apps.items]);
   const filteredApps = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) return apps;
