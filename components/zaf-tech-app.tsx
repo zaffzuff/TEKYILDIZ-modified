@@ -160,7 +160,7 @@ export function ZafTechApp() {
               <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={44} height={44} className="h-11 w-11 shrink-0 object-contain" priority />
               <div className="min-w-0">
                 <div className="text-2xl font-bold tracking-tight ty-brand-text">ZAF TECH</div>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem İstihbaratı")}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem Gözlem Merkezi")}</p>
               </div>
             </div>
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
@@ -184,11 +184,11 @@ export function ZafTechApp() {
           </div>
         </header>
 
-        {loading ? <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading ecosystem intelligence…", "Ekosistem istihbaratı yükleniyor…")}</div> : null}
+        {loading ? <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading ecosystem observatory…", "Ekosistem gözlemleri yükleniyor…")}</div> : null}
 
         {!loading && section === "overview" && subtab === "Ecosystem" ? (
           <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem İstihbaratı")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
+            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Card title={tr("Observed apps", "Gözlemlenen uygulamalar")} value={number(ecosystem?.apps.totalCount)} detail={tr("Current public source response", "Mevcut herkese açık kaynak yanıtı")} />
               <Card title={tr("Recent ledgers", "Son ledger'lar")} value={number(snapshot?.metrics.recentLedgerCount)} detail={tr("Pi Mainnet observation window", "Pi Mainnet gözlem penceresi")} />
@@ -209,7 +209,7 @@ export function ZafTechApp() {
 
         {!loading && section === "intelligence" && subtab !== "Wallet" ? (
           <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Intelligence", "Ekosistem İstihbaratı")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
+            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Observatory", "Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity state", "Aktivite durumu")} value={snapshot?.intelligence.activityState ?? "—"} detail={tr("Descriptive, not predictive", "Tanımlayıcı, tahmin edici değil")} /><Card title={tr("Tx / hour", "İşlem / saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / hour", "Operasyon / saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement boundary", "Ölçüm sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.", "Bu sinyaller yalnızca örneklenen herkese açık blockchain verisini tanımlar. Pi Network için puan değildir, kullanıcı niyeti çıkarmaz ve gelecekteki ağ davranışını tahmin etmez.")}</p></div>
           </section>
