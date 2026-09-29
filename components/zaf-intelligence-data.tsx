@@ -399,7 +399,7 @@ export function ZafIntelligenceData({
           ))}
         </div>
 
-        <div className="mt-4 spac        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {(["apps", "defi", "node", "pioneer", "mainnet", "official"] as const).map((category) => {
             const count = (ecosystem?.signals ?? []).filter((signal) => signal.category === category).length + (category === "mainnet" && data?.metrics.observedTransactionsPerHour != null ? 1 : 0);
             return (
