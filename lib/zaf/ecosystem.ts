@@ -20,6 +20,15 @@ export type EcosystemNewsItem = {
   publishedAt: string | null;
 };
 
+export type OfficialEcosystemSignal = {
+  id: string;
+  title: string;
+  value: string;
+  detail: string;
+  observedAt: string;
+  sourceUrl: string;
+};
+
 export type EcosystemSnapshot = {
   generatedAt: string;
   sources: EcosystemSourceStatus[];
@@ -32,6 +41,7 @@ export type EcosystemSnapshot = {
     note: string;
   };
   news: EcosystemNewsItem[];
+  officialSignals: OfficialEcosystemSignal[];
   defi: {
     launchpad: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
     dex: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
@@ -226,5 +236,48 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     });
   }
 
-  return { generatedAt, sources, apps: appData, news, defi, changes };
+  const officialSignals: OfficialEcosystemSignal[] = [
+    {
+      id: "ecosystem-quest-started",
+      title: "Pi2Day Ecosystem Quest started",
+      value: "2.56M started",
+      detail: "Official recap reported more than 2.56 million Pioneers started the 2026 Ecosystem Quest.",
+      observedAt: "2026-08-05",
+      sourceUrl: "https://minepi.com/blog/pi2day-2026-recap/",
+    },
+    {
+      id: "ecosystem-quest-completed",
+      title: "Pi2Day Ecosystem Quest completed",
+      value: "1.78M completed",
+      detail: "Official recap reported more than 1.78 million Pioneers completed every step of the 2026 Ecosystem Quest.",
+      observedAt: "2026-08-05",
+      sourceUrl: "https://minepi.com/blog/pi2day-2026-recap/",
+    },
+    {
+      id: "solohost-apps",
+      title: "SoloHost apps deployed",
+      value: "110 apps",
+      detail: "Official Pi2Day recap reported 110 community-deployed SoloHost apps at that time.",
+      observedAt: "2026-08-05",
+      sourceUrl: "https://minepi.com/blog/pi2day-2026-recap/",
+    },
+    {
+      id: "directory-staking-example",
+      title: "Ecosystem staking example",
+      value: "3.19M Pi staked",
+      detail: "Pi reported that CiDi Games received 3.19 million Pi in staked support and over 1.2 million game plays in under one week.",
+      observedAt: "2026-06-18",
+      sourceUrl: "https://minepi.com/blog/ecosystem-directory-staking/",
+    },
+    {
+      id: "launchpad-slice-commitment",
+      title: "SLICE Testnet commitment",
+      value: "15.92M Test-Pi",
+      detail: "Pi reported more than 242,000 participants committing 15.92 million Test-Pi toward 10 million SLICE Test tokens.",
+      observedAt: "2026-07-24",
+      sourceUrl: "https://minepi.com/blog/launchpad-liquidity-pool/",
+    },
+  ];
+
+  return { generatedAt, sources, apps: appData, news, officialSignals, defi, changes };
 }
