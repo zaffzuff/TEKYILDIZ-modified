@@ -1,5 +1,5 @@
 /** @type {import('postcss-load-config').Config} */
-const config = {
+const config = { // ZAF TECH PostCSS configuration
   plugins: {
     '@tailwindcss/postcss': {},
   },
