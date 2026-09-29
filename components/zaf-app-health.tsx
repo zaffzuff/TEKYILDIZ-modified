@@ -130,7 +130,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
           {batch.results.slice(0,8).map(item=><button type="button" onClick={()=>void loadHistory(item.url)} key={item.url} className="flex w-full items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-left text-[10px]">
             <span className="min-w-0 truncate text-foreground">{item.name}</span>
             <span className="shrink-0 text-muted-foreground">{item.check.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.check.responseTimeMs} ms</span>
-          </div>)}
+          </button>)}
         </div>
         <div className="mt-3 text-[10px] text-muted-foreground">{tr("Checks are persisted when DATABASE_URL is configured. Scheduled checks run through the configured server-side scheduler.","DATABASE_URL yapılandırıldığında kontroller geçmişe kaydedilir. Zamanlanmış kontroller yapılandırılmış sunucu tarafı zamanlayıcısı üzerinden çalışır.")}</div>
         {historyUrl?<div className="mt-4 border-t border-border pt-4">
