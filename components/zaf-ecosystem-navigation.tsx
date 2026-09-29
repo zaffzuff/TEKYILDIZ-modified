@@ -25,7 +25,6 @@ const labels: Record<string, [string, string]> = {
   "Official Context": ["Official Context", "Resmi Bağlam"],
   Launchpad: ["Launchpad", "Launchpad"],
   "DEX & AMM": ["DEX & AMM", "DEX & AMM"],
-  "Official Context": ["Official Context", "Resmi Bağlam"],
   Node: ["Node", "Node"],
   "Node History": ["Node History", "Node Geçmişi"],
   SoloHost: ["SoloHost", "SoloHost"],
