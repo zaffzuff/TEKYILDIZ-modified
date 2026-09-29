@@ -5,7 +5,10 @@ const HORIZON_TIMEOUT_MS = 10_000;
 const PAGE_LIMIT = 200;
 
 type HorizonRecord = Record<string, unknown>;
-type HorizonResponse = { _embedded?: { records?: HorizonRecord[] } } & Record<string, unknown>;
+type HorizonResponse = {
+  _embedded?: { records?: HorizonRecord[] };
+  _links?: { next?: { href?: unknown } };
+} & Record<string, unknown>;
 
 async function horizon(path: string): Promise<HorizonResponse> {
   const controller = new AbortController();
