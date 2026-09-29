@@ -90,3 +90,9 @@ Historical storage is optional until a PostgreSQL-compatible `DATABASE_URL` is c
 - Detects observed app-count changes, ecosystem source status changes, added/removed observable signals, and DeFi status changes.
 - Exposed through `/api/zaf/ecosystem/changes` and surfaced in the Observatory Activity Signals view.
 - Historical comparison remains optional until `DATABASE_URL` is configured.
+
+
+### Ecosystem Time Series
+- Historical snapshot points can be exposed through `/api/zaf/ecosystem/trends`.
+- The Observatory Activity Signals view renders an observed app-count trend when stored snapshots are available.
+- Trend data is descriptive historical data and is not presented as a forecast.
