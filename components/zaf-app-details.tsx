@@ -4,7 +4,7 @@ import type { DirectoryApp } from "@/lib/zaf/app-directory";
 
 function verification(value: DirectoryApp["piAuthentication"]) {
   if (value === "verified") return "Verified";
-  return "Not verified";
+  return "Not Verified";
 }
 
 export function AppDetails({ app }: { app: DirectoryApp }) {
@@ -21,8 +21,8 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
             <h1 className="mt-1 text-xl font-bold tracking-tight text-foreground">{app.name}</h1>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.category}</span>
-              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.network === "unknown" ? "Network not verified" : app.network}</span>
-              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.status === "unknown" ? "Status not checked" : app.status}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.network === "unknown" ? "Network Not Verified" : app.network}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.status === "unknown" ? "Status Not Checked" : app.status}</span>
             </div>
           </div>
         </header>
@@ -31,7 +31,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="text-xs font-semibold text-foreground">Application</div>
             <p className="mt-2 break-all text-[11px] text-muted-foreground">{app.url}</p>
-            <a href={app.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex rounded-lg bg-foreground px-3 py-2 text-[11px] font-medium text-background">Open application</a>
+            <a href={app.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex rounded-lg bg-foreground px-3 py-2 text-[11px] font-medium text-background">Open Application</a>
           </div>
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -39,9 +39,9 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
               ["Pi Authentication", verification(app.piAuthentication)],
               ["Pi Payments", verification(app.piPayments)],
               ["PiNet", verification(app.piNet)],
-              ["Network", app.network === "unknown" ? "Not verified" : app.network],
+              ["Network", app.network === "unknown" ? "Not Verified" : app.network],
               ["Status", app.status === "unknown" ? "Not checked" : app.status],
-              ["Last checked", new Date(app.lastChecked).toLocaleString("en-GB")],
+              ["Last Checked", new Date(app.lastChecked).toLocaleString("en-GB")],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl border border-border bg-card p-3">
                 <div className="text-[10px] text-muted-foreground">{label}</div>
@@ -51,7 +51,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-4">
-            <div className="text-xs font-semibold text-foreground">Verification boundary</div>
+            <div className="text-xs font-semibold text-foreground">Verification Boundary</div>
             <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
               ZAF TECH does not claim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or application health until the relevant property has been independently verified by an observable check. Category is a ZAF TECH classification based on the public name/URL signal and is not an official Pi category.
             </p>
