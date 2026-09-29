@@ -15,6 +15,8 @@ type Result = {
   checkedAt: string;
 };
 
+type HistoryRecord = Result & { appName: string };
+
 type BatchResult = {
   generatedAt: string;
   checked: number;
@@ -30,6 +32,9 @@ export function ZafAppHealth({locale}:{locale:Locale}){
  const [batch,setBatch]=useState<BatchResult|null>(null);
  const [loading,setLoading]=useState(false);
  const [batchLoading,setBatchLoading]=useState(false);
+ const [history,setHistory]=useState<HistoryRecord[]|null>(null);
+ const [historyUrl,setHistoryUrl]=useState("");
+ const [historyLoading,setHistoryLoading]=useState(false);
 
  async function check(){
    if(!url.trim()) return;
@@ -37,6 +42,20 @@ export function ZafAppHealth({locale}:{locale:Locale}){
    try{const r=await fetch("/api/apps/check?url="+encodeURIComponent(url.trim()),{cache:"no-store"}); setResult(await r.json());}
    catch{setResult({url:url.trim(),reachable:false,responseTimeMs:0,https:url.startsWith("https://"),redirect:false,checkedAt:new Date().toISOString(),error:"Request failed"});}
    finally{setLoading(false);}
+ }
+
+ async function loadHistory(target:string){
+   setHistoryLoading(true); setHistory(null); setHistoryUrl(target);
+   try{
+     const r=await fetch("/api/apps/health/history?url="+encodeURIComponent(target),{cache:"no-store"});
+     if(!r.ok) throw new Error("History request failed");
+     const data=await r.json();
+     setHistory(data.records ?? []);
+   }catch{
+     setHistory([]);
+   }finally{
+     setHistoryLoading(false);
+   }
  }
 
  async function checkEcosystem(){
@@ -85,12 +104,22 @@ export function ZafAppHealth({locale}:{locale:Locale}){
           <div className="rounded-lg border border-border p-3"><div className="text-[10px] text-muted-foreground">{tr("Offline","Çevrimdışı")}</div><div className="mt-1 text-sm font-semibold text-foreground">{batch.summary.offline}</div></div>
         </div>
         <div className="mt-3 space-y-1.5">
-          {batch.results.slice(0,8).map(item=><div key={item.url} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-[10px]">
+          {batch.results.slice(0,8).map(item=><button type="button" onClick={()=>void loadHistory(item.url)} key={item.url} className="flex w-full items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-left text-[10px]">
             <span className="min-w-0 truncate text-foreground">{item.name}</span>
             <span className="shrink-0 text-muted-foreground">{item.check.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.check.responseTimeMs} ms</span>
           </div>)}
         </div>
-        <div className="mt-3 text-[10px] text-muted-foreground">{tr("Current batch is an observable snapshot. Historical storage and scheduled checks will be added in the Data phase.","Mevcut toplu kontrol gözlemlenebilir bir anlık örnektir. Geçmiş veri saklama ve zamanlanmış kontroller Data aşamasında eklenecektir.")}</div>
+        <div className="mt-3 text-[10px] text-muted-foreground">{tr("Checks are persisted when DATABASE_URL is configured. Scheduled checks will be added next.","DATABASE_URL yapılandırıldığında kontroller geçmişe kaydedilir. Zamanlanmış kontroller sonraki adımda eklenecektir.")}</div>
+        {historyUrl?<div className="mt-4 border-t border-border pt-4">
+          <div className="text-xs font-semibold text-foreground">{tr("Historical Checks","Geçmiş Kontroller")}</div>
+          <div className="mt-1 truncate text-[10px] text-muted-foreground">{historyUrl}</div>
+          {historyLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading History…","Geçmiş Yükleniyor…")}</div>:history?.length?<div className="mt-3 space-y-1.5">
+            {history.slice(0,10).map((item,index)=><div key={item.checkedAt+"-"+index} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-[10px]">
+              <span className="text-foreground">{new Date(item.checkedAt).toLocaleString(locale==="tr"?"tr-TR":"en-US")}</span>
+              <span className="shrink-0 text-muted-foreground">{item.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.responseTimeMs} ms</span>
+            </div>)}
+          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored history is available yet.","Henüz kaydedilmiş geçmiş bulunmuyor.")}</div>}
+        </div>:null}
       </div>:null}
     </div>
    </div>
