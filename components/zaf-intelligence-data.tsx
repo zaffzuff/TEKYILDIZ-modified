@@ -177,7 +177,7 @@ export function ZafIntelligenceData({
   }, [ecosystem, data?.metrics.observedTransactionsPerHour, locale, signalStatuses]);
 
   useEffect(() => {
-    if (!ecosystem?.signals.length) return;
+    if (!ecosystem) return;
     const current = readSignalState();
     const previousSnapshot = readSnapshotState();
     const statuses: Record<string, "new" | "updated" | "observed"> = {};
@@ -201,10 +201,12 @@ export function ZafIntelligenceData({
       const firstSeenAt = previous?.firstSeenAt ?? ecosystem.generatedAt;
       const seenCount = (previous?.seenCount ?? 0) + 1;
       next[signal.id] = { fingerprint, firstSeenAt, lastSeenAt: ecosystem.generatedAt, seenCount };
-      nextHistory.push({
-        id: signal.id, fingerprint, firstSeenAt, lastSeenAt: ecosystem.generatedAt, seenCount,
-        status, detectedAt: ecosystem.generatedAt, title: signal.title, category: signal.category, sourceUrl: signal.sourceUrl
-      });
+      if (status !== "observed") {
+        nextHistory.push({
+          id: signal.id, fingerprint, firstSeenAt, lastSeenAt: ecosystem.generatedAt, seenCount,
+          status, detectedAt: ecosystem.generatedAt, title: signal.title, category: signal.category, sourceUrl: signal.sourceUrl
+        });
+      }
     }
 
     const snapshot: SnapshotState = {
