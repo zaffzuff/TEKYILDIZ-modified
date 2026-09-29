@@ -331,7 +331,7 @@ export function ZafIntelligenceData({
           </div>
           <div className="mt-5 border-t border-border pt-4">
             <div className="text-xs font-semibold text-foreground">{copy(locale, "Recent signal events", "Son sinyal olayları")}</div>
-            <div className="mt-2 spac<div className="mt-4 space-y-2">
+            <div className="mt-2 space-y-2">
               {signalHistory.slice().reverse().slice(0, 12).map((entry, index) => (
                 <div key={entry.id + entry.detectedAt + index} className="rounded-lg border border-border p-2.5">
                   <div className="flex flex-wrap items-center justify-between gap-2 text-[10px]">
