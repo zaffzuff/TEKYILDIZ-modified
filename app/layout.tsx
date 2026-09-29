@@ -5,44 +5,18 @@ import { GeistMono } from "geist/font/mono";
 import { Michroma } from "next/font/google";
 import "./globals.css";
 
-const michroma = Michroma({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
+const michroma = Michroma({ subsets: ["latin"], weight: "400", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "ZAF TECH — Pi Ecosystem Activity Intelligence",
-  description: "Read-only intelligence surface for observable Pi Network Mainnet blockchain activity.",
-  icons: {
-    icon: [{ url: "/tekyildiz-mark.png", sizes: "512x512", type: "image/png" }],
-    apple: "/tekyildiz-mark.png",
-  },
+  title: "ZAF TECH — Pi Ecosystem Intelligence",
+  description: "Independent, read-only intelligence and utility layer for observable Pi Network ecosystem data.",
+  icons: { icon: [{ url: "/tekyildiz-mark.png", sizes: "512x512", type: "image/png" }], apple: "/tekyildiz-mark.png" },
 };
 
-export const viewport = {
-  themeColor: "#f7f8fa",
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover" as const,
-};
+export const viewport = { themeColor: "#f7f8fa", width: "device-width", initialScale: 1, viewportFit: "cover" as const };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en" className="light bg-background">
-      <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-  --font-michroma: ${michroma.style.fontFamily};
-}
-        `}</style>
-      </head>
-      <body>{children}</body>
-    </html>
-  );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="en" className="light bg-background"><head><style>{`
+html { font-family: ${GeistSans.style.fontFamily}; --font-sans: ${GeistSans.variable}; --font-mono: ${GeistMono.variable}; --font-michroma: ${michroma.style.fontFamily}; }
+`}</style></head><body>{children}</body></html>;
 }
