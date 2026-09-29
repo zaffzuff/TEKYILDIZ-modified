@@ -83,3 +83,10 @@ The current Data phase introduces the first persistence layer for App Health obs
 - Historical App Health view
 
 Historical storage is optional until a PostgreSQL-compatible `DATABASE_URL` is configured. The live health checker remains functional without a database.
+
+
+### Ecosystem Change Detection
+- Compares the current public ecosystem observation with the latest stored PostgreSQL snapshot when available.
+- Detects observed app-count changes, ecosystem source status changes, added/removed observable signals, and DeFi status changes.
+- Exposed through `/api/zaf/ecosystem/changes` and surfaced in the Observatory Activity Signals view.
+- Historical comparison remains optional until `DATABASE_URL` is configured.
