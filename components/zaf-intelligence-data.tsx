@@ -14,9 +14,14 @@ type TrendPoint = {
 };
 
 const STORAGE_KEY = "zaf-tech-intelligence-trends-v1";
-const SIGNAL_STATE_KEY = "zaf-tech-intelligence-signal-state-v1";
+const SIGNAL_STATE_KEY = "zaf-tech-intelligence-signal-state-v2";
+const SIGNAL_HISTORY_KEY = "zaf-tech-intelligence-signal-history-v1";
+const SNAPSHOT_STATE_KEY = "zaf-tech-intelligence-snapshot-state-v1";
 
-type SignalState = Record<string, { fingerprint: string; lastSeenAt: string }>;
+type SignalStateEntry = { fingerprint: string; firstSeenAt: string; lastSeenAt: string; seenCount: number };
+type SignalState = Record<string, SignalStateEntry>;
+type SignalHistoryEntry = SignalStateEntry & { id: string; status: "new" | "updated" | "observed"; detectedAt: string; title: string; category: string; sourceUrl: string | null };
+type SnapshotState = { appCount: number | null; newsCount: number; transactionsPerHour: number | null; operationsPerHour: number | null; capturedAt: string };
 
 function readSignalState(): SignalState {
   try {
@@ -26,6 +31,21 @@ function readSignalState(): SignalState {
   } catch {
     return {};
   }
+}
+
+function readSignalHistory(): SignalHistoryEntry[] {
+  try {
+    const value = JSON.parse(window.localStorage.getItem(SIGNAL_HISTORY_KEY) || "[]");
+    if (!Array.isArray(value)) return [];
+    return value.filter((item) => item && typeof item.id === "string" && typeof item.detectedAt === "string").slice(-500);
+  } catch { return []; }
+}
+
+function readSnapshotState(): SnapshotState | null {
+  try {
+    const value = JSON.parse(window.localStorage.getItem(SNAPSHOT_STATE_KEY) || "null");
+    return value && typeof value === "object" ? value as SnapshotState : null;
+  } catch { return null; }
 }
 
 function signalFingerprint(signal: EcosystemSnapshot["signals"][number]) {
@@ -94,6 +114,10 @@ export function ZafIntelligenceData({
   const [ecosystem, setEcosystem] = useState<EcosystemSnapshot | null>(null);
   const [points, setPoints] = useState<TrendPoint[]>([]);
   const [signalState, setSignalState] = useState<SignalState>({});
+  const [signalHistory, setSignalHistory] = useState<SignalHistoryEntry[]>([]);
+  const [signalFilter, setSignalFilter] = useState<"all" | "new" | "updated" | "observed">("all");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | EcosystemSnapshot["signals"][number]["category"]>("all");
+  const [snapshotDelta, setSnapshotDelta] = useState<{ app: number | null; news: number; transactions: number | null; operations: number | null } | null>(null);
   const [signalStatuses, setSignalStatuses] = useState<Record<string, "new" | "updated" | "observed">>({});
   const [loading, setLoading] = useState(true);
 
@@ -112,6 +136,7 @@ export function ZafIntelligenceData({
   useEffect(() => {
     setPoints(readPoints());
     setSignalState(readSignalState());
+    setSignalHistory(readSignalHistory());
     void loadEcosystem();
     const timer = window.setInterval(() => void loadEcosystem(), 5 * 60_000);
     return () => window.clearInterval(timer);
@@ -154,21 +179,50 @@ export function ZafIntelligenceData({
   useEffect(() => {
     if (!ecosystem?.signals.length) return;
     const current = readSignalState();
+    const previousSnapshot = readSnapshotState();
     const statuses: Record<string, "new" | "updated" | "observed"> = {};
     const next = { ...current };
+    const history = readSignalHistory();
+    const nextHistory = [...history];
 
     for (const signal of ecosystem.signals) {
       const fingerprint = signalFingerprint(signal);
       const previous = current[signal.id];
-      statuses[signal.id] = !previous ? "new" : previous.fingerprint !== fingerprint ? "updated" : "observed";
-      next[signal.id] = { fingerprint, lastSeenAt: ecosystem.generatedAt };
+      const status = !previous ? "new" : previous.fingerprint !== fingerprint ? "updated" : "observed";
+      statuses[signal.id] = status;
+      const firstSeenAt = previous?.firstSeenAt ?? ecosystem.generatedAt;
+      const seenCount = (previous?.seenCount ?? 0) + 1;
+      next[signal.id] = { fingerprint, firstSeenAt, lastSeenAt: ecosystem.generatedAt, seenCount };
+      nextHistory.push({
+        id: signal.id, fingerprint, firstSeenAt, lastSeenAt: ecosystem.generatedAt, seenCount,
+        status, detectedAt: ecosystem.generatedAt, title: signal.title, category: signal.category, sourceUrl: signal.sourceUrl
+      });
     }
 
-    const trimmed = Object.fromEntries(Object.entries(next).slice(-500));
-    try { window.localStorage.setItem(SIGNAL_STATE_KEY, JSON.stringify(trimmed)); } catch {}
+    const snapshot: SnapshotState = {
+      appCount: ecosystem.apps.totalCount,
+      newsCount: ecosystem.news.length,
+      transactionsPerHour: data?.metrics.observedTransactionsPerHour ?? null,
+      operationsPerHour: data?.metrics.observedOperationsPerHour ?? null,
+      capturedAt: ecosystem.generatedAt,
+    };
+    if (previousSnapshot) {
+      setSnapshotDelta({
+        app: previousSnapshot.appCount != null && snapshot.appCount != null ? snapshot.appCount - previousSnapshot.appCount : null,
+        news: snapshot.newsCount - previousSnapshot.newsCount,
+        transactions: previousSnapshot.transactionsPerHour != null && snapshot.transactionsPerHour != null ? snapshot.transactionsPerHour - previousSnapshot.transactionsPerHour : null,
+        operations: previousSnapshot.operationsPerHour != null && snapshot.operationsPerHour != null ? snapshot.operationsPerHour - previousSnapshot.operationsPerHour : null,
+      });
+    }
+    try {
+      window.localStorage.setItem(SIGNAL_STATE_KEY, JSON.stringify(Object.fromEntries(Object.entries(next).slice(-500))));
+      window.localStorage.setItem(SIGNAL_HISTORY_KEY, JSON.stringify(nextHistory.slice(-500)));
+      window.localStorage.setItem(SNAPSHOT_STATE_KEY, JSON.stringify(snapshot));
+    } catch {}
     setSignalStatuses(statuses);
-    setSignalState(trimmed);
-  }, [ecosystem]);
+    setSignalState(next);
+    setSignalHistory(nextHistory.slice(-500));
+  }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour]);
 
   if (subtab === "Trends") {
     return (
@@ -202,28 +256,84 @@ export function ZafIntelligenceData({
     );
   }
 
-  if (subtab === "Alerts") {
+  if (subtab === "Signal History" || subtab === "Alerts") {
+    const visibleSignals = signals.filter((signal) =>
+      (signalFilter === "all" || signal.displayKind === signalFilter) &&
+      (categoryFilter === "all" || signal.category === categoryFilter)
+    );
+    const categories = Array.from(new Set((ecosystem?.signals ?? []).map((signal) => signal.category)));
+    const statusLabel = (value: string) => copy(locale, value === "new" ? "New" : value === "updated" ? "Updated" : "Observed", value === "new" ? "Yeni" : value === "updated" ? "Güncellendi" : "Gözlemlendi");
     return (
       <section className="mt-5 space-y-4">
         <div className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-foreground">{copy(locale, "Observed Signals", "Gözlemlenen Sinyaller")}</h2>
-          <p className="mt-1 text-[11px] text-muted-foreground">{copy(locale, "Structured change signals derived from official ecosystem sources and observed Mainnet activity.", "Resmi ekosistem kaynakları ve gözlemlenen Mainnet aktivitesinden türetilen yapılandırılmış değişim sinyalleri.")}</p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">{copy(locale, "Signal History", "Sinyal Geçmişi")}</h2>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copy(locale, "Persistent local history of first seen, last seen, updates, and repeated observations.", "İlk görülme, son görülme, güncellemeler ve tekrar eden gözlemlerin kalıcı yerel geçmişi.")}</p>
+            </div>
+            <div className="text-[10px] text-muted-foreground">{signalHistory.length} {copy(locale, "history records", "geçmiş kaydı")}</div>
+          </div>
+          <div className="mt-4 rounded-xl border border-border p-3">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{copy(locale, "Snapshot-to-snapshot change", "Snapshot'lar arası değişim")}</div>
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[
+                [copy(locale, "Apps", "Uygulamalar"), snapshotDelta?.app],
+                [copy(locale, "News", "Haberler"), snapshotDelta?.news],
+                [copy(locale, "Tx / hour", "İşlem / saat"), snapshotDelta?.transactions],
+                [copy(locale, "Ops / hour", "Operasyon / saat"), snapshotDelta?.operations],
+              ].map(([label, value]) => (
+                <div key={String(label)} className="rounded-lg border border-border p-2">
+                  <div className="text-sm font-semibold text-foreground">{value == null ? "—" : (Number(value) > 0 ? "+" : "") + Number(value).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</div>
+                  <div className="mt-1 text-[9px] text-muted-foreground">{label}</div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-[9px] leading-relaxed text-muted-foreground">{copy(locale, "Changes are calculated against the previous snapshot observed by this browser. They are not global network deltas.", "Değişimler bu tarayıcı tarafından gözlemlenen bir önceki snapshot'a göre hesaplanır; küresel ağ değişimi değildir.")}</p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {(["all", "new", "updated", "observed"] as const).map((value) => (
+              <button key={value} type="button" onClick={() => setSignalFilter(value)} className={"rounded-md border px-2.5 py-1.5 text-[10px] " + (signalFilter === value ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground")}>{statusLabel(value)}</button>
+            ))}
+            {["all", ...categories].map((value) => (
+              <button key={value} type="button" onClick={() => setCategoryFilter(value as typeof categoryFilter)} className={"rounded-md border px-2.5 py-1.5 text-[10px] " + (categoryFilter === value ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground")}>{value === "all" ? copy(locale, "All categories", "Tüm kategoriler") : value}</button>
+            ))}
+          </div>
           <div className="mt-4 space-y-2">
-            {signals.length ? signals.map((signal) => (
-              <div key={signal.id} className="rounded-xl border border-border p-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="text-xs font-medium text-foreground">{signal.title}</div>
-                  <span className="rounded-full border border-border px-2 py-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">{signal.displayKind}</span>
+            {visibleSignals.length ? visibleSignals.map((signal) => {
+              const state = signalState[signal.id];
+              return (
+                <div key={signal.id} className="rounded-xl border border-border p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="text-xs font-medium text-foreground">{signal.title}</div>
+                    <span className="rounded-full border border-border px-2 py-0.5 text-[9px] uppercase tracking-wide text-muted-foreground">{statusLabel(signal.displayKind)}</span>
+                  </div>
+                  <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detailTr)}</div>
+                  <div className="mt-2 grid grid-cols-1 gap-1 text-[9px] text-muted-foreground sm:grid-cols-3">
+                    <span>{copy(locale, "First seen:", "İlk görülme:")} {state ? new Date(state.firstSeenAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}</span>
+                    <span>{copy(locale, "Last seen:", "Son görülme:")} {state ? new Date(state.lastSeenAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}</span>
+                    <span>{copy(locale, "Seen:", "Görülme:")} {state?.seenCount ?? 0}</span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-[9px] text-muted-foreground">
+                    <span>{signal.category}</span><span>·</span><span>{new Date(signal.detectedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</span>
+                    {signal.sourceUrl ? <a href={signal.sourceUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">{copy(locale, "Source ↗", "Kaynak ↗")}</a> : null}
+                  </div>
                 </div>
-                <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{copy(locale, signal.detail, signal.detailTr)}</div>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-[9px] text-muted-foreground">
-                  <span>{signal.category}</span>
-                  <span>·</span>
-                  <span>{new Date(signal.detectedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</span>
-                  {signal.sourceUrl ? <a href={signal.sourceUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">{copy(locale, "Source ↗", "Kaynak ↗")}</a> : null}
+              );
+            }) : <div className="text-xs text-muted-foreground">{copy(locale, "No signals match the selected filters.", "Seçilen filtrelerle eşleşen sinyal yok.")}</div>}
+          </div>
+          <div className="mt-5 border-t border-border pt-4">
+            <div className="text-xs font-semibold text-foreground">{copy(locale, "Recent signal events", "Son sinyal olayları")}</div>
+            <div className="mt-2 space-y-2">
+              {signalHistory.slice().reverse().slice(0, 12).map((entry, index) => (
+                <div key={entry.id + entry.detectedAt + index} className="rounded-lg border border-border p-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[10px]">
+                    <span className="font-medium text-foreground">{entry.title}</span>
+                    <span className="text-muted-foreground">{statusLabel(entry.status)} · {entry.category}</span>
+                  </div>
+                  <div className="mt-1 text-[9px] text-muted-foreground">{new Date(entry.detectedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</div>
                 </div>
-              </div>
-            )) : <div className="text-xs text-muted-foreground">{copy(locale, "No signals observed.", "Sinyal gözlemlenmedi.")}</div>}
+              ))}
+            </div>
           </div>
         </div>
       </section>
