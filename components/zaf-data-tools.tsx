@@ -130,6 +130,7 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [newLedgers, setNewLedgers] = useState(0);
+  const [historicalWindowHours, setHistoricalWindowHours] = useState<24 | 168 | 720>(24);
   const [historicalStats, setHistoricalStats] = useState<StoredLedgerStats>({
     count: 0,
     transactionCount: 0,
@@ -231,6 +232,17 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
   const historicalOpsPerHour = elapsedHours > 0 ? historicalStats.operationCount / elapsedHours : null;
   const averageTxPerLedger = historicalStats.count ? historicalStats.transactionCount / historicalStats.count : null;
   const averageOpsPerLedger = historicalStats.count ? historicalStats.operationCount / historicalStats.count : null;
+  const windowCutoff = Date.now() - historicalWindowHours * 3_600_000;
+  const windowLedgers = uniqueVisibleLedgers.filter((ledger) => Date.parse(ledger.closedAt) >= windowCutoff);
+  const windowTransactionCount = windowLedgers.reduce((sum, ledger) => sum + ledger.transactionCount, 0);
+  const windowOperationCount = windowLedgers.reduce((sum, ledger) => sum + ledger.operationCount, 0);
+  const windowOldest = windowLedgers.length ? windowLedgers[windowLedgers.length - 1].closedAt : null;
+  const windowNewest = windowLedgers.length ? windowLedgers[0].closedAt : null;
+  const windowElapsedHours = windowOldest && windowNewest ? Math.max(0, (Date.parse(windowNewest) - Date.parse(windowOldest)) / 3_600_000) : 0;
+  const windowTxPerHour = windowElapsedHours > 0 ? windowTransactionCount / windowElapsedHours : null;
+  const windowOpsPerHour = windowElapsedHours > 0 ? windowOperationCount / windowElapsedHours : null;
+  const windowAvgTxPerLedger = windowLedgers.length ? windowTransactionCount / windowLedgers.length : null;
+  const windowAvgOpsPerLedger = windowLedgers.length ? windowOperationCount / windowLedgers.length : null;
 
   return (
     <section className="mt-7">
@@ -246,16 +258,23 @@ export function ZafHistoricalExplorer({ locale }: { locale: Locale }) {
       <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
         {all.length ? (
           <>
+            <div className="mb-3 flex flex-wrap gap-1">
+              {([24, 168, 720] as const).map((hours) => (
+                <button key={hours} type="button" onClick={() => setHistoricalWindowHours(hours)} className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${historicalWindowHours === hours ? "border-foreground bg-foreground text-background" : "border-border text-foreground hover:bg-muted"}`}>
+                  {hours === 24 ? tr("24h", "24s") : hours === 168 ? tr("7d", "7g") : tr("30d", "30g")}
+                </button>
+              ))}
+            </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <Metric label={tr("Loaded ledgers", "Yüklenen ledger")} value={uniqueVisibleLedgers.length.toLocaleString("en-US")} detail={tr("Unique real Mainnet records in this view", "Bu görünümdeki benzersiz gerçek Mainnet kayıtları")} />
+              <Metric label={tr("Window ledgers", "Penceredeki ledger")} value={windowLedgers.length.toLocaleString("en-US")} detail={tr("Unique real Mainnet records inside the selected window", "Seçilen pencere içindeki benzersiz gerçek Mainnet kayıtları")} />
               <Metric label={tr("Stored locally", "Yerelde saklanan")} value={storedCount.toLocaleString("en-US")} detail={tr("Persistent IndexedDB records on this device", "Bu cihazdaki kalıcı IndexedDB kayıtları")} />
               <Metric label={tr("New this sync", "Bu senkronizasyonda yeni")} value={newLedgers.toLocaleString("en-US")} detail={tr("Ledgers newer than the stored tip", "Yerel kayıtların en yeni ledger'ından sonraki kayıtlar")} />
-              <Metric label={tr("Transactions", "İşlemler")} value={historicalStats.transactionCount.toLocaleString("en-US")} detail={tr("Sum across all stored unique ledgers", "Tüm saklanan benzersiz ledger'ların toplamı")} />
-              <Metric label={tr("Operations", "Operasyonlar")} value={historicalStats.operationCount.toLocaleString("en-US")} detail={tr("Sum across all stored unique ledgers", "Tüm saklanan benzersiz ledger'ların toplamı")} />
-              <Metric label={tr("Historical tx / hour", "Tarihsel işlem / saat")} value={historicalTxPerHour != null ? historicalTxPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
-              <Metric label={tr("Historical ops / hour", "Tarihsel operasyon / saat")} value={historicalOpsPerHour != null ? historicalOpsPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
-              <Metric label={tr("Average tx / ledger", "Ortalama işlem / ledger")} value={averageTxPerLedger != null ? averageTxPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
-              <Metric label={tr("Average ops / ledger", "Ortalama operasyon / ledger")} value={averageOpsPerLedger != null ? averageOpsPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
+              <Metric label={tr("Transactions", "İşlemler")} value={windowTransactionCount.toLocaleString("en-US")} detail={tr("Sum inside the selected observed window", "Seçilen gözlemlenen pencerenin toplamı")} />
+              <Metric label={tr("Operations", "Operasyonlar")} value={windowOperationCount.toLocaleString("en-US")} detail={tr("Sum inside the selected observed window", "Seçilen gözlemlenen pencerenin toplamı")} />
+              <Metric label={tr("Historical tx / hour", "Tarihsel işlem / saat")} value={windowTxPerHour != null ? windowTxPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
+              <Metric label={tr("Historical ops / hour", "Tarihsel operasyon / saat")} value={windowOpsPerHour != null ? windowOpsPerHour.toLocaleString("en-US", { maximumFractionDigits: 1 }) : "—"} detail={tr("Across the locally stored time span", "Yerelde saklanan zaman aralığı genelinde")} />
+              <Metric label={tr("Average tx / ledger", "Ortalama işlem / ledger")} value={windowAvgTxPerLedger != null ? windowAvgTxPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
+              <Metric label={tr("Average ops / ledger", "Ortalama operasyon / ledger")} value={windowAvgOpsPerLedger != null ? windowAvgOpsPerLedger.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"} detail={tr("Stored ledger average", "Saklanan ledger ortalaması")} />
             </div>
             {lastSync ? <p className="mt-3 text-[10px] text-muted-foreground">{tr("Last sync", "Son senkronizasyon")}: {new Date(lastSync).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}</p> : null}
             {error ? <p className="mt-3 text-xs text-destructive">{error}</p> : null}
