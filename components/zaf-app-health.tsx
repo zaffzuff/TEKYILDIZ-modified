@@ -132,7 +132,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
             <span className="shrink-0 text-muted-foreground">{item.check.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.check.responseTimeMs} ms</span>
           </div>)}
         </div>
-        <div className="mt-3 text-[10px] text-muted-foreground">{tr("Checks are persisted when DATABASE_URL is configured. Scheduled checks will be added next.","DATABASE_URL yapılandırıldığında kontroller geçmişe kaydedilir. Zamanlanmış kontroller sonraki adımda eklenecektir.")}</div>
+        <div className="mt-3 text-[10px] text-muted-foreground">{tr("Checks are persisted when DATABASE_URL is configured. Scheduled checks run through the configured server-side scheduler.","DATABASE_URL yapılandırıldığında kontroller geçmişe kaydedilir. Zamanlanmış kontroller yapılandırılmış sunucu tarafı zamanlayıcısı üzerinden çalışır.")}</div>
         {historyUrl?<div className="mt-4 border-t border-border pt-4">
           <div className="text-xs font-semibold text-foreground">{tr("Historical Checks","Geçmiş Kontroller")}</div>
           <div className="mt-1 truncate text-[10px] text-muted-foreground">{historyUrl}</div>
