@@ -131,11 +131,7 @@ export function ZafAppsData({ locale, subtab }: { locale: Locale; subtab: string
 
       {!supported ? (
         <div className="mt-4 rounded-xl border border-border p-4 text-[11px] leading-relaxed text-muted-foreground">
-          {text(
-            locale,
-            "This view requires a source field that is not exposed by the current public response. It will remain empty rather than infer Mainnet/Testnet, activity, categories, or staking data from names and URLs.",
-            "Bu görünüm mevcut herkese açık yanıtta bulunmayan bir kaynak alanı gerektiriyor. ZAF TECH; isim ve URL'lerden Mainnet/Testnet, aktivite, kategori veya staking verisi tahmin etmek yerine bu alanı boş bırakır.",
-          )}
+          {text(locale, detailByTab[selected]?.[0] ?? "", detailByTab[selected]?.[1] ?? "")}
         </div>
       ) : visibleApps.length ? (
         <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
