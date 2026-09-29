@@ -18,3 +18,15 @@ CREATE TABLE IF NOT EXISTS zaf_app_checks (
 
 CREATE INDEX IF NOT EXISTS zaf_app_checks_url_checked_at_idx
   ON zaf_app_checks (url, checked_at DESC);
+
+
+CREATE TABLE IF NOT EXISTS zaf_ecosystem_snapshots (
+  id BIGSERIAL PRIMARY KEY,
+  generated_at TIMESTAMPTZ NOT NULL,
+  source_available BOOLEAN NOT NULL,
+  observed_app_count INTEGER NULL,
+  payload JSONB NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS zaf_ecosystem_snapshots_generated_at_idx
+  ON zaf_ecosystem_snapshots (generated_at DESC);
