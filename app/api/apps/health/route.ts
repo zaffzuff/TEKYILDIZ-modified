@@ -19,7 +19,11 @@ export async function GET() {
     })),
   );
 
-  await saveAppChecks(results.map((item) => ({ appName: item.name, ...item.check })));
+  try {
+    await saveAppChecks(results.map((item) => ({ appName: item.name, ...item.check })));
+  } catch {
+    // Persistence is best-effort; an unavailable database must not break live health checks.
+  }
 
   const reachable = results.filter((item) => item.check.reachable).length;
   const online = results.filter((item) => item.check.ok).length;
