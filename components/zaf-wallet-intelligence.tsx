@@ -58,7 +58,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
 
   return <section className="mt-5 sm:mt-7">
     <div className="mb-3">
-      <h2 className="text-sm font-semibold text-foreground">{tr("Wallet Observatory", "Cüzdan İstihbaratı")}</h2>
+      <h2 className="text-sm font-semibold text-foreground">{tr("Wallet Observatory", "Cüzdan Gözlemleri")}</h2>
       <p className="text-[11px] text-muted-foreground">{tr("Public, read-only wallet observations from Pi Horizon. No wallet connection or signing is required.", "Pi Horizon üzerinden herkese açık, salt-okunur cüzdan gözlemleri. Cüzdan bağlantısı veya imzalama gerekmez.")}</p>
     </div>
 
