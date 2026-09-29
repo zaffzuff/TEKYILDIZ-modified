@@ -10,7 +10,7 @@ export const ZAF_SECTION_TABS: Record<ZafSection, readonly string[]> = {
   defi: ["Launchpad", "Tokens", "DEX", "Liquidity", "Trading Activity"],
   node: ["Node", "Node History", "SoloHost", "Compute", "Infrastructure"],
   pioneer: ["KYC", "Migration", "Pi Browser", "Pi Sign-in", "PiVerify"],
-  intelligence: ["Ecosystem Radar", "Activity Signals", "Trends", "Explorer", "Alerts", "Ecosystem Graph"],
+  intelligence: ["Ecosystem Radar", "Activity Signals", "Trends", "Explorer", "Signal History", "Ecosystem Graph"],
 };
 
 const labels: Record<string, [string, string]> = {
@@ -46,7 +46,7 @@ const labels: Record<string, [string, string]> = {
   "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"],
   Trends: ["Trends", "Trendler"],
   Explorer: ["Explorer", "Explorer"],
-  Alerts: ["Alerts", "Uyarılar"],
+  "Signal History": ["Signal History", "Sinyal Geçmişi"],
   "Ecosystem Graph": ["Ecosystem Graph", "Ekosistem Grafiği"],
 };
 
