@@ -248,7 +248,14 @@ export function ZafTechApp() {
         {!loading && section === "overview" && subtab === "Tools" ? <ZafDeveloperTools locale={locale} /> : null}
 
         <footer className="mt-8 border-t border-border pt-4 text-[10px] leading-relaxed text-muted-foreground">
-          <div className="flex flex-wrap justify-between gap-2"><span>ZAF TECH · Pi Ecosystem Intelligence</span><span>{tr("Independent community-developed technology project", "Bağımsız topluluk geliştirimi teknoloji projesi")}</span></div>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <span>ZAF TECH · Pi Ecosystem Intelligence</span>
+            <span>{tr("Independent community-developed technology project", "Bağımsız topluluk geliştirimi teknoloji projesi")}</span>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-3">
+            <a href="/about" className="underline underline-offset-2">{tr("About", "Hakkında")}</a>
+            <a href="/privacy" className="underline underline-offset-2">{tr("Privacy", "Gizlilik")}</a>
+          </div>
         </footer>
       </main>
     </div>
