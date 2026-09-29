@@ -6,6 +6,7 @@ import type { ZafHistoricalActivity, ZafSnapshot } from "@/lib/zaf/types";
 import { localeLabels, t, type Locale } from "@/lib/zaf/i18n";
 import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-data-tools";
 import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
+import { ZafEcosystemOverview } from "@/components/zaf-ecosystem-overview";
 
 function formatNumber(value: number | null, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
@@ -435,6 +436,8 @@ export function ZafTechApp() {
                 </div>
               </div>
             </section>
+
+            <ZafEcosystemOverview locale={locale} />
 
             <section className={`mt-5 sm:mt-7 ${tabClass("overview")}`}>
               <div className="mb-3">
