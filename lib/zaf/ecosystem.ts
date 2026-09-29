@@ -32,7 +32,7 @@ export type OfficialEcosystemSignal = {
 
 export type EcosystemSignal = {
   id: string;
-  category: "apps" | "defi" | "official";
+  category: "apps" | "defi" | "official" | "mainnet";
   kind: "new" | "updated" | "observed" | "changed" | "unavailable";
   title: string;
   detail: string;
