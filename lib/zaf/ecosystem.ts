@@ -61,12 +61,6 @@ export type EcosystemSnapshot = {
     amm: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };
     mainnetTrading: { status: "restricted"; detail: string };
   };
-  changes: Array<{
-    type: "new-app" | "news" | "source";
-    title: string;
-    detail: string;
-    detectedAt: string;
-  }>;
 };
 
 const APP_SOURCE = ECOSYSTEM_SOURCES.ecosystemAppPlatform;
@@ -231,24 +225,6 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     },
   ];
 
-  const changes: EcosystemSnapshot["changes"] = [];
-  if (appData.totalCount != null) {
-    changes.push({
-      type: "new-app",
-      title: "Ecosystem directory snapshot",
-      detail: `${appData.totalCount.toLocaleString("en-US")} app records were exposed by the current source response; this is a snapshot observation, not a confirmed new-app delta.`,
-      detectedAt: generatedAt,
-    });
-  }
-  for (const item of news.slice(0, 4)) {
-    changes.push({
-      type: "news",
-      title: item.title,
-      detail: "Official Pi publication observed.",
-      detectedAt: generatedAt,
-    });
-  }
-
   const officialSignals: OfficialEcosystemSignal[] = [
     {
       id: "ecosystem-quest-started",
@@ -407,5 +383,5 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     });
   }
 
-  return { generatedAt, sources, apps: appData, news, officialSignals, signals, defi, changes };
+  return { generatedAt, sources, apps: appData, news, officialSignals, signals, defi };
 }
