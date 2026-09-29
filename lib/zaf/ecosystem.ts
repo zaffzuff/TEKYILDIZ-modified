@@ -32,7 +32,7 @@ export type OfficialEcosystemSignal = {
 
 export type EcosystemSignal = {
   id: string;
-  category: "apps" | "defi" | "official" | "mainnet";
+  category: "apps" | "defi" | "official" | "mainnet" | "node" | "pioneer";
   kind: "new" | "updated" | "observed" | "changed" | "unavailable";
   title: string;
   detail: string;
@@ -295,6 +295,33 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
       observedAt: "2026-07-24",
       sourceUrl: "https://minepi.com/blog/launchpad-liquidity-pool/",
     },
+    {
+      id: "node-pi-desktop-063",
+      title: "Pi Desktop 0.6.3 update",
+      value: "0.6.3",
+      detail: "Pi's September 9, 2026 update described improvements to app discovery, reliability, and developer tooling.",
+      detailTr: "Pi'nin 9 Eylül 2026 güncellemesi uygulama keşfi, güvenilirlik ve geliştirici araçlarındaki iyileştirmeleri açıkladı.",
+      observedAt: "2026-09-09",
+      sourceUrl: "https://minepi.com/blog/solohost-pi-desktop-0-6-3/",
+    },
+    {
+      id: "node-compute-test",
+      title: "Distributed computing test",
+      value: "5 Node runners",
+      detail: "Pi reported an initial distributed-computing test completed with five volunteer Node runners.",
+      detailTr: "Pi, beş gönüllü Node runner ile ilk dağıtık hesaplama testinin tamamlandığını bildirdi.",
+      observedAt: "2026-08-14",
+      sourceUrl: "https://minepi.com/blog/pi-node-0-6-2/",
+    },
+    {
+      id: "pioneer-kyc-update",
+      title: "KYC and Mainnet migration update",
+      value: "2026-09-26",
+      detail: "Pi published an update covering additional KYC and Mainnet migration corner-case handling and related processing paths.",
+      detailTr: "Pi, KYC ve Mainnet migrasyonundaki ek köşe durumları ve ilgili işlem yollarını ele alan bir güncelleme yayımladı.",
+      observedAt: "2026-09-26",
+      sourceUrl: "https://minepi.com/blog/kyc-mainnet-migration-9-26/",
+    },
   ];
 
   const signals: EcosystemSignal[] = [];
@@ -370,7 +397,7 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
   for (const signal of officialSignals) {
     signals.push({
       id: `official-${signal.id}`,
-      category: "official",
+      category: /node|solohost|compute|desktop/i.test(signal.id) ? "node" : /kyc|migration|pioneer|browser|signin|verify/i.test(signal.id) ? "pioneer" : "official",
       kind: "observed",
       title: signal.title,
       detail: signal.detail,
