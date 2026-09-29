@@ -37,7 +37,7 @@ function External({ href, children }: { href: string; children: React.ReactNode 
   return <a href={href} target="_blank" rel="noreferrer" className="text-foreground underline underline-offset-2">{children}</a>;
 }
 
-function AppDirectoryView({ apps, sourceOnline, generatedAt, locale, tr }: { apps: AppItem[]; sourceOnline: boolean; generatedAt?: string; locale: Locale; tr: (en: string, trText: string) => string }) {
+function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }: { apps: AppItem[]; sourceOnline: boolean; generatedAt?: string; note?: string; locale: Locale; tr: (en: string, trText: string) => string }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"All" | AppCategory>("All");
   const directoryApps = useMemo(() => apps.map(app => toDirectoryApp(app, generatedAt ?? new Date().toISOString())), [apps, generatedAt]);
@@ -90,7 +90,7 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, locale, tr }: { app
           </article>
         ))}
       </div>
-      {!filtered.length ? <div className="mt-3 rounded-xl border border-border bg-card p-4 text-[11px] text-muted-foreground">{apps.length ? tr("No applications match the current filters.", "Mevcut filtrelerle eşleşen uygulama yok.") : ecosystem?.apps.note}</div> : null}
+      {!filtered.length ? <div className="mt-3 rounded-xl border border-border bg-card p-4 text-[11px] text-muted-foreground">{apps.length ? tr("No applications match the current filters.", "Mevcut filtrelerle eşleşen uygulama yok.") : note}</div> : null}
       <div className="mt-3 rounded-xl border border-border bg-card p-3 text-[10px] leading-relaxed text-muted-foreground">
         {tr("Category is a ZAF TECH classification based on the public app name/URL signal, not an official Pi category. Pi Authentication, Pi Payments, PiNet, network and health fields remain unverified until a dedicated observable check confirms them.", "Kategori, herkese açık uygulama adı/URL sinyaline dayalı ZAF TECH sınıflandırmasıdır; resmi Pi kategorisi değildir. Pi Authentication, Pi Payments, PiNet, ağ ve sağlık alanları özel bir gözlemlenebilir kontrol doğrulayana kadar doğrulanmamış olarak kalır.")}
       </div>
@@ -204,7 +204,7 @@ export function ZafTechApp() {
 
         {!loading && section === "apps" && subtab === "App Health" ? <ZafAppHealth locale={locale} /> : null}
 
-        {!loading && section === "apps" && subtab === "App Directory" ? <AppDirectoryView apps={apps} sourceOnline={sourceOnline} generatedAt={ecosystem?.generatedAt} locale={locale} tr={tr} /> : null}
+        {!loading && section === "apps" && subtab === "App Directory" ? <AppDirectoryView apps={apps} sourceOnline={sourceOnline} generatedAt={ecosystem?.generatedAt} note={ecosystem?.apps.note} locale={locale} tr={tr} /> : null}
 
         {!loading && section === "intelligence" ? (
           <section className="mt-5 sm:mt-7">
