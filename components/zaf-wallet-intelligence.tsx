@@ -31,6 +31,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
   const [error, setError] = useState("");
 
   const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+  const explorerBase = network === "mainnet" ? "https://blockexplorer.minepi.com/mainnet" : "https://blockexplorer.minepi.com/testnet";
 
   async function lookup() {
     const normalized = address.trim().toUpperCase();
@@ -79,7 +80,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
           <div className="min-w-0"><div className="text-[10px] text-muted-foreground">{tr("Public address", "Herkese açık adres")}</div><div className="mt-1 break-all font-mono text-[11px] text-foreground">{data.address}</div></div>
           <div className="flex shrink-0 gap-2">
             <button type="button" onClick={() => void navigator.clipboard?.writeText(data.address)} className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Copy", "Kopyala")}</button>
-            <a href={data.network === "Pi Mainnet" ? `https://blockexplorer.minepi.com/mainnet/accounts/${data.address}` : `https://blockexplorer.minepi.com/testnet/accounts/${data.address}`} target="_blank" rel="noreferrer" className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Explorer", "Explorer")}</a>
+            <a href={data.network === "Pi Mainnet" ? `${explorerBase}/accounts/${data.address}` : `https://blockexplorer.minepi.com/testnet/accounts/${data.address}`} target="_blank" rel="noreferrer" className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground">{tr("Explorer", "Explorer")}</a>
           </div>
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5"><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{data.network}</span><span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Public data only", "Yalnızca herkese açık veri")}</span></div>
@@ -103,7 +104,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
       <div className="rounded-xl border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-2"><div className="text-xs font-semibold text-foreground">{tr("Recent transactions", "Son işlemler")}</div><span className="text-[10px] text-muted-foreground">{data.transactions.length}</span></div>
         <div className="mt-2 space-y-2">
-          {data.transactions.slice(0, 8).map(tx => <div key={tx.hash} className="rounded-lg border border-border p-2.5"><div className="flex items-start justify-between gap-2"><a href={`https://blockexplorer.minepi.com/mainnet/transactions/${tx.hash}`} target="_blank" rel="noreferrer" className="truncate font-mono text-[10px] text-foreground underline underline-offset-2">{tx.hash}</a><span className="shrink-0 text-[9px] text-muted-foreground">{tx.successful === true ? tr("Success", "Başarılı") : tx.successful === false ? tr("Failed", "Başarısız") : "—"}</span></div><div className="mt-1 text-[9px] text-muted-foreground">{tx.createdAt ? new Date(tx.createdAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"} · {tx.operationCount ?? "—"} ops · {fmt(tx.feePi)} Pi</div></div>)}
+          {data.transactions.slice(0, 8).map(tx => <div key={tx.hash} className="rounded-lg border border-border p-2.5"><div className="flex items-start justify-between gap-2"><a href={`${explorerBase}/transactions/${tx.hash}`} target="_blank" rel="noreferrer" className="truncate font-mono text-[10px] text-foreground underline underline-offset-2">{tx.hash}</a><span className="shrink-0 text-[9px] text-muted-foreground">{tx.successful === true ? tr("Success", "Başarılı") : tx.successful === false ? tr("Failed", "Başarısız") : "—"}</span></div><div className="mt-1 text-[9px] text-muted-foreground">{tx.createdAt ? new Date(tx.createdAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"} · {tx.operationCount ?? "—"} ops · {fmt(tx.feePi)} Pi</div></div>)}
           {!data.transactions.length ? <div className="text-[11px] text-muted-foreground">{tr("No recent transactions returned.", "Son işlemler döndürülmedi.")}</div> : null}
         </div>
       </div>
