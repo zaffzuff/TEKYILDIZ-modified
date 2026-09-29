@@ -434,12 +434,6 @@ export function ZafIntelligenceData({
               </p>
             </div>
           ) : null}
-          {recentChanges.map((change, index) => (
-            <div key={index} className="rounded-xl border border-border p-3">
-              <div className="text-xs font-medium text-foreground">{change.title}</div>
-              <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{change.detail}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>
