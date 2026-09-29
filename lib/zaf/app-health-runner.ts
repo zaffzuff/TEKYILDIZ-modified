@@ -1,6 +1,7 @@
 import { getEcosystemSnapshot } from "@/lib/zaf/ecosystem";
 import { checkAppHealth, type AppHealthCheck } from "@/lib/zaf/app-health";
 import { saveAppChecks } from "@/lib/zaf/app-check-history";
+import { saveEcosystemSnapshot } from "@/lib/zaf/ecosystem-history";
 
 export const MAX_APPS = 20;
 
@@ -39,7 +40,7 @@ export async function runEcosystemHealthChecks(): Promise<EcosystemHealthRun> {
     // Persistence is best-effort; an unavailable database must not break live checks.
   }
 
-  const reachable = results.filter((item) => item.check.reachable).length;
+  try {\n    await saveEcosystemSnapshot({\n      generatedAt: new Date().toISOString(),\n      sourceAvailable: ecosystem.apps.sourceAvailable,\n      observedAppCount: ecosystem.apps.totalCount,\n      payload: ecosystem,\n    });\n  } catch {\n    // Snapshot persistence is best-effort.\n  }\n\n  const reachable = results.filter((item) => item.check.reachable).length;
   const online = results.filter((item) => item.check.ok).length;
 
   return {
