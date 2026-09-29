@@ -8,6 +8,7 @@ import { ZafHistoricalExplorer, ZafWalletIntelligence } from "@/components/zaf-d
 import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
 import { ZafEcosystemOverview } from "@/components/zaf-ecosystem-overview";
 import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosystem-navigation";
+import { ZafDefiData } from "@/components/zaf-defi-data";
 import { ZafAppsData } from "@/components/zaf-apps-data";
 
 function formatNumber(value: number | null, digits = 0) {
@@ -435,19 +436,7 @@ export function ZafTechApp() {
 
             {activeSection === "apps" ? <ZafAppsData locale={locale} subtab={activeSubtab} /> : null}
 
-            {activeSection === "defi" ? (
-              <section className="mt-5 sm:mt-7">
-                <div className="rounded-xl border border-border bg-card p-4">
-                  <h2 className="text-sm font-semibold text-foreground">{tr(activeSubtab)}</h2>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                    {tr("This DeFi layer is being connected to Pi Launchpad, token, DEX, liquidity, and trading sources. Testnet and Mainnet records will remain explicitly separated.")}
-                  </p>
-                  <div className="mt-3 rounded-lg border border-border px-3 py-3 text-[11px] text-muted-foreground">
-                    {tr("No unverified token, liquidity, volume, price, or trading figures are shown here.")}
-                  </div>
-                </div>
-              </section>
-            ) : null}
+            {activeSection === "defi" ? <ZafDefiData locale={locale} subtab={activeSubtab} /> : null}
 
             {activeSection === "pioneer" ? (
               <section className="mt-5 sm:mt-7">
