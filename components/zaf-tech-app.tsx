@@ -136,19 +136,22 @@ type EcosystemChangePayload = {
 
 function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: string, trText: string) => string }) {
   const [data, setData] = useState<EcosystemStatisticsPayload | null>(null);
-  const [changes, setChanges] = useState<EcosystemChangePayload | null>(null);\n  const [trends, setTrends] = useState<EcosystemTrendPayload | null>(null);
+  const [changes, setChanges] = useState<EcosystemChangePayload | null>(null);
+  const [trends, setTrends] = useState<EcosystemTrendPayload | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     let active = true;
     Promise.all([
       fetch("/api/zaf/ecosystem/statistics", { cache: "no-store" }).then(response => response.ok ? response.json() : null),
-      fetch("/api/zaf/ecosystem/changes", { cache: "no-store" }).then(response => response.ok ? response.json() : null),\n      fetch("/api/zaf/ecosystem/trends", { cache: "no-store" }).then(response => response.ok ? response.json() : null),
+      fetch("/api/zaf/ecosystem/changes", { cache: "no-store" }).then(response => response.ok ? response.json() : null),
+      fetch("/api/zaf/ecosystem/trends", { cache: "no-store" }).then(response => response.ok ? response.json() : null),
     ])
       .then(([statistics, changeData, trendData]) => {
         if (!active) return;
         setData(statistics);
-        setChanges(changeData);\n        setTrends(trendData);
+        setChanges(changeData);
+        setTrends(trendData);
       })
       .catch(() => {
         if (!active) return;
@@ -207,7 +210,9 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
         </div>
       </div>
 
-      <TrendView points={trends?.points ?? []} locale={locale} tr={tr} />\n\n      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <TrendView points={trends?.points ?? []} locale={locale} tr={tr} />
+
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Card title="Launchpad" value={data?.current.defi.launchpad.toUpperCase() ?? "—"} />
         <Card title="DEX" value={data?.current.defi.dex.toUpperCase() ?? "—"} />
         <Card title="AMM" value={data?.current.defi.amm.toUpperCase() ?? "—"} />
