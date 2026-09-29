@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getEcosystemSnapshot } from "@/lib/zaf/ecosystem";
 import { checkAppHealth } from "@/lib/zaf/app-health";
+import { saveAppChecks } from "@/lib/zaf/app-check-history";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,8 @@ export async function GET() {
       check: await checkAppHealth(app.url),
     })),
   );
+
+  await saveAppChecks(results.map((item) => ({ appName: item.name, ...item.check })));
 
   const reachable = results.filter((item) => item.check.reachable).length;
   const online = results.filter((item) => item.check.ok).length;
