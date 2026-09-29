@@ -379,6 +379,16 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Observation Metadata", "Gözlem Metaverisi")}</div>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Card title={tr("Generated", "Üretildi")} value={age(data?.generatedAt, locale)} />
+          <Card title={tr("Snapshots", "Snapshot'lar")} value={number(data?.history.snapshots)} />
+          <Card title={tr("First Stored", "İlk Kayıt")} value={age(data?.history.firstObservedAt, locale)} />
+          <Card title={tr("Latest Stored", "Son Kayıt")} value={age(data?.history.latestObservedAt, locale)} />
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <div className="text-xs font-semibold text-foreground">{tr("Detected Changes", "Tespit Edilen Değişiklikler")}</div>
@@ -418,6 +428,12 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
         <Card title="DEX" value={data?.current.defi.dex.toUpperCase() ?? "—"} />
         <Card title="AMM" value={data?.current.defi.amm.toUpperCase() ?? "—"} />
         <Card title={tr("Mainnet Trading", "Mainnet İşlemleri")} value={data?.current.defi.mainnetTrading.toUpperCase() ?? "—"} />
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Data Boundary", "Veri Sınırı")}</div>
+        <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("Observatory metrics are derived from public ecosystem responses and stored snapshots. They describe what ZAF TECH could observe at collection time; missing, unavailable or unverified signals are not inferred.", "Gözlem Merkezi metrikleri herkese açık ekosistem yanıtlarından ve kayıtlı snapshotlardan üretilir. Veriler, ZAF TECH'in toplama anında gözlemleyebildiği durumu tanımlar; eksik, kullanılamayan veya doğrulanmamış sinyaller çıkarımla tamamlanmaz.")}</p>
+        <div className="mt-3 flex flex-wrap gap-3 text-[10px] text-muted-foreground"><span>{tr("Read-only", "Salt-okunur")}</span><span>•</span><span>{tr("Public Sources", "Herkese Açık Kaynaklar")}</span><span>•</span><span>{tr("Historical Data", "Tarihsel Veri")}</span></div>
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
