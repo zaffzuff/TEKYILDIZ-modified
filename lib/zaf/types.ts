@@ -110,3 +110,49 @@ export interface ZafSnapshot {
   };
   error: string | null;
 }
+
+
+export interface ZafWalletTransaction {
+  hash: string;
+  ledger: string | null;
+  createdAt: string | null;
+  successful: boolean | null;
+  sourceAccount: string | null;
+  feePi: number | null;
+  operationCount: number | null;
+  memo: string | null;
+}
+
+export interface ZafWalletOperation {
+  id: string;
+  ledger: string | null;
+  createdAt: string | null;
+  type: string;
+  successful: boolean | null;
+  sourceAccount: string | null;
+  transactionHash: string | null;
+  amountPi: number | null;
+  from: string | null;
+  to: string | null;
+}
+
+export interface ZafWalletSnapshot {
+  address: string;
+  network: "Pi Mainnet" | "Pi Testnet";
+  exists: boolean | null;
+  totalBalancePi: number | null;
+  availableBalancePi: number | null;
+  lockedBalancePi: number | null;
+  lockup: null | Record<string, unknown>;
+  account: {
+    sequence: string | null;
+    subentryCount: number | null;
+    lastModifiedLedger: string | null;
+  } | null;
+  lastActivity: string | null;
+  transactions: ZafWalletTransaction[];
+  operations: ZafWalletOperation[];
+  source: string;
+  generatedAt: string;
+  error: string | null;
+}
