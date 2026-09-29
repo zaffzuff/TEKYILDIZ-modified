@@ -43,7 +43,7 @@ export async function saveEcosystemSnapshot(record: EcosystemSnapshotRecord) {
       INSERT INTO zaf_ecosystem_snapshots
         (generated_at, source_available, observed_app_count, payload)
       VALUES
-        (${record.generatedAt}, ${record.sourceAvailable}, ${record.observedAppCount}, ${sql.json(record.payload)})
+        (${record.generatedAt}, ${record.sourceAvailable}, ${record.observedAppCount}, ${JSON.stringify(record.payload)}::jsonb)
     `;
     return true;
   } finally {
