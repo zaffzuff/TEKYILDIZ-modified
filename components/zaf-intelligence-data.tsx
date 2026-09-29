@@ -151,7 +151,7 @@ export function ZafIntelligenceData({
       transactionsPerHour: data?.metrics.observedTransactionsPerHour ?? null,
       operationsPerHour: data?.metrics.observedOperationsPerHour ?? null,
     }));
-  }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour]);
+  }, [ecosystem, data?.metrics.observedTransactionsPerHour, data?.metrics.observedOperationsPerHour, locale]);
 
   const recentChanges = ecosystem?.changes.slice(0, 8) ?? [];
   const signals = useMemo(() => {
@@ -184,8 +184,16 @@ export function ZafIntelligenceData({
     const next = { ...current };
     const history = readSignalHistory();
     const nextHistory = [...history];
+    const runtimeSignals: EcosystemSnapshot["signals"] = data?.metrics.observedTransactionsPerHour != null ? [{
+      id: "mainnet-transactions-observed", category: "mainnet", kind: "observed",
+      title: copy(locale, "Mainnet activity observed", "Mainnet aktivitesi gözlemlendi"),
+      detail: data.metrics.observedTransactionsPerHour.toLocaleString(locale === "tr" ? "tr-TR" : "en-US") + " transactions/hour in the current observation window.",
+      detailTr: "Mevcut gözlem penceresinde saatte " + data.metrics.observedTransactionsPerHour.toLocaleString("tr-TR") + " işlem.",
+      detectedAt: ecosystem.generatedAt, sourceUrl: null,
+    }] : [];
+    const observedSignals = [...ecosystem.signals, ...runtimeSignals];
 
-    for (const signal of ecosystem.signals) {
+    for (const signal of observedSignals) {
       const fingerprint = signalFingerprint(signal);
       const previous = current[signal.id];
       const status = !previous ? "new" : previous.fingerprint !== fingerprint ? "updated" : "observed";
@@ -391,7 +399,19 @@ export function ZafIntelligenceData({
           ))}
         </div>
 
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 spac        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {(["apps", "defi", "node", "pioneer", "mainnet", "official"] as const).map((category) => {
+            const count = (ecosystem?.signals ?? []).filter((signal) => signal.category === category).length + (category === "mainnet" && data?.metrics.observedTransactionsPerHour != null ? 1 : 0);
+            return (
+              <div key={category} className="rounded-xl border border-border p-2.5">
+                <div className="text-xs font-semibold text-foreground">{category}</div>
+                <div className="mt-1 text-[10px] text-muted-foreground">{count} {copy(locale, "signals in current snapshot", "mevcut snapshot sinyali")}</div>
+              </div>
+            );
+          })}
+        </div>
+
+e-y-2">
           {loading && !ecosystem ? <div className="text-xs text-muted-foreground">{copy(locale, "Reading official ecosystem sources…", "Resmi ekosistem kaynakları okunuyor…")}</div> : null}
           {ecosystem?.officialSignals.length ? (
             <div className="rounded-xl border border-border p-3">
