@@ -147,6 +147,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
       maxListeners: Math.max(0, ...samples.map((s) => s.listeningPorts ?? 0)),
       restartEvents,
       latestRestartCount: samples.at(-1)?.restarts ?? null,
+      healthTransitions: samples.slice(1).reduce((count, sample, index) => count + (sample.healthy !== samples[index].healthy ? 1 : 0), 0),
     };
   }, [samples]);
 
@@ -192,7 +193,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
 
       {!payload ? (
         <div className="mt-4 rounded-lg border border-border px-3 py-4 text-[11px] text-muted-foreground">
-          {tr("Install and run Connector v0.3.3 to start collecting Node history.", "Node geçmişini toplamaya başlamak için Connector v0.3.3 kurup çalıştırın.")}
+          {tr("Install and run the current ZAF TECH Node Connector to start collecting Node history.", "Node geçmişini toplamaya başlamak için güncel ZAF TECH Node Connector'ı kurup çalıştırın.")}
         </div>
       ) : (
         <>
@@ -203,6 +204,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               [tr("Avg incoming", "Ort. gelen"), stats.inbound == null ? "—" : stats.inbound.toFixed(1)],
               [tr("Avg outgoing", "Ort. giden"), stats.outbound == null ? "—" : stats.outbound.toFixed(1)],
               [tr("Samples", "Örnek"), samples.length.toLocaleString()],
+              [tr("Health changes", "Sağlık değişimi"), stats.healthTransitions.toLocaleString()],
             ].map(([label, value]) => (
               <div key={label} className="rounded-lg border border-border px-3 py-3">
                 <div className="text-[10px] text-muted-foreground">{label}</div>
@@ -211,6 +213,22 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             ))}
           </div>
 
+          <div className="mt-3 rounded-lg border border-border px-3 py-3">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="text-[10px] text-muted-foreground">{tr("Observation coverage", "Gözlem kapsamı")}</div>
+                <div className="mt-1 text-sm font-semibold text-foreground">
+                  {samples.length ? `${new Date(samples[0].observedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(samples.at(-1)?.observedAt ?? samples[0].observedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}` : "—"}
+                </div>
+              </div>
+              <div className="text-[10px] text-muted-foreground">
+                {payload.sampleIntervalSeconds ? tr(`Target cadence: ${payload.sampleIntervalSeconds}s`, `Hedef örnekleme: ${payload.sampleIntervalSeconds}s`) : tr("Connector cadence unavailable", "Connector örnekleme bilgisi yok")}
+              </div>
+            </div>
+            <div className="mt-2 text-[10px] text-muted-foreground">
+              {tr("The selected window is calculated only from samples actually collected by this Connector.", "Seçilen pencere yalnızca bu Connector tarafından gerçekten toplanan örneklerden hesaplanır.")}
+            </div>
+          </div>
           <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-3">
             <div className="rounded-lg border border-border p-3">
               <div className="text-[10px] text-muted-foreground">{tr("Node health summary", "Node sağlık özeti")}</div>
