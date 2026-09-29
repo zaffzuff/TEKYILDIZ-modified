@@ -86,12 +86,7 @@ const copy = {
 } as const;
 
 export function ZafPioneerData({ locale, subtab }: { locale: Locale; subtab: string }) {
-  const [lastRefresh, setLastRefresh] = useState(new Date().toISOString());
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setLastRefresh(new Date().toISOString()), 300_000);
-    return () => window.clearInterval(timer);
-  }, []);
+  const [lastViewedAt] = useState(() => new Date().toISOString());
 
   const key = subtab in copy.en ? subtab as keyof typeof copy.en : "KYC";
   const item = copy[locale][key];
@@ -117,8 +112,9 @@ export function ZafPioneerData({ locale, subtab }: { locale: Locale; subtab: str
             {locale === "tr" ? "Salt okunur" : "Read-only"}
           </span>
           <span>
-            {locale === "tr" ? "Son yerel yenileme:" : "Last local refresh:"}{" "}
-            {new Date(lastRefresh).toLocaleTimeString(locale === "tr" ? "tr-TR" : "en-US")}
+            {locale === "tr" ? "Son görüntüleme:" : "Last viewed:"}{" "}
+            {new Date(lastViewedAt).toLocaleTimeString(locale === "tr" ? "tr-TR" : "en-US")}
+            <span className="ml-2">{locale === "tr" ? "Kaynak içerikleri resmi yayınlardan alınır." : "Content is derived from official publications."}</span>
           </span>
         </div>
 
