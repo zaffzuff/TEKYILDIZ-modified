@@ -10,6 +10,8 @@ import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosys
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
 import { ZafAppHealth } from "@/components/zaf-app-health";
 import { ZafDeveloperTools } from "@/components/zaf-developer-tools";
+import { APP_CATEGORIES, toDirectoryApp, type AppCategory } from "@/lib/zaf/app-directory";
+import { useMemo } from "react";
 
 type AppItem = { name: string; url: string };
 type EcosystemPayload = {
@@ -33,6 +35,67 @@ function Card({ title, value, detail }: { title: string; value: string; detail?:
 }
 function External({ href, children }: { href: string; children: React.ReactNode }) {
   return <a href={href} target="_blank" rel="noreferrer" className="text-foreground underline underline-offset-2">{children}</a>;
+}
+
+function AppDirectoryView({ apps, sourceOnline, generatedAt, locale, tr }: { apps: AppItem[]; sourceOnline: boolean; generatedAt?: string; locale: Locale; tr: (en: string, trText: string) => string }) {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<"All" | AppCategory>("All");
+  const directoryApps = useMemo(() => apps.map(app => toDirectoryApp(app, generatedAt ?? new Date().toISOString())), [apps, generatedAt]);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return directoryApps.filter(app => {
+      const matchesQuery = !q || app.name.toLowerCase().includes(q) || app.url.toLowerCase().includes(q);
+      const matchesCategory = category === "All" || app.category === category;
+      return matchesQuery && matchesCategory;
+    });
+  }, [directoryApps, query, category]);
+
+  return (
+    <section className="mt-5 sm:mt-7">
+      <div className="mb-3">
+        <h2 className="text-sm font-semibold text-foreground">{tr("Pi App Directory", "Pi Uygulama Dizini")}</h2>
+        <p className="text-[11px] text-muted-foreground">{tr("Structured discovery of applications observed from the public Pi ecosystem source.", "Herkese açık Pi ekosistem kaynağında gözlemlenen uygulamaların yapılandırılmış keşfi.")}</p>
+      </div>
+      <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <Card title={tr("Observed", "Gözlemlenen")} value={number(directoryApps.length)} detail={tr("Current source response", "Mevcut kaynak yanıtı")} />
+        <Card title={tr("Matching", "Eşleşen")} value={number(filtered.length)} detail={tr("Current filters", "Mevcut filtreler")} />
+        <Card title={tr("Source", "Kaynak")} value={sourceOnline ? "ONLINE" : "OFFLINE"} detail={age(generatedAt, locale)} />
+      </div>
+      <div className="rounded-xl border border-border bg-card p-3">
+        <input value={query} onChange={e => setQuery(e.target.value)} placeholder={tr("Search apps or URLs…", "Uygulama veya URL ara…")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring" />
+        <div className="mt-2 overflow-x-auto ty-no-scrollbar">
+          <div className="flex min-w-max gap-1">
+            <button type="button" onClick={() => setCategory("All")} className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${category === "All" ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground"}`}>{tr("All", "Tümü")}</button>
+            {APP_CATEGORIES.map(item => <button key={item} type="button" onClick={() => setCategory(item)} className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${category === item ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground"}`}>{item}</button>)}
+          </div>
+        </div>
+      </div>
+      <div className="mt-3 space-y-2">
+        {filtered.map(app => (
+          <article key={app.url} className="rounded-xl border border-border bg-card p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h3 className="text-xs font-semibold text-foreground">{app.name}</h3>
+                <p className="mt-1 truncate text-[10px] text-muted-foreground">{app.url}</p>
+              </div>
+              <div className="flex shrink-0 gap-1.5">
+                <a href={`/ecosystem/${app.slug}`} className="rounded-md bg-foreground px-2.5 py-1.5 text-[10px] font-medium text-background">{tr("Details", "Detay")}</a>
+                <a href={app.url} target="_blank" rel="noreferrer" className="rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open", "Aç")}</a>
+              </div>
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{app.category}</span>
+              <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Pi features: not verified", "Pi özellikleri: doğrulanmadı")}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+      {!filtered.length ? <div className="mt-3 rounded-xl border border-border bg-card p-4 text-[11px] text-muted-foreground">{apps.length ? tr("No applications match the current filters.", "Mevcut filtrelerle eşleşen uygulama yok.") : ecosystem?.apps.note}</div> : null}
+      <div className="mt-3 rounded-xl border border-border bg-card p-3 text-[10px] leading-relaxed text-muted-foreground">
+        {tr("Category is a ZAF TECH classification based on the public app name/URL signal, not an official Pi category. Pi Authentication, Pi Payments, PiNet, network and health fields remain unverified until a dedicated observable check confirms them.", "Kategori, herkese açık uygulama adı/URL sinyaline dayalı ZAF TECH sınıflandırmasıdır; resmi Pi kategorisi değildir. Pi Authentication, Pi Payments, PiNet, ağ ve sağlık alanları özel bir gözlemlenebilir kontrol doğrulayana kadar doğrulanmamış olarak kalır.")}
+      </div>
+    </section>
+  );
 }
 
 export function ZafTechApp() {
@@ -141,14 +204,7 @@ export function ZafTechApp() {
 
         {!loading && section === "apps" && subtab === "App Health" ? <ZafAppHealth locale={locale} /> : null}
 
-        {!loading && section === "apps" && subtab === "App Directory" ? (
-          <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi App Directory", "Pi Uygulama Dizini")}</h2><p className="text-[11px] text-muted-foreground">{tr("Applications observed from the public Pi ecosystem source. Technical claims are shown only when verifiable.", "Herkese açık Pi ekosistem kaynağında gözlemlenen uygulamalar. Teknik iddialar yalnızca doğrulanabildiğinde gösterilir.")}</p></div>
-            <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Observed", "Gözlemlenen")} value={number(apps.length)} /><Card title={tr("Source", "Kaynak")} value={sourceOnline ? "ONLINE" : "OFFLINE"} /><Card title={tr("Last check", "Son kontrol")} value={age(ecosystem?.generatedAt, locale)} /></div>
-            <div className="space-y-2">{apps.slice(0, 50).map(app => <article key={app.url} className="rounded-xl border border-border bg-card p-3"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><h3 className="text-xs font-semibold text-foreground">{app.name}</h3><p className="mt-1 truncate text-[10px] text-muted-foreground">{app.url}</p></div><a href={app.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open", "Aç")}</a></div><div className="mt-2 text-[10px] text-muted-foreground">{tr("Observed from Pi Ecosystem source", "Pi Ekosistem kaynağından gözlemlendi")}</div></article>)}</div>
-            {!apps.length ? <div className="rounded-xl border border-border bg-card p-4 text-[11px] text-muted-foreground">{ecosystem?.apps.note}</div> : null}
-          </section>
-        ) : null}
+        {!loading && section === "apps" && subtab === "App Directory" ? <AppDirectoryView apps={apps} sourceOnline={sourceOnline} generatedAt={ecosystem?.generatedAt} locale={locale} tr={tr} /> : null}
 
         {!loading && section === "intelligence" ? (
           <section className="mt-5 sm:mt-7">
