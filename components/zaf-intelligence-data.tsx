@@ -94,6 +94,7 @@ export function ZafIntelligenceData({
   const [ecosystem, setEcosystem] = useState<EcosystemSnapshot | null>(null);
   const [points, setPoints] = useState<TrendPoint[]>([]);
   const [signalState, setSignalState] = useState<SignalState>({});
+  const [signalStatuses, setSignalStatuses] = useState<Record<string, "new" | "updated" | "observed">>({});
   const [loading, setLoading] = useState(true);
 
   async function loadEcosystem() {
@@ -144,24 +145,28 @@ export function ZafIntelligenceData({
       });
     }
 
-    return result.slice(0, 12).map((signal) => {
-      const previous = signalState[signal.id];
-      const fingerprint = [signal.title, signal.detail, signal.detailTr, signal.sourceUrl ?? ""].join("|");
-      const kind = !previous ? "new" : previous.fingerprint !== fingerprint ? "updated" : "observed";
-      return { ...signal, displayKind: kind };
-    });
-  }, [ecosystem, data?.metrics.observedTransactionsPerHour, locale, signalState]);
+    return result.slice(0, 12).map((signal) => ({
+      ...signal,
+      displayKind: signalStatuses[signal.id] ?? "observed",
+    }));
+  }, [ecosystem, data?.metrics.observedTransactionsPerHour, locale, signalStatuses]);
 
   useEffect(() => {
     if (!ecosystem?.signals.length) return;
     const current = readSignalState();
+    const statuses: Record<string, "new" | "updated" | "observed"> = {};
     const next = { ...current };
+
     for (const signal of ecosystem.signals) {
-      next[signal.id] = { fingerprint: signalFingerprint(signal), lastSeenAt: ecosystem.generatedAt };
+      const fingerprint = signalFingerprint(signal);
+      const previous = current[signal.id];
+      statuses[signal.id] = !previous ? "new" : previous.fingerprint !== fingerprint ? "updated" : "observed";
+      next[signal.id] = { fingerprint, lastSeenAt: ecosystem.generatedAt };
     }
-    const entries = Object.entries(next).slice(-500);
-    const trimmed = Object.fromEntries(entries);
+
+    const trimmed = Object.fromEntries(Object.entries(next).slice(-500));
     try { window.localStorage.setItem(SIGNAL_STATE_KEY, JSON.stringify(trimmed)); } catch {}
+    setSignalStatuses(statuses);
     setSignalState(trimmed);
   }, [ecosystem]);
 
