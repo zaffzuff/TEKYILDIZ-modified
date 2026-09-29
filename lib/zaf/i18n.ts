@@ -136,7 +136,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Show all": "Tümünü göster",
     "No ledger records available.": "Ledger kaydı mevcut değil.",
     "Each row is a real Mainnet ledger observed from Pi Horizon. Transaction counts include successful and failed transactions when both ledger counters are available.": "Her satır Pi Horizon'dan gözlemlenen gerçek bir Mainnet ledger'ıdır. Her iki ledger sayacı mevcut olduğunda işlem sayıları başarılı ve başarısız işlemleri içerir.",
-    "Activity Signals": "Aktivite Sinyalleri",
     "Latest 100-ledger window": "Son 100 ledger penceresi",
     "Average fee": "Ortalama ücret",
     "Latest transaction sample": "Son işlem örneklemi",
