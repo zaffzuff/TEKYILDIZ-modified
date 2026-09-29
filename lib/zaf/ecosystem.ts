@@ -32,7 +32,7 @@ export type EcosystemSnapshot = {
     note: string;
   };
   news: EcosystemNewsItem[];
-  changes: Array<{
+  defi: {\n    launchpad: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };\n    dex: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };\n    amm: { status: "testnet"; sourceUrl: string; latestUpdate: EcosystemNewsItem | null };\n    mainnetTrading: { status: "restricted"; detail: string };\n  };\n  changes: Array<{
     type: "new-app" | "news" | "source";
     title: string;
     detail: string;
@@ -40,7 +40,7 @@ export type EcosystemSnapshot = {
   }>;
 };
 
-const APP_SOURCE = ECOSYSTEM_SOURCES.ecosystemAppPlatform;
+const APP_SOURCE = ECOSYSTEM_SOURCES.ecosystemAppPlatform;\nconst DEFI_SOURCES = {\n  launchpad: "https://minepi.com/blog/pi-launchpad/",\n  dexAmm: "https://minepi.com/blog/dex-amm-token-creation/",\n  dexUpdate: "https://minepi.com/blog/dex-amm-update/",\n} as const;
 
 function absoluteUrl(value: string) {
   try {
@@ -159,6 +159,16 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     readOfficialNews(),
   ]);
 
+  const defiNews = news.filter((item) => /launchpad|dex|amm|liquidity|token/i.test(item.title));
+  const launchpadUpdate = defiNews.find((item) => /launchpad/i.test(item.title)) ?? null;
+  const dexUpdate = defiNews.find((item) => /dex|amm|liquidity/i.test(item.title)) ?? null;
+  const defi = {
+    launchpad: { status: "testnet" as const, sourceUrl: DEFI_SOURCES.launchpad, latestUpdate: launchpadUpdate },
+    dex: { status: "testnet" as const, sourceUrl: DEFI_SOURCES.dexUpdate, latestUpdate: dexUpdate },
+    amm: { status: "testnet" as const, sourceUrl: DEFI_SOURCES.dexAmm, latestUpdate: dexUpdate },
+    mainnetTrading: { status: "restricted" as const, detail: "Official Pi documentation currently describes DEX/AMM functionality as Testnet-only during the testing phase." },
+  };
+
   const sources: EcosystemSourceStatus[] = [
     ecosystemInterface,
     {
@@ -205,5 +215,5 @@ export async function getEcosystemSnapshot(): Promise<EcosystemSnapshot> {
     });
   }
 
-  return { generatedAt, sources, apps: appData, news, changes };
+  return { generatedAt, sources, apps: appData, news, defi, changes };
 }
