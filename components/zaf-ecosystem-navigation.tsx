@@ -1,6 +1,7 @@
 "use client";
 
 import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
 
 export type ZafSection = "overview" | "apps" | "node" | "intelligence" | "wallet";
 
@@ -22,7 +23,7 @@ const labels: Record<string, [string, string]> = {
 
 function label(value: string, locale: Locale) {
   const pair = labels[value] ?? [value, value];
-  return locale === "tr" ? pair[1] : pair[0];
+  return translate(locale, pair[0], pair[1]);
 }
 
 export function ZafEcosystemNavigation({ locale, section, subtab, onSectionChange, onSubtabChange }: {
