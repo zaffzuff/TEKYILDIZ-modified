@@ -216,13 +216,13 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
           <div className="mt-3 rounded-lg border border-border px-3 py-3">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-[10px] text-muted-foreground">{tr("Observation coverage", "Gözlem kapsamı")}</div>
+                <div className="text-[10px] text-muted-foreground">{tr("Observation Coverage", "Gözlem Kapsamı")}</div>
                 <div className="mt-1 text-sm font-semibold text-foreground">
                   {samples.length ? `${new Date(samples[0].observedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} → ${new Date(samples.at(-1)?.observedAt ?? samples[0].observedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}` : "—"}
                 </div>
               </div>
               <div className="text-[10px] text-muted-foreground">
-                {payload.sampleIntervalSeconds ? tr(`Target cadence: ${payload.sampleIntervalSeconds}s`, `Hedef örnekleme: ${payload.sampleIntervalSeconds}s`) : tr("Connector cadence unavailable", "Connector örnekleme bilgisi yok")}
+                {payload.sampleIntervalSeconds ? tr(`Target cadence: ${payload.sampleIntervalSeconds}s`, `Hedef örnekleme: ${payload.sampleIntervalSeconds}s`) : tr("Connector Cadence Unavailable", "Connector Örnekleme Bilgisi Yok")}
               </div>
             </div>
             <div className="mt-2 text-[10px] text-muted-foreground">
@@ -231,9 +231,9 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-3">
             <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Node health summary", "Node sağlık özeti")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Node Health Summary", "Node Sağlık Özeti")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">
-                {latest?.healthy ? tr("Healthy", "Sağlıklı") : latest?.available ? tr("Available with warnings", "Çalışıyor, uyarılar var") : tr("Unavailable", "Kullanılamıyor")}
+                {latest?.healthy ? tr("Healthy", "Sağlıklı") : latest?.available ? tr("Available With Warnings", "Çalışıyor, Uyarılar Var") : tr("Unavailable", "Kullanılamıyor")}
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
                 <div className="rounded-md border border-border px-2 py-2">
@@ -265,21 +265,21 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             </div>
 
             <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Uptime & restart history", "Çalışma süresi ve yeniden başlatma geçmişi")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Uptime & Restart History", "Çalışma Süresi Ve Yeniden Başlatma Geçmişi")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">
                 {stats.availability == null ? "—" : stats.availability.toFixed(2) + "% " + tr("availability", "erişilebilirlik")}
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
                 <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Restarts observed", "Gözlenen yeniden başlatma")}</div>
+                  <div className="text-muted-foreground">{tr("Restarts Observed", "Gözlenen Yeniden Başlatma")}</div>
                   <div className="mt-0.5 font-medium text-foreground">{stats.restartEvents}</div>
                 </div>
                 <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Docker count", "Docker sayacı")}</div>
+                  <div className="text-muted-foreground">{tr("Docker Count", "Docker Sayacı")}</div>
                   <div className="mt-0.5 font-medium text-foreground">{stats.latestRestartCount ?? "—"}</div>
                 </div>
               </div>
-              <div className="mt-2 flex h-3 gap-px overflow-hidden rounded-sm border border-border" aria-label={tr("Recent uptime timeline", "Son çalışma süresi zaman çizelgesi")}>
+              <div className="mt-2 flex h-3 gap-px overflow-hidden rounded-sm border border-border" aria-label={tr("Recent Uptime Timeline", "Son Çalışma Süresi Zaman Çizelgesi")}>
                 {chart.map((sample) => (
                   <span
                     key={sample.observedAt}
@@ -309,7 +309,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
                 </div>
               </div>
               {chart.length > 1 ? (
-                <svg viewBox="0 0 600 80" className="mt-2 h-16 w-full" role="img" aria-label={tr("Local port listener history", "Yerel port dinleyici geçmişi")}>
+                <svg viewBox="0 0 600 80" className="mt-2 h-16 w-full" role="img" aria-label={tr("Local Port Listener History", "Yerel Port Dinleyici Geçmişi")}>
                   <polyline
                     fill="none"
                     stroke="currentColor"
@@ -337,7 +337,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               <div className="mt-2 text-[9px] text-muted-foreground">
                 {resources?.host?.memory?.usedBytes != null && resources?.host?.memory?.totalBytes != null
                   ? formatBytes(resources.host.memory.usedBytes) + " / " + formatBytes(resources.host.memory.totalBytes) + " RAM"
-                  : tr("Local Windows resource snapshot", "Yerel Windows kaynak anlık görüntüsü")}
+                  : tr("Local Windows Resource Snapshot", "Yerel Windows Kaynak Anlık Görüntüsü")}
               </div>
             </div>
 
@@ -351,7 +351,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               <div className="mt-2 text-[9px] text-muted-foreground">
                 {resources?.docker?.memory?.usedBytes != null && resources?.docker?.memory?.limitBytes != null
                   ? formatBytes(resources.docker.memory.usedBytes) + " / " + formatBytes(resources.docker.memory.limitBytes) + " RAM"
-                  : tr("Docker stats for the local Node container", "Yerel Node container için Docker istatistikleri")}
+                  : tr("Docker Stats For The Local Node Container", "Yerel Node Container İçin Docker İstatistikleri")}
               </div>
             </div>
 
@@ -367,7 +367,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
                   </div>
                 </div>
                 <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Node container", "Node container")}</div>
+                  <div className="text-muted-foreground">{tr("Node Container", "Node Container")}</div>
                   <div className="mt-0.5 font-medium text-foreground">
                     {resources?.docker?.network?.receivedBytes != null && resources?.docker?.network?.sentBytes != null
                       ? formatBytes(resources.docker.network.receivedBytes) + " ↓ · " + formatBytes(resources.docker.network.sentBytes) + " ↑"
@@ -389,7 +389,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               <span>{tr("Max", "Maks.")}: {stats.maxInbound} / {stats.maxOutbound}</span>
             </div>
             {chart.length > 1 ? (
-              <svg viewBox="0 0 600 180" className="mt-2 h-44 w-full" role="img" aria-label={tr("Peer history chart", "Peer geçmişi grafiği")}>
+              <svg viewBox="0 0 600 180" className="mt-2 h-44 w-full" role="img" aria-label={tr("Peer History Chart", "Peer Geçmişi Grafiği")}>
                 <line x1="0" y1="160" x2="600" y2="160" stroke="currentColor" strokeOpacity="0.12" />
                 <polyline fill="none" stroke="currentColor" strokeWidth="2"
                   points={chart.map((s, i) => `${(i / (chart.length - 1)) * 600},${160 - ((s.inbound ?? 0) / maxPeers) * 140}`).join(" ")} />
@@ -398,7 +398,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               </svg>
             ) : (
               <div className="flex h-44 items-center justify-center text-[11px] text-muted-foreground">
-                {tr("Collecting enough observations for the chart…", "Grafik için yeterli gözlem toplanıyor…")}
+                {tr("Collecting Enough Observations For The Chart…", "Grafik İçin Yeterli Gözlem Toplanıyor…")}
               </div>
             )}
             <div className="flex gap-4 text-[10px] text-muted-foreground">
