@@ -828,7 +828,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "First Stored": "首次存储",
     "Latest Stored": "最近存储",
     "No stored trend points yet.": "尚无存储的趋势点。",
-    "Launchpad": "Launchpad",
     "Mainnet Trading": "主网交易",
     "Public Sources": "公开来源",
     "Loading Statistics…": "正在加载统计数据…",
