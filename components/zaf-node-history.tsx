@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
 
 type Sample = {
   observedAt: string;
@@ -91,7 +92,7 @@ function pct(samples: Sample[], key: "available" | "healthy") {
 }
 
 export function ZafNodeHistory({ locale }: { locale: Locale }) {
-  const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+  const tr = (en: string, trText: string) => translate(locale, en, trText);
   const [payload, setPayload] = useState<Payload | null>(null);
   const [resources, setResources] = useState<ResourcePayload | null>(null);
   const [windowHours, setWindowHours] = useState<WindowHours>(24);
