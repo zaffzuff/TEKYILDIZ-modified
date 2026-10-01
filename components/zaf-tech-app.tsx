@@ -80,8 +80,8 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
         <p className="text-[11px] text-muted-foreground">{tr("Structured discovery of applications observed from the public Pi ecosystem source.", "Herkese açık Pi ekosistem kaynağında gözlemlenen uygulamaların yapılandırılmış keşfi.")}</p>
       </div>
       <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <Card title={tr("Observed", "Gözlemlenen")} value={number(directoryApps.length)} detail={tr("Current source response", "Mevcut kaynak yanıtı")} />
-        <Card title={tr("Matching", "Eşleşen")} value={number(filtered.length)} detail={tr("Current filters", "Mevcut filtreler")} />
+        <Card title={tr("Observed", "Gözlemlenen")} value={number(directoryApps.length)} detail={tr("Current Source Response", "Mevcut Kaynak Yanıtı")} />
+        <Card title={tr("Matching", "Eşleşen")} value={number(filtered.length)} detail={tr("Current Filters", "Mevcut Filtreler")} />
         <Card title={tr("Source", "Kaynak")} value={displayStatus(sourceOnline ? "online" : "offline", locale)} detail={age(generatedAt, locale)} />
       </div>
       <div className="rounded-xl border border-border bg-card p-3">
@@ -323,7 +323,7 @@ export function ZafTechApp() {
               <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current Sample", "Mevcut Örnek")} />
               <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations)} detail={tr("Current Sample", "Mevcut Örnek")} />
               <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} />
-              <Card title={tr("Ops / hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} />
+              <Card title={tr("Ops / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} />
             </div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
               <div className="text-xs font-semibold text-foreground">{tr("Network Measurement Boundary", "Ağ Ölçüm Sınırı")}</div>
