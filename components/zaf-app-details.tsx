@@ -56,7 +56,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
               ["PiNet", verification(app.piNet)],
               [tr("Network", "Ağ"), displayStatus(app.network)],
               [tr("Status", "Durum"), displayStatus(app.status)],
-              [tr("Last Checked", "Son Kontrol"), new Date(app.lastChecked).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : "en-GB")],
+              [tr("Last Checked", "Son Kontrol"), new Date(app.lastChecked).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : "en-GB")],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl border border-border bg-card p-3">
                 <div className="text-[10px] text-muted-foreground">{label}</div>
