@@ -19,7 +19,7 @@ function verification(value: DirectoryApp["piAuthentication"]) {
 
 export function AppDetails({ app }: { app: DirectoryApp }) {
   const [locale, setLocale] = useState<Locale>("en");
-  useEffect(() => { const saved = window.localStorage.getItem("zaf-tech-locale-v1"); if (saved === "en" || saved === "es" || saved === "tr") setLocale(saved as Locale); }, []);
+
   const tr = (en: string, trText: string) => translate(locale, en, trText);
   return (
     <main className="min-h-screen bg-background">
@@ -28,7 +28,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
           <div className="flex items-center justify-between gap-3">
             <Link href="/" className="text-xs font-medium text-muted-foreground hover:text-foreground">{tr("← Back To ZAF TECH", "← ZAF TECH'e Dön")}</Link>
             <select value={locale} onChange={e => { const next = e.target.value as Locale; setLocale(next);  }} aria-label={tr("Language", "Dil")} className="rounded-md border bg-background px-2 py-1 text-[10px] text-foreground">
-              {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>({ en: "🇬🇧", es: "🇪🇸", tr: "🇹🇷" }[option])} {localeLabels[option]}</option>)}
+              {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>{({ en: "🇬🇧", es: "🇪🇸", tr: "🇹🇷" }[option])} {localeLabels[option]}</option>)}
             </select>
             <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={38} height={38} className="h-9 w-9 object-contain" priority />
           </div>
