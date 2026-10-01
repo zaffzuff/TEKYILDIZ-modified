@@ -164,7 +164,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
     !latest.available ? tr("Connector / Node unavailable", "Connector / Node kullanılamıyor") : null,
     String(latest.quorumPhase || "").toUpperCase() !== "EXTERNALIZE" ? tr("SCP is not EXTERNALIZE", "SCP EXTERNALIZE değil") : null,
     latest.intersection !== true ? tr("Quorum intersection is not true", "Quorum intersection true değil") : null,
-    latest.ledgerAge == null || latest.ledgerAge >= 10 ? tr("Ledger age is 10s or higher", "Ledger yaşı 10s veya daha yüksek") : null,
+    latest.ledgerAge == null || latest.ledgerAge >= 10 ? tr("Ledger Age is 10s or higher", "Ledger Yaşı 10s veya daha yüksek") : null,
     (latest.authenticated ?? 0) < 8 ? tr("Fewer than 8 authenticated peers", "8'den az authenticated peer") : null,
   ].filter(Boolean) as string[] : [];
   const hostNetworkRate = rateFromSamples(samples, "hostNetworkReceivedBytes", "hostNetworkSentBytes");
@@ -201,10 +201,10 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             {[
               [tr("Availability", "Erişilebilirlik"), stats.availability == null ? "—" : `${stats.availability.toFixed(2)}%`],
               [tr("Healthy", "Sağlıklı"), stats.health == null ? "—" : `${stats.health.toFixed(2)}%`],
-              [tr("Avg incoming", "Ort. gelen"), stats.inbound == null ? "—" : stats.inbound.toFixed(1)],
-              [tr("Avg outgoing", "Ort. giden"), stats.outbound == null ? "—" : stats.outbound.toFixed(1)],
+              [tr("Avg Incoming", "Ort. Gelen"), stats.inbound == null ? "—" : stats.inbound.toFixed(1)],
+              [tr("Avg Outgoing", "Ort. Giden"), stats.outbound == null ? "—" : stats.outbound.toFixed(1)],
               [tr("Samples", "Örnek"), samples.length.toLocaleString()],
-              [tr("Health changes", "Sağlık değişimi"), stats.healthTransitions.toLocaleString()],
+              [tr("Health Changes", "Sağlık Değişimi"), stats.healthTransitions.toLocaleString()],
             ].map(([label, value]) => (
               <div key={label} className="rounded-lg border border-border px-3 py-3">
                 <div className="text-[10px] text-muted-foreground">{label}</div>
@@ -237,7 +237,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
                 <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Ledger age", "Ledger yaşı")}</div>
+                  <div className="text-muted-foreground">{tr("Ledger Age", "Ledger Yaşı")}</div>
                   <div className="mt-0.5 font-medium text-foreground">{latest?.ledgerAge != null ? latest.ledgerAge + "s" : "—"}</div>
                 </div>
                 <div className="rounded-md border border-border px-2 py-2">
@@ -294,9 +294,9 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             </div>
 
             <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Port health history", "Port sağlık geçmişi")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Port Health History", "Port Sağlık Geçmişi")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">
-                {latest?.listeningPorts ?? "—"}/10 {tr("local listeners", "yerel dinleyici")}
+                {latest?.listeningPorts ?? "—"}/10 {tr("Local Listeners", "Yerel Dinleyici")}
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
                 <div className="rounded-md border border-border px-2 py-2">
@@ -318,17 +318,17 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
                   />
                 </svg>
               ) : (
-                <div className="mt-2 text-[10px] text-muted-foreground">{tr("Collecting port observations…", "Port gözlemleri toplanıyor…")}</div>
+                <div className="mt-2 text-[10px] text-muted-foreground">{tr("Collecting Port Observations…", "Port Gözlemleri Toplanıyor…")}</div>
               )}
               <div className="mt-1 text-[9px] text-muted-foreground">
-                {tr("Local listener checks only; this is not an Internet reachability test.", "Yalnızca yerel dinleyici kontrolüdür; Internet erişilebilirlik testi değildir.")}
+                {tr("Local listener checks only; this is not an Internet reachability test.", "Yalnızca Yerel Dinleyici kontrolüdür; Internet erişilebilirlik testi değildir.")}
               </div>
             </div>
           </div>
 
           <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-3">
             <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Host resources", "Ana bilgisayar kaynakları")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Host Resources", "Ana Bilgisayar Kaynakları")}</div>
               <div className="mt-1 grid grid-cols-3 gap-2">
                 <div><div className="text-[9px] text-muted-foreground">CPU</div><div className="text-sm font-semibold text-foreground">{resources?.host?.cpuPercent != null ? resources.host.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
                 <div><div className="text-[9px] text-muted-foreground">RAM</div><div className="text-sm font-semibold text-foreground">{resources?.host?.memory?.usedPercent != null ? resources.host.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
@@ -342,7 +342,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             </div>
 
             <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Node container resources", "Node container kaynakları")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Node Container Resources", "Node Container Kaynakları")}</div>
               <div className="mt-1 grid grid-cols-3 gap-2">
                 <div><div className="text-[9px] text-muted-foreground">CPU</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.cpuPercent != null ? resources.docker.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
                 <div><div className="text-[9px] text-muted-foreground">RAM</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.memory?.usedPercent != null ? resources.docker.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
@@ -356,10 +356,10 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
             </div>
 
             <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Network I/O & WSL", "Ağ I/O ve WSL")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Network I/O & WSL", "Ağ I/O Ve WSL")}</div>
               <div className="mt-1 grid grid-cols-2 gap-2 text-[10px]">
                 <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Host rate", "Host hızı")}</div>
+                  <div className="text-muted-foreground">{tr("Host Rate", "Host Hızı")}</div>
                   <div className="mt-0.5 font-medium text-foreground">
                     {hostNetworkRate.rx != null && hostNetworkRate.tx != null
                       ? formatBytes(hostNetworkRate.rx) + "/s ↓ · " + formatBytes(hostNetworkRate.tx) + "/s ↑"
@@ -377,8 +377,8 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               </div>
               <div className="mt-2 text-[9px] text-muted-foreground">
                 {resources?.wsl?.available
-                  ? tr("WSL active distributions: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0), "WSL çalışan dağıtımlar: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0))
-                  : tr("WSL not detected", "WSL algılanmadı")}
+                  ? tr("WSL Active Distributions: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0), "WSL Çalışan Dağıtımlar: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0))
+                  : tr("WSL Not Detected", "WSL Algılanmadı")}
               </div>
             </div>
           </div>
@@ -415,9 +415,9 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
                   <th className="px-3 py-2">{tr("Incoming", "Gelen")}</th>
                   <th className="px-3 py-2">{tr("Outgoing", "Giden")}</th>
                   <th className="px-3 py-2">{tr("Pending", "Bekleyen")}</th>
-                  <th className="px-3 py-2">{tr("Ledger age", "Ledger yaşı")}</th>
+                  <th className="px-3 py-2">{tr("Ledger Age", "Ledger Yaşı")}</th>
                   <th className="px-3 py-2">{tr("Listeners", "Dinleyici")}</th>
-                  <th className="px-3 py-2">{tr("Restarts", "Yeniden başlatma")}</th>
+                  <th className="px-3 py-2">{tr("Restarts", "Yeniden Başlatma")}</th>
                   <th className="px-3 py-2">SCP</th>
                 </tr>
               </thead>
