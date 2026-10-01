@@ -485,6 +485,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Loading Statistics…": "Cargando Estadísticas…",
     "About": "Acerca De",
     "Privacy": "Privacidad",
+  },
   zh: {
     "Overview": "概览",
     "Apps": "应用",
