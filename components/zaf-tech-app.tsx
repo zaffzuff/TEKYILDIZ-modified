@@ -27,22 +27,22 @@ function number(value: number | null | undefined, digits = 0) {
 function displayStatus(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
   const normalized = value.replace(/[_-]+/g, " ").trim().toLowerCase();
-  const known: Record<string, [string, string]> = {
-    online: ["Online", "Çevrimiçi"],
-    offline: ["Offline", "Çevrimdışı"],
-    available: ["Available", "Kullanılabilir"],
-    unavailable: ["Unavailable", "Kullanılamıyor"],
-    error: ["Error", "Hata"],
-    active: ["Active", "Aktif"],
-    "not configured": ["Not configured", "Yapılandırılmadı"],
-    rising: ["Rising", "Yükseliyor"],
-    stable: ["Stable", "Sabit"],
-    falling: ["Falling", "Düşüyor"],
-    observed: ["Observed", "Gözlemlendi"],
-    unverified: ["Unverified", "Doğrulanmadı"],
+  const known: Record<string, [string, string, string]> = {
+    online: ["Online", "En Línea", "En Línea"],
+    offline: ["Offline", "Fuera De Línea", "Fuera De Línea"],
+    available: ["Available", "Kullanılabilir", "Disponible"],
+    unavailable: ["Unavailable", "Kullanılamıyor", "No Disponible"],
+    error: ["Error", "Hata", "Error"],
+    active: ["Active", "Aktif", "Activo"],
+    "not configured": ["Not configured", "Yapılandırılmadı", "No Configurado"],
+    rising: ["Rising", "Yükseliyor", "Subiendo"],
+    stable: ["Stable", "Sabit", "Estable"],
+    falling: ["Falling", "Düşüyor", "Bajando"],
+    observed: ["Observed", "Gözlemlendi", "Observado"],
+    unverified: ["Unverified", "Doğrulanmadı", "No Verificado"],
   };
   const pair = known[normalized];
-  if (pair) return locale === "tr" ? pair[1] : pair[0];
+  if (pair) return locale === "tr" ? pair[1] : locale === "es" ? pair[2] : pair[0];
   const label = normalized.charAt(0).toUpperCase() + normalized.slice(1);
   return label;
 }
@@ -51,7 +51,7 @@ function age(value: string | null | undefined, locale: Locale) {
   const ms = Date.now() - Date.parse(value);
   if (!Number.isFinite(ms)) return "—";
   const min = Math.floor(ms / 60000);
-  return locale === "tr" ? (min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`) : (min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`);
+  return locale === "tr" ? (min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`) : locale === "es" ? (min < 1 ? "Ahora Mismo" : min < 60 ? `${min} Min Antes` : `${Math.floor(min / 60)} H Antes`) : (min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`);
 }
 function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
   return <div className="rounded-xl border border-border bg-card p-3 sm:p-4"><div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div><div className="mt-1 text-xs font-medium text-foreground">{title}</div>{detail ? <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div> : null}</div>;
