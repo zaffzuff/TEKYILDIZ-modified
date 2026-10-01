@@ -5,7 +5,6 @@ import type { Locale } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 import { ZafNodeIntelligence } from "@/components/zaf-node-intelligence";
 import { ZafNodeHistory } from "@/components/zaf-node-history";
-import { translate } from "@/lib/zaf/i18n";
 
 function spanishCopy(value:string){
   if(value.length<70)return value;
@@ -41,7 +40,7 @@ function SoloHost({locale}:{locale:Locale}){
 }
 
 function Compute({locale}:{locale:Locale}){
- const tr=locale==="tr"; const es=locale==="es";
+ const tr=locale==="tr"; const es=locale==="es"; const zh=locale==="zh";
  return <section className="mt-7"><div className="mb-3"><h2 className="text-sm font-semibold text-foreground">Compute</h2><p className="text-[11px] text-muted-foreground">{tr?"Pi Node kaynaklarının blockchain dışında hesaplama amacıyla kullanımına ilişkin resmi durum.":zh?"Pi Node 资源用于区块链基础设施之外计算的官方状态。":es?spanishCopy("Estado Oficial Del Uso De Recursos De Pi Node Para Cómputo Más Allá De La Infraestructura Blockchain."):"Official status of using Pi Node resources for computing beyond blockchain infrastructure."}</p></div>
  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
  <Card title={tr?"Kullanım Durumu":zh?"使用状态":es?spanishCopy("Estado De Uso"):"Use-Case Status"} value={tr?"Test edildi":zh?"已测试":es?spanishCopy("Probado"):"Tested"} detail={tr?"SoloHost üzerinden gerçek cihazlarla uçtan uca dağıtık hesaplama testi yapıldı.":zh?"通过 SoloHost 完成了一次端到端分布式计算测试。":es?spanishCopy("An end-to-end distributed-computing test was completed through SoloHost."):"An end-to-end distributed-computing test was completed through SoloHost."}/>
@@ -54,7 +53,7 @@ function Compute({locale}:{locale:Locale}){
 }
 
 function Infrastructure({locale}:{locale:Locale}){
- const tr=locale==="tr"; const es=locale==="es";const[health,setHealth]=useState<Health|null>(null);const[r,setR]=useState<Resources|null>(null);const[online,setOnline]=useState<boolean|null>(null);
+ const tr=locale==="tr"; const es=locale==="es"; const zh=locale==="zh";const[health,setHealth]=useState<Health|null>(null);const[r,setR]=useState<Resources|null>(null);const[online,setOnline]=useState<boolean|null>(null);
  useEffect(()=>{const load=async()=>{try{const[h,x]=await Promise.all([fetch("http://127.0.0.1:39100/health",{cache:"no-store"}),fetch("http://127.0.0.1:39100/resources",{cache:"no-store"})]);if(!h.ok)throw new Error();setHealth(await h.json());setR(x.ok?await x.json():null);setOnline(true);}catch{setHealth(null);setR(null);setOnline(false);}};void load();const id=window.setInterval(()=>void load(),15000);return()=>window.clearInterval(id);},[]);
  const dist=r?.wsl?.distributions?.filter(d=>d.state==="running").length??0;
  return <section className="mt-7"><div className="mb-3"><h2 className="text-sm font-semibold text-foreground">Infrastructure</h2><p className="text-[11px] text-muted-foreground">{tr?"Yerel Connector, Docker ve WSL kaynak gözlemleri.":zh?"本地 Connector、Docker 和 WSL 资源观测。":es?spanishCopy("Observaciones De Recursos Del Connector Local, Docker Y WSL."):"Local Connector, Docker, and WSL resource observations."}</p></div>
