@@ -28,22 +28,22 @@ function number(value: number | null | undefined, digits = 0) {
 function displayStatus(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
   const normalized = value.replace(/[_-]+/g, " ").trim().toLowerCase();
-  const known: Record<string, [string, string, string]> = {
-    online: ["Online", "En Línea", "En Línea"],
-    offline: ["Offline", "Fuera De Línea", "Fuera De Línea"],
-    available: ["Available", "Kullanılabilir", "Disponible"],
-    unavailable: ["Unavailable", "Kullanılamıyor", "No Disponible"],
-    error: ["Error", "Hata", "Error"],
-    active: ["Active", "Aktif", "Activo"],
-    "not configured": ["Not configured", "Yapılandırılmadı", "No Configurado"],
-    rising: ["Rising", "Yükseliyor", "Subiendo"],
-    stable: ["Stable", "Sabit", "Estable"],
-    falling: ["Falling", "Düşüyor", "Bajando"],
-    observed: ["Observed", "Gözlemlendi", "Observado"],
-    unverified: ["Unverified", "Doğrulanmadı", "No Verificado"],
+  const known: Record<string, [string, string, string, string]> = {
+    online: ["Online", "En Línea", "En Línea", "在线"],
+    offline: ["Offline", "Fuera De Línea", "Fuera De Línea", "离线"],
+    available: ["Available", "Kullanılabilir", "Disponible", "可用"],
+    unavailable: ["Unavailable", "Kullanılamıyor", "No Disponible", "不可用"],
+    error: ["Error", "Hata", "Error", "错误"],
+    active: ["Active", "Aktif", "Activo", "活跃"],
+    "not configured": ["Not configured", "Yapılandırılmadı", "No Configurado", "未配置"],
+    rising: ["Rising", "Yükseliyor", "Subiendo", "上升"],
+    stable: ["Stable", "Sabit", "Estable", "稳定"],
+    falling: ["Falling", "Düşüyor", "Bajando", "下降"],
+    observed: ["Observed", "Gözlemlendi", "Observado", "已观测"],
+    unverified: ["Unverified", "Doğrulanmadı", "No Verificado", "未验证"],
   };
   const pair = known[normalized];
-  if (pair) return locale === "tr" ? pair[1] : locale === "es" ? pair[2] : pair[0];
+  if (pair) return locale === "tr" ? pair[1] : locale === "es" ? pair[2] : locale === "zh" ? pair[3] : pair[0];
   const label = normalized.charAt(0).toUpperCase() + normalized.slice(1);
   return label;
 }
