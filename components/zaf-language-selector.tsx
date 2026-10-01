@@ -7,34 +7,17 @@ import { localeLabels } from "@/lib/zaf/i18n";
 const locales: Locale[] = ["en", "es", "tr"];
 
 function FlagIcon({ locale }: { locale: Locale }) {
-  if (locale === "tr") {
-    return (
-      <svg viewBox="0 0 20 14" className="h-3.5 w-5 shrink-0 rounded-[2px]" aria-hidden="true">
-        <rect width="20" height="14" fill="#e30a17" />
-        <circle cx="8.2" cy="7" r="3.2" fill="#fff" />
-        <circle cx="9.1" cy="7" r="2.55" fill="#e30a17" />
-        <path d="M12.1 7l2.1-1.4-.8 2.45 2.05 1.45-2.55-.05-.8 2.4-.75-2.4-2.55.05 2.05-1.45-.8-2.45z" fill="#fff" />
-      </svg>
-    );
-  }
-
-  if (locale === "es") {
-    return (
-      <svg viewBox="0 0 20 14" className="h-3.5 w-5 shrink-0 rounded-[2px]" aria-hidden="true">
-        <rect width="20" height="14" fill="#aa151b" />
-        <rect y="3.5" width="20" height="7" fill="#f1bf00" />
-      </svg>
-    );
-  }
+  const flag = locale === "en" ? "gb" : locale === "es" ? "es" : "tr";
 
   return (
-    <svg viewBox="0 0 20 14" className="h-3.5 w-5 shrink-0 rounded-[2px]" aria-hidden="true">
-      <rect width="20" height="14" fill="#012169" />
-      <path d="M0 0L20 14M20 0L0 14" stroke="#fff" strokeWidth="3" />
-      <path d="M0 0L20 14M20 0L0 14" stroke="#c8102e" strokeWidth="1.2" />
-      <path d="M10 0v14M0 7h20" stroke="#fff" strokeWidth="5" />
-      <path d="M10 0v14M0 7h20" stroke="#c8102e" strokeWidth="2.8" />
-    </svg>
+    <img
+      src={`https://flagcdn.com/${flag}.svg`}
+      alt=""
+      width={20}
+      height={14}
+      className="h-3.5 w-5 shrink-0 rounded-[2px] object-cover"
+      aria-hidden="true"
+    />
   );
 }
 
@@ -79,7 +62,7 @@ export function LanguageSelector({
         <div
           role="listbox"
           aria-label="Language"
-          className="absolute right-0 z-50 mt-1 min-w-full overflow-hidden rounded-lg border border-border bg-card p-1 shadow-lg"
+          className="absolute right-0 z-50 mt-1 min-w-[118px] overflow-hidden rounded-lg border border-border bg-card p-1 shadow-lg"
         >
           {ordered.map(option => (
             <button
