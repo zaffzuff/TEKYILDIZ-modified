@@ -196,6 +196,48 @@ const translations: Record<Locale, Record<string, string>> = {
     "Filters and search apply to the latest transaction sample returned by Pi Mainnet Horizon.": "Filtreler ve arama, Pi Mainnet Horizon tarafından döndürülen son işlem örneklemine uygulanır.",
   },
   es: {
+    "Search apps or URLs…": "Buscar Aplicaciones O URL…",
+    "Matching": "Coincidencias",
+    "Current Filters": "Filtros Actuales",
+    "Source": "Fuente",
+    "Details": "Detalles",
+    "Open": "Abrir",
+    "Pi Features: Not Verified": "Funciones Pi: No Verificadas",
+    "Category is a ZAF TECH classification based on the public app name/URL signal, not an official Pi category. Pi Authentication, Pi Payments, PiNet, network and health fields remain unverified until a dedicated observable check confirms them.": "La Categoría Es Una Clasificación De ZAF TECH Basada En La Señal Pública Del Nombre/URL, No Una Categoría Oficial De Pi. Pi Kimlik Doğrulama, Pi Ödemeleri, PiNet, La Red Y Los Campos De Salud Permanecen Sin Verificar Hasta Que Una Comprobación Observable Los Confirme.",
+    "Ecosystem Explorer": "Explorador Del Ecosistema",
+    "Explore the public ecosystem sources and applications currently observable by ZAF TECH.": "Explora Las Fuentes Públicas Del Ecosistema Y Las Aplicaciones Actualmente Observables Por ZAF TECH.",
+    "Public Ecosystem Sources": "Fuentes Públicas Del Ecosistema",
+    "Observed Applications": "Aplicaciones Observadas",
+    "Explorer Boundary": "Límite Del Explorador",
+    "Explorer exposes only public sources and records already observed by ZAF TECH. It does not add unverified ecosystem claims or perform Pi-side integration.": "El Explorador Solo Expone Fuentes Públicas Y Registros Ya Observados Por ZAF TECH. No Añade Afirmaciones No Verificadas Del Ecosistema Ni Realiza Integración Del Lado De Pi.",
+    "Activity Signals": "Señales De Actividad",
+    "Current observations, stored snapshots and detected changes from public ecosystem sources.": "Observaciones Actuales, Snapshots Guardados Y Cambios Detectados De Fuentes Públicas Del Ecosistema.",
+    "Observation Metadata": "Metadatos De Observación",
+    "Detected Changes": "Cambios Detectados",
+    "Compared with": "Comparado Con",
+    "A baseline is not available yet.": "Aún No Hay Una Línea Base Disponible.",
+    "changes": "cambios",
+    "No changes detected between the current observation and the latest stored snapshot.": "No Se Detectaron Cambios Entre La Observación Actual Y El Último Snapshot Guardado.",
+    "Ecosystem Trend": "Tendencia Del Ecosistema",
+    "Stored observations over time.": "Observaciones Guardadas A Lo Largo Del Tiempo.",
+    "Data Boundary": "Límite De Datos",
+    "Read-only": "Solo Lectura",
+    "Historical Data": "Datos Históricos",
+    "Current Source Response": "Respuesta Actual De La Fuente",
+    "Latest Ledger": "Último Ledger",
+    "Data Status": "Estado De Los Datos",
+    "Operations": "Operaciones",
+    "Ops / Hour": "Operaciones / Hora",
+    "Tx / Hour": "Transacciones / Hora",
+    "Network Measurement Boundary": "Límite De Medición De La Red",
+    "Observed Source": "Fuente Observada",
+    "Network": "Red",
+    "Updated": "Actualizado",
+    "Pi Mainnet Horizon": "Pi Mainnet Horizon",
+    "Ecosystem Source Online": "Fuente Del Ecosistema En Línea",
+    "Loading Ecosystem Observatory…": "Cargando El Observatorio Del Ecosistema…",
+    "A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.": "Una Capa Tecnológica De Solo Lectura Para Descubrir Datos Observables Del Ecosistema Pi, Aplicaciones E Infraestructura De Node.",
+    "Independent Community-Developed Technology Project": "Proyecto Tecnológico Independiente Desarrollado Por La Comunidad",
     "Overview": "General",
     "Apps": "Aplicaciones",
     "Network": "Red",
@@ -442,8 +484,10 @@ const translations: Record<Locale, Record<string, string>> = {
   },
 };
 
-export function t(locale: Locale, key: string): string {
-  return translations[locale][key] ?? key;
+export function t(locale: Locale, key: string, trText?: string): string {
+  if (locale === "tr") return trText ?? translations.tr[key] ?? key;
+  if (locale === "es") return translations.es[key] ?? key;
+  return key;
 }
 
 export const translate = t;
