@@ -5,7 +5,8 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 import type { Locale } from "@/lib/zaf/i18n";
-import { localeLabels, translate } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
+import { LanguageSelector } from "@/components/zaf-language-selector";
 import { ZafEcosystemNavigation, ZAF_SECTION_TABS, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
 import { ZafAppHealth } from "@/components/zaf-app-health";
@@ -245,9 +246,7 @@ export function ZafTechApp() {
               </div>
             </div>
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
-              <select value={locale} onChange={e => setLocale(e.target.value as Locale)} aria-label={tr("Language", "Dil")} className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground">
-                {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>{<span className="inline-block h-3 w-4 shrink-0 rounded-[2px] bg-cover bg-center" style={{ backgroundImage: `url(https://flagcdn.com/20x15/${option === "en" ? "gb" : option === "es" ? "es" : "tr"}.png)` }} aria-hidden="true" />} {localeLabels[option]}</option>)}
-              </select>
+              <LanguageSelector locale={locale} onChange={setLocale} />
               <button type="button" onClick={() => setTheme(theme === "light" ? "dark" : "light")} className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground">{theme === "light" ? `☾ ${tr("Dark", "Koyu")}` : `☀ ${tr("Light", "Açık")}`}</button>
               <button type="button" onClick={() => void load()} disabled={refreshing} className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">{refreshing ? tr("Refreshing…", "Yenileniyor…") : tr("Refresh", "Yenile")}</button>
             </div>
