@@ -5,7 +5,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 import type { Locale } from "@/lib/zaf/i18n";
-import { localeLabels } from "@/lib/zaf/i18n";
+import { localeLabels, translate } from "@/lib/zaf/i18n";
 import { ZafEcosystemNavigation, ZAF_SECTION_TABS, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
 import { ZafAppHealth } from "@/components/zaf-app-health";
@@ -193,7 +193,7 @@ export function ZafTechApp() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+  const tr = (en: string, trText: string) => translate(locale, en, trText);
 
   useEffect(() => {
     const l = window.localStorage.getItem("zaf-tech-locale-v1");
@@ -248,9 +248,9 @@ export function ZafTechApp() {
               </div>
             </div>
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
-              <div className="flex rounded-lg border border-border bg-card p-0.5 text-[11px]">
-                {(Object.keys(localeLabels) as Locale[]).map(option => <button key={option} type="button" onClick={() => setLocale(option)} className={`rounded-md px-2 py-1.5 font-medium ${locale === option ? "bg-muted text-foreground" : "text-muted-foreground"}`}>{localeLabels[option]}</button>)}
-              </div>
+              <select value={locale} onChange={e => setLocale(e.target.value as Locale)} aria-label={tr("Language", "Dil")} className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground">
+                {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>{localeLabels[option]}</option>)}
+              </select>
               <button type="button" onClick={() => setTheme(theme === "light" ? "dark" : "light")} className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground">{theme === "light" ? `☾ ${tr("Dark", "Koyu")}` : `☀ ${tr("Light", "Açık")}`}</button>
               <button type="button" onClick={() => void load()} disabled={refreshing} className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">{refreshing ? tr("Refreshing…", "Yenileniyor…") : tr("Refresh", "Yenile")}</button>
             </div>
