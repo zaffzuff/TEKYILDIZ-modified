@@ -7,29 +7,29 @@ type Locale = "en" | "tr";
 
 const copy = {
   en: {
-    back: "← Back to ZAF TECH",
+    back: "← Back To ZAF TECH",
     title: "About ZAF TECH",
     subtitle: "Pi Ecosystem Observatory",
-    what: "What it is",
+    what: "What It Is",
     whatText: "ZAF TECH is an independent, read-only technology layer for discovering, checking and observing public Pi Network ecosystem data.",
-    scope: "Current scope",
+    scope: "Current Scope",
     scopeText: "The current release includes the Pi Ecosystem Observatory, App Directory, App Details, App URL Checker, Network view, Developer Tools, Node & Compute observations and Wallet Intelligence, with English and Turkish interface support.",
-    verification: "Verification principle",
+    verification: "Verification Principle",
     verificationText: "ZAF TECH separates observed facts from unverified claims. Pi-specific capabilities are not marked as verified unless an observable check supports them.",
-    future: "Future direction",
+    future: "Future Direction",
     futureText: "The next planned phase extends ZAF TECH with Wallet Intelligence: public Pi wallet address lookup, Mainnet/Testnet selection, observable balances and claimable balances, account metadata, recent public transactions and operations, and explorer navigation. Private wallet access, signing and authentication are outside this scope.",
   },
   tr: {
-    back: "← ZAF TECH'e dön",
+    back: "← ZAF TECH'e Dön",
     title: "ZAF TECH Hakkında",
     subtitle: "Pi Ekosistem Gözlem Merkezi",
     what: "Nedir?",
     whatText: "ZAF TECH, herkese açık Pi Network ekosistem verilerini keşfetmek, kontrol etmek ve gözlemlemek için geliştirilmiş bağımsız, salt-okunur bir teknoloji katmanıdır.",
-    scope: "Mevcut kapsam",
+    scope: "Mevcut Kapsam",
     scopeText: "Mevcut sürüm; Pi Ekosistem Gözlem Merkezi, App Directory, App Details, App URL Checker, Network görünümü, Developer Tools, Node & Compute gözlemleri ve Wallet Intelligence bölümlerini İngilizce ve Türkçe arayüz desteğiyle içerir.",
-    verification: "Doğrulama ilkesi",
+    verification: "Doğrulama İlkesi",
     verificationText: "ZAF TECH, gözlemlenen gerçekleri doğrulanmamış iddialardan ayırır. Gözlemlenebilir bir kontrol desteklemedikçe Pi'ye özgü yetenekler doğrulanmış olarak işaretlenmez.",
-    future: "Gelecek yönü",
+    future: "Gelecek Yönü",
     futureText: "Sonraki planlanan aşama Wallet Intelligence kapsamını genişletir: herkese açık Pi cüzdan adresi sorgulama, Mainnet/Testnet seçimi, gözlemlenebilir bakiyeler ve claimable bakiyeler, hesap meta verileri, son herkese açık işlemler ve operasyonlar ile explorer bağlantıları. Özel cüzdan erişimi, imzalama ve kimlik doğrulama bu kapsamın dışındadır.",
   },
 };
@@ -57,7 +57,7 @@ export default function AboutPage() {
           <div className="flex gap-1 rounded-md border p-1 text-xs">
             {(["en", "tr"] as Locale[]).map((item) => (
               <button key={item} onClick={() => changeLocale(item)} className={`rounded px-2 py-1 ${locale === item ? "bg-foreground text-background" : ""}`}>
-                {item.toUpperCase()}
+                {locale === "en" ? "English" : "Türkçe"}
               </button>
             ))}
           </div>
