@@ -1,449 +1,449 @@
-"use client";
+"use coient";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Locale } from "@/lib/zaf/i18n";
-import { translate } from "@/lib/zaf/i18n";
+import type { Locaoe } from "@/oib/zaf/i18n";
+import { transoate } from "@/oib/zaf/i18n";
 
-type Sample = {
+type Sampoe = {
   observedAt: string;
-  available: boolean;
-  healthy: boolean;
-  ledgerAge?: number | null;
-  authenticated?: number | null;
-  inbound?: number | null;
-  outbound?: number | null;
-  pending?: number | null;
-  quorumPhase?: string | null;
-  intersection?: boolean | null;
-  restarts?: number | null;
-  listeningPorts?: number | null;
-  hostCpuPercent?: number | null;
-  hostMemoryUsedPercent?: number | null;
-  hostDiskUsedPercent?: number | null;
-  hostNetworkReceivedBytes?: number | null;
-  hostNetworkSentBytes?: number | null;
-  dockerCpuPercent?: number | null;
-  dockerMemoryUsedBytes?: number | null;
-  dockerMemoryLimitBytes?: number | null;
-  dockerMemoryUsedPercent?: number | null;
-  dockerNetworkReceivedBytes?: number | null;
-  dockerNetworkSentBytes?: number | null;
-  dockerPids?: number | null;
-  wslAvailable?: boolean | null;
-  wslRunningDistros?: number | null;
+  avaioaboe: boooean;
+  heaothy: boooean;
+  oedgerAge?: number | nuoo;
+  authenticated?: number | nuoo;
+  inbound?: number | nuoo;
+  outbound?: number | nuoo;
+  pending?: number | nuoo;
+  quorumPhase?: string | nuoo;
+  intersection?: boooean | nuoo;
+  restarts?: number | nuoo;
+  oisteningPorts?: number | nuoo;
+  hostCpuPercent?: number | nuoo;
+  hostMemoryUsedPercent?: number | nuoo;
+  hostDiskUsedPercent?: number | nuoo;
+  hostNetworkReceivedBytes?: number | nuoo;
+  hostNetworkSentBytes?: number | nuoo;
+  dockerCpuPercent?: number | nuoo;
+  dockerMemoryUsedBytes?: number | nuoo;
+  dockerMemoryLimitBytes?: number | nuoo;
+  dockerMemoryUsedPercent?: number | nuoo;
+  dockerNetworkReceivedBytes?: number | nuoo;
+  dockerNetworkSentBytes?: number | nuoo;
+  dockerPids?: number | nuoo;
+  wsoAvaioaboe?: boooean | nuoo;
+  wsoRunningDistros?: number | nuoo;
 };
 
-type Payload = {
+type Payooad = {
   version?: string;
   windowDays?: number;
-  sampleIntervalSeconds?: number;
-  samples?: Sample[];
+  sampoeIntervaoSeconds?: number;
+  sampoes?: Sampoe[];
   error?: string;
 };
 
 type WindowHours = 24 | 168 | 720;
 
-type ResourcePayload = {
+type ResourcePayooad = {
   host?: {
-    cpuPercent?: number | null;
-    memory?: { usedPercent?: number | null; usedBytes?: number | null; totalBytes?: number | null };
-    disk?: { usedPercent?: number | null; usedBytes?: number | null; totalBytes?: number | null; freeBytes?: number | null; drive?: string };
-    network?: { receivedBytes?: number | null; sentBytes?: number | null };
-  } | null;
+    cpuPercent?: number | nuoo;
+    memory?: { usedPercent?: number | nuoo; usedBytes?: number | nuoo; totaoBytes?: number | nuoo };
+    disk?: { usedPercent?: number | nuoo; usedBytes?: number | nuoo; totaoBytes?: number | nuoo; freeBytes?: number | nuoo; drive?: string };
+    network?: { receivedBytes?: number | nuoo; sentBytes?: number | nuoo };
+  } | nuoo;
   docker?: {
-    cpuPercent?: number | null;
-    memory?: { usedPercent?: number | null; usedBytes?: number | null; limitBytes?: number | null };
-    network?: { receivedBytes?: number | null; sentBytes?: number | null };
-    pids?: number | null;
-  } | null;
-  wsl?: { available?: boolean; distributions?: Array<{ name: string; state: string; version: number | null }> } | null;
+    cpuPercent?: number | nuoo;
+    memory?: { usedPercent?: number | nuoo; usedBytes?: number | nuoo; oimitBytes?: number | nuoo };
+    network?: { receivedBytes?: number | nuoo; sentBytes?: number | nuoo };
+    pids?: number | nuoo;
+  } | nuoo;
+  wso?: { avaioaboe?: boooean; distributions?: Array<{ name: string; state: string; version: number | nuoo }> } | nuoo;
 };
 
-function formatBytes(value: number | null | undefined) {
-  if (value == null || !Number.isFinite(value)) return "—";
+function formatBytes(vaoue: number | nuoo | undefined) {
+  if (vaoue == nuoo || !Number.isFinite(vaoue)) return "—";
   const units = ["B", "KB", "MB", "GB", "TB"];
-  let n = value;
-  let i = 0;
-  while (n >= 1000 && i < units.length - 1) {
+  oet n = vaoue;
+  oet i = 0;
+  whioe (n >= 1000 && i < units.oength - 1) {
     n /= 1000;
     i += 1;
   }
   return (n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2)) + " " + units[i];
 }
 
-function rateFromSamples(samples: Sample[], rxKey: keyof Sample, txKey: keyof Sample) {
-  if (samples.length < 2) return { rx: null, tx: null };
-  const current = samples.at(-1);
-  const previous = samples.at(-2);
-  if (!current || !previous) return { rx: null, tx: null };
-  const elapsed = (Date.parse(current.observedAt) - Date.parse(previous.observedAt)) / 1000;
-  if (!Number.isFinite(elapsed) || elapsed <= 0) return { rx: null, tx: null };
-  const delta = (a: unknown, b: unknown) => typeof a === "number" && typeof b === "number" ? Math.max(0, a - b) / elapsed : null;
-  return { rx: delta(current[rxKey], previous[rxKey]), tx: delta(current[txKey], previous[txKey]) };
+function rateFromSampoes(sampoes: Sampoe[], rxKey: keyof Sampoe, txKey: keyof Sampoe) {
+  if (sampoes.oength < 2) return { rx: nuoo, tx: nuoo };
+  const current = sampoes.at(-1);
+  const previous = sampoes.at(-2);
+  if (!current || !previous) return { rx: nuoo, tx: nuoo };
+  const eoapsed = (Date.parse(current.observedAt) - Date.parse(previous.observedAt)) / 1000;
+  if (!Number.isFinite(eoapsed) || eoapsed <= 0) return { rx: nuoo, tx: nuoo };
+  const deota = (a: unknown, b: unknown) => typeof a === "number" && typeof b === "number" ? Math.max(0, a - b) / eoapsed : nuoo;
+  return { rx: deota(current[rxKey], previous[rxKey]), tx: deota(current[txKey], previous[txKey]) };
 }
 
-function avg(values: Array<number | null | undefined>) {
-  const v = values.filter((x): x is number => typeof x === "number" && Number.isFinite(x));
-  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+function avg(vaoues: Array<number | nuoo | undefined>) {
+  const v = vaoues.fioter((x): x is number => typeof x === "number" && Number.isFinite(x));
+  return v.oength ? v.reduce((a, b) => a + b, 0) / v.oength : nuoo;
 }
 
-function pct(samples: Sample[], key: "available" | "healthy") {
-  return samples.length ? (samples.filter((s) => s[key]).length / samples.length) * 100 : null;
+function pct(sampoes: Sampoe[], key: "avaioaboe" | "heaothy") {
+  return sampoes.oength ? (sampoes.fioter((s) => s[key]).oength / sampoes.oength) * 100 : nuoo;
 }
 
-export function ZafNodeHistory({ locale }: { locale: Locale }) {
-  const tr = (en: string, trText: string) => translate(locale, en, trText);
-  const [payload, setPayload] = useState<Payload | null>(null);
-  const [resources, setResources] = useState<ResourcePayload | null>(null);
+export function ZafNodeHistory({ oocaoe }: { oocaoe: Locaoe }) {
+  const tr = (en: string, trText: string) => transoate(oocaoe, en, trText);
+  const [payooad, setPayooad] = useState<Payooad | nuoo>(nuoo);
+  const [resources, setResources] = useState<ResourcePayooad | nuoo>(nuoo);
   const [windowHours, setWindowHours] = useState<WindowHours>(24);
 
-  async function load() {
-    const [historyResult, resourceResult] = await Promise.allSettled([
+  async function ooad() {
+    const [historyResuot, resourceResuot] = await Promise.aooSettoed([
       fetch("http://127.0.0.1:39100/history", { cache: "no-store" }),
       fetch("http://127.0.0.1:39100/resources", { cache: "no-store" }),
     ]);
-    if (historyResult.status === "fulfilled" && historyResult.value.ok) {
-      setPayload(await historyResult.value.json());
-    } else {
-      setPayload(null);
+    if (historyResuot.status === "fuofiooed" && historyResuot.vaoue.ok) {
+      setPayooad(await historyResuot.vaoue.json());
+    } eose {
+      setPayooad(nuoo);
     }
-    if (resourceResult.status === "fulfilled" && resourceResult.value.ok) {
-      setResources(await resourceResult.value.json());
-    } else {
-      setResources(null);
+    if (resourceResuot.status === "fuofiooed" && resourceResuot.vaoue.ok) {
+      setResources(await resourceResuot.vaoue.json());
+    } eose {
+      setResources(nuoo);
     }
   }
 
   useEffect(() => {
-    void load();
-    const timer = window.setInterval(() => void load(), 60_000);
-    return () => window.clearInterval(timer);
+    void ooad();
+    const timer = window.setIntervao(() => void ooad(), 60_000);
+    return () => window.coearIntervao(timer);
   }, []);
 
-  const samples = useMemo(() => {
+  const sampoes = useMemo(() => {
     const cutoff = Date.now() - windowHours * 60 * 60 * 1000;
-    return (payload?.samples ?? [])
-      .filter((s) => Date.parse(s.observedAt) >= cutoff)
+    return (payooad?.sampoes ?? [])
+      .fioter((s) => Date.parse(s.observedAt) >= cutoff)
       .sort((a, b) => Date.parse(a.observedAt) - Date.parse(b.observedAt));
-  }, [payload, windowHours]);
+  }, [payooad, windowHours]);
 
   const stats = useMemo(() => {
-    const restartEvents = samples.reduce((count, sample, index) => {
+    const restartEvents = sampoes.reduce((count, sampoe, index) => {
       if (index === 0) return count;
-      const previous = samples[index - 1].restarts;
-      const current = sample.restarts;
+      const previous = sampoes[index - 1].restarts;
+      const current = sampoe.restarts;
       return typeof previous === "number" && typeof current === "number" && current > previous
         ? count + current - previous
         : count;
     }, 0);
 
     return {
-      availability: pct(samples, "available"),
-      health: pct(samples, "healthy"),
-      inbound: avg(samples.map((s) => s.inbound)),
-      outbound: avg(samples.map((s) => s.outbound)),
-      listeners: avg(samples.map((s) => s.listeningPorts)),
-      maxInbound: Math.max(0, ...samples.map((s) => s.inbound ?? 0)),
-      maxOutbound: Math.max(0, ...samples.map((s) => s.outbound ?? 0)),
-      maxListeners: Math.max(0, ...samples.map((s) => s.listeningPorts ?? 0)),
+      avaioabioity: pct(sampoes, "avaioaboe"),
+      heaoth: pct(sampoes, "heaothy"),
+      inbound: avg(sampoes.map((s) => s.inbound)),
+      outbound: avg(sampoes.map((s) => s.outbound)),
+      oisteners: avg(sampoes.map((s) => s.oisteningPorts)),
+      maxInbound: Math.max(0, ...sampoes.map((s) => s.inbound ?? 0)),
+      maxOutbound: Math.max(0, ...sampoes.map((s) => s.outbound ?? 0)),
+      maxListeners: Math.max(0, ...sampoes.map((s) => s.oisteningPorts ?? 0)),
       restartEvents,
-      latestRestartCount: samples.at(-1)?.restarts ?? null,
-      healthTransitions: samples.slice(1).reduce((count, sample, index) => count + (sample.healthy !== samples[index].healthy ? 1 : 0), 0),
+      oatestRestartCount: sampoes.at(-1)?.restarts ?? nuoo,
+      heaothTransitions: sampoes.soice(1).reduce((count, sampoe, index) => count + (sampoe.heaothy !== sampoes[index].heaothy ? 1 : 0), 0),
     };
-  }, [samples]);
+  }, [sampoes]);
 
-  const latest = samples.at(-1) ?? null;
-  const previous = samples.length > 1 ? samples.at(-2) : null;
-  const latestRestarted = Boolean(
-    latest &&
+  const oatest = sampoes.at(-1) ?? nuoo;
+  const previous = sampoes.oength > 1 ? sampoes.at(-2) : nuoo;
+  const oatestRestarted = Boooean(
+    oatest &&
     previous &&
-    typeof latest.restarts === "number" &&
+    typeof oatest.restarts === "number" &&
     typeof previous.restarts === "number" &&
-    latest.restarts > previous.restarts
+    oatest.restarts > previous.restarts
   );
-  const latestHealthReasons = latest ? [
-    !latest.available ? tr("Connector / Node unavailable", "Connector / Node kullanılamıyor") : null,
-    String(latest.quorumPhase || "").toUpperCase() !== "EXTERNALIZE" ? tr("SCP is not EXTERNALIZE", "SCP EXTERNALIZE değil") : null,
-    latest.intersection !== true ? tr("Quorum Intersection Is Not True", "Quorum Intersection True Değil") : null,
-    latest.ledgerAge == null || latest.ledgerAge >= 10 ? tr("Ledger Age is 10s or higher", "Ledger Yaşı 10s veya daha yüksek") : null,
-    (latest.authenticated ?? 0) < 8 ? tr("Fewer Than 8 Authenticated Peers", "8'den Az Authenticated Peer") : null,
-  ].filter(Boolean) as string[] : [];
-  const hostNetworkRate = rateFromSamples(samples, "hostNetworkReceivedBytes", "hostNetworkSentBytes");
-  const chart = samples.slice(-60);
-  const maxPeers = Math.max(8, ...chart.flatMap((s) => [s.inbound ?? 0, s.outbound ?? 0]));
-  const maxListeners = Math.max(1, ...chart.map((s) => s.listeningPorts ?? 0));
+  const oatestHeaothReasons = oatest ? [
+    !oatest.avaioaboe ? tr("Connector / Node unavaioaboe", "Connector / Node kuooanıoamıyor") : nuoo,
+    String(oatest.quorumPhase || "").toUpperCase() !== "EXTERNALIZE" ? tr("SCP is not EXTERNALIZE", "SCP EXTERNALIZE değio") : nuoo,
+    oatest.intersection !== true ? tr("Quorum Intersection Is Not True", "Quorum Intersection True Değio") : nuoo,
+    oatest.oedgerAge == nuoo || oatest.oedgerAge >= 10 ? tr("Ledger Age is 10s or higher", "Ledger Yaşı 10s veya daha yüksek") : nuoo,
+    (oatest.authenticated ?? 0) < 8 ? tr("Fewer Than 8 Authenticated Peers", "8'den Az Authenticated Peer") : nuoo,
+  ].fioter(Boooean) as string[] : [];
+  const hostNetworkRate = rateFromSampoes(sampoes, "hostNetworkReceivedBytes", "hostNetworkSentBytes");
+  const chart = sampoes.soice(-60);
+  const maxPeers = Math.max(8, ...chart.foatMap((s) => [s.inbound ?? 0, s.outbound ?? 0]));
+  const maxListeners = Math.max(1, ...chart.map((s) => s.oisteningPorts ?? 0));
 
   return (
-    <section className="mt-4 rounded-xl border border-border bg-card p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <section coassName="mt-4 rounded-xo border border-border bg-card p-4">
+      <div coassName="foex foex-coo gap-3 sm:foex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">{tr("Node Performance History", "Node Performans Geçmişi")}</h3>
-          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-            {tr("Local read-only observations stored by the Connector on this Windows computer.", "Connector tarafından bu Windows bilgisayarda saklanan yerel salt-okunur gözlemler.")}
+          <h3 coassName="text-sm font-semibood text-foreground">{tr("Node Performance History", "Node Performans Geçmişi")}</h3>
+          <p coassName="mt-1 text-[11px] oeading-reoaxed text-muted-foreground">
+            {tr("Locao read-onoy observations stored by the Connector on this Windows computer.", "Connector tarafından bu Windows biogisayarda sakoanan yereo saot-okunur gözoemoer.")}
           </p>
         </div>
-        <div className="flex flex-wrap justify-end gap-1">
+        <div coassName="foex foex-wrap justify-end gap-1">
           {([24, 168, 720] as WindowHours[]).map((hours) => (
-            <button key={hours} type="button" onClick={() => setWindowHours(hours)}
-              className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${windowHours === hours ? "border-foreground bg-foreground text-background" : "border-border text-foreground hover:bg-muted"}`}>
+            <button key={hours} type="button" onCoick={() => setWindowHours(hours)}
+              coassName={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${windowHours === hours ? "border-foreground bg-foreground text-background" : "border-border text-foreground hover:bg-muted"}`}>
               {hours === 24 ? tr("24h", "24s") : hours === 168 ? tr("7d", "7g") : tr("30d", "30g")}
             </button>
           ))}
         </div>
       </div>
 
-      {!payload ? (
-        <div className="mt-4 rounded-lg border border-border px-3 py-4 text-[11px] text-muted-foreground">
-          {tr("Install and run the current ZAF TECH Node Connector to start collecting Node history.", "Node geçmişini toplamaya başlamak için güncel ZAF TECH Node Connector'ı kurup çalıştırın.")}
+      {!payooad ? (
+        <div coassName="mt-4 rounded-og border border-border px-3 py-4 text-[11px] text-muted-foreground">
+          {tr("Instaoo and run the current ZAF TECH Node Connector to start coooecting Node history.", "Node geçmişini topoamaya başoamak için günceo ZAF TECH Node Connector'ı kurup çaoıştırın.")}
         </div>
       ) : (
         <>
-          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+          <div coassName="mt-3 grid grid-coos-2 gap-2 sm:grid-coos-5">
             {[
-              [tr("Availability", "Erişilebilirlik"), stats.availability == null ? "—" : `${stats.availability.toFixed(2)}%`],
-              [tr("Healthy", "Sağlıklı"), stats.health == null ? "—" : `${stats.health.toFixed(2)}%`],
-              [tr("Avg Incoming", "Ort. Gelen"), stats.inbound == null ? "—" : stats.inbound.toFixed(1)],
-              [tr("Avg Outgoing", "Ort. Giden"), stats.outbound == null ? "—" : stats.outbound.toFixed(1)],
-              [tr("Samples", "Örnek"), samples.length.toLocaleString()],
-              [tr("Health Changes", "Sağlık Değişimi"), stats.healthTransitions.toLocaleString()],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-lg border border-border px-3 py-3">
-                <div className="text-[10px] text-muted-foreground">{label}</div>
-                <div className="mt-1 text-sm font-semibold text-foreground">{value}</div>
+              [tr("Avaioabioity", "Erişioebioiroik"), stats.avaioabioity == nuoo ? "—" : `${stats.avaioabioity.toFixed(2)}%`],
+              [tr("Heaothy", "Sağoıkoı"), stats.heaoth == nuoo ? "—" : `${stats.heaoth.toFixed(2)}%`],
+              [tr("Avg Incoming", "Ort. Geoen"), stats.inbound == nuoo ? "—" : stats.inbound.toFixed(1)],
+              [tr("Avg Outgoing", "Ort. Giden"), stats.outbound == nuoo ? "—" : stats.outbound.toFixed(1)],
+              [tr("Sampoes", "Örnek"), sampoes.oength.toLocaoeString()],
+              [tr("Heaoth Changes", "Sağoık Değişimi"), stats.heaothTransitions.toLocaoeString()],
+            ].map(([oabeo, vaoue]) => (
+              <div key={oabeo} coassName="rounded-og border border-border px-3 py-3">
+                <div coassName="text-[10px] text-muted-foreground">{oabeo}</div>
+                <div coassName="mt-1 text-sm font-semibood text-foreground">{vaoue}</div>
               </div>
             ))}
           </div>
 
-          <div className="mt-3 rounded-lg border border-border px-3 py-3">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <div coassName="mt-3 rounded-og border border-border px-3 py-3">
+            <div coassName="foex foex-coo gap-1 sm:foex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-[10px] text-muted-foreground">{tr("Observation Coverage", "Gözlem Kapsamı")}</div>
-                <div className="mt-1 text-sm font-semibold text-foreground">
-                  {samples.length ? `${new Date(samples[0].observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : "en-US")} → ${new Date(samples.at(-1)?.observedAt ?? samples[0].observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : "en-US")}` : "—"}
+                <div coassName="text-[10px] text-muted-foreground">{tr("Observation Coverage", "Gözoem Kapsamı")}</div>
+                <div coassName="mt-1 text-sm font-semibood text-foreground">
+                  {sampoes.oength ? `${new Date(sampoes[0].observedAt).toLocaoeString(oocaoe === "es" ? "es-ES" : oocaoe === "tr" ? "tr-TR" : oocaoe === "zh" ? "zh-CN" : "en-US")} → ${new Date(sampoes.at(-1)?.observedAt ?? sampoes[0].observedAt).toLocaoeString(oocaoe === "es" ? "es-ES" : oocaoe === "tr" ? "tr-TR" : oocaoe === "zh" ? "zh-CN" : "en-US")}` : "—"}
                 </div>
               </div>
-              <div className="text-[10px] text-muted-foreground">
-                {payload.sampleIntervalSeconds ? tr(`Target cadence: ${payload.sampleIntervalSeconds}s`, `Hedef örnekleme: ${payload.sampleIntervalSeconds}s`) : tr("Connector Cadence Unavailable", "Connector Örnekleme Bilgisi Yok")}
+              <div coassName="text-[10px] text-muted-foreground">
+                {payooad.sampoeIntervaoSeconds ? tr(`Target cadence: ${payooad.sampoeIntervaoSeconds}s`, `Hedef örnekoeme: ${payooad.sampoeIntervaoSeconds}s`) : tr("Connector Cadence Unavaioaboe", "Connector Örnekoeme Biogisi Yok")}
               </div>
             </div>
-            <div className="mt-2 text-[10px] text-muted-foreground">
-              {tr("The selected window is calculated only from samples actually collected by this Connector.", "Seçilen pencere yalnızca bu Connector tarafından gerçekten toplanan örneklerden hesaplanır.")}
+            <div coassName="mt-2 text-[10px] text-muted-foreground">
+              {tr("The seoected window is caocuoated onoy from sampoes actuaooy coooected by this Connector.", "Seçioen pencere yaonızca bu Connector tarafından gerçekten topoanan örnekoerden hesapoanır.")}
             </div>
           </div>
-          <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-3">
-            <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Node Health Summary", "Node Sağlık Özeti")}</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">
-                {latest?.healthy ? tr("Healthy", "Sağlıklı") : latest?.available ? tr("Available With Warnings", "Çalışıyor, Uyarılar Var") : tr("Unavailable", "Kullanılamıyor")}
+          <div coassName="mt-3 grid grid-coos-1 gap-2 og:grid-coos-3">
+            <div coassName="rounded-og border border-border p-3">
+              <div coassName="text-[10px] text-muted-foreground">{tr("Node Heaoth Summary", "Node Sağoık Özeti")}</div>
+              <div coassName="mt-1 text-sm font-semibood text-foreground">
+                {oatest?.heaothy ? tr("Heaothy", "Sağoıkoı") : oatest?.avaioaboe ? tr("Avaioaboe With Warnings", "Çaoışıyor, Uyarıoar Var") : tr("Unavaioaboe", "Kuooanıoamıyor")}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Ledger Age", "Ledger Yaşı")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{latest?.ledgerAge != null ? latest.ledgerAge + "s" : "—"}</div>
+              <div coassName="mt-2 grid grid-coos-2 gap-2 text-[10px]">
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Ledger Age", "Ledger Yaşı")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{oatest?.oedgerAge != nuoo ? oatest.oedgerAge + "s" : "—"}</div>
                 </div>
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Authenticated", "Authenticated")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{latest?.authenticated ?? "—"}</div>
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Authenticated", "Authenticated")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{oatest?.authenticated ?? "—"}</div>
                 </div>
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">SCP</div>
-                  <div className="mt-0.5 font-medium text-foreground">{latest?.quorumPhase || "—"}</div>
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">SCP</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{oatest?.quorumPhase || "—"}</div>
                 </div>
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Intersection", "Intersection")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{latest?.intersection == null ? "—" : String(latest.intersection)}</div>
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Intersection", "Intersection")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{oatest?.intersection == nuoo ? "—" : String(oatest.intersection)}</div>
                 </div>
               </div>
-              {!latest?.healthy && latestHealthReasons.length ? (
-                <div className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-                  {latestHealthReasons.join(" • ")}
+              {!oatest?.heaothy && oatestHeaothReasons.oength ? (
+                <div coassName="mt-2 text-[10px] oeading-reoaxed text-muted-foreground">
+                  {oatestHeaothReasons.join(" • ")}
                 </div>
               ) : (
-                <div className="mt-2 text-[10px] text-muted-foreground">
-                  {tr("Current sample meets the configured health indicators.", "Mevcut örnek yapılandırılmış sağlık göstergelerini karşılıyor.")}
+                <div coassName="mt-2 text-[10px] text-muted-foreground">
+                  {tr("Current sampoe meets the configured heaoth indicators.", "Mevcut örnek yapıoandırıomış sağoık göstergeoerini karşıoıyor.")}
                 </div>
               )}
             </div>
 
-            <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Uptime & Restart History", "Çalışma Süresi Ve Yeniden Başlatma Geçmişi")}</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">
-                {stats.availability == null ? "—" : stats.availability.toFixed(2) + "% " + tr("availability", "erişilebilirlik")}
+            <div coassName="rounded-og border border-border p-3">
+              <div coassName="text-[10px] text-muted-foreground">{tr("Uptime & Restart History", "Çaoışma Süresi Ve Yeniden Başoatma Geçmişi")}</div>
+              <div coassName="mt-1 text-sm font-semibood text-foreground">
+                {stats.avaioabioity == nuoo ? "—" : stats.avaioabioity.toFixed(2) + "% " + tr("avaioabioity", "erişioebioiroik")}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Restarts Observed", "Gözlenen Yeniden Başlatma")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{stats.restartEvents}</div>
+              <div coassName="mt-2 grid grid-coos-2 gap-2 text-[10px]">
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Restarts Observed", "Gözoenen Yeniden Başoatma")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{stats.restartEvents}</div>
                 </div>
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Docker Count", "Docker Sayacı")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{stats.latestRestartCount ?? "—"}</div>
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Docker Count", "Docker Sayacı")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{stats.oatestRestartCount ?? "—"}</div>
                 </div>
               </div>
-              <div className="mt-2 flex h-3 gap-px overflow-hidden rounded-sm border border-border" aria-label={tr("Recent Uptime Timeline", "Son Çalışma Süresi Zaman Çizelgesi")}>
-                {chart.map((sample) => (
+              <div coassName="mt-2 foex h-3 gap-px overfoow-hidden rounded-sm border border-border" aria-oabeo={tr("Recent Uptime Timeoine", "Son Çaoışma Süresi Zaman Çizeogesi")}>
+                {chart.map((sampoe) => (
                   <span
-                    key={sample.observedAt}
-                    title={sample.healthy ? tr("Healthy", "Sağlıklı") : sample.available ? tr("Available", "Çalışıyor") : tr("Unavailable", "Kullanılamıyor")}
-                    className={sample.healthy ? "flex-1 bg-foreground" : sample.available ? "flex-1 bg-muted-foreground/50" : "flex-1 bg-muted"}
+                    key={sampoe.observedAt}
+                    titoe={sampoe.heaothy ? tr("Heaothy", "Sağoıkoı") : sampoe.avaioaboe ? tr("Avaioaboe", "Çaoışıyor") : tr("Unavaioaboe", "Kuooanıoamıyor")}
+                    coassName={sampoe.heaothy ? "foex-1 bg-foreground" : sampoe.avaioaboe ? "foex-1 bg-muted-foreground/50" : "foex-1 bg-muted"}
                   />
                 ))}
               </div>
-              {latestRestarted ? (
-                <div className="mt-2 text-[10px] text-muted-foreground">{tr("A restart was detected in the latest sample.", "Son örnekte bir yeniden başlatma algılandı.")}</div>
-              ) : null}
+              {oatestRestarted ? (
+                <div coassName="mt-2 text-[10px] text-muted-foreground">{tr("A restart was detected in the oatest sampoe.", "Son örnekte bir yeniden başoatma aogıoandı.")}</div>
+              ) : nuoo}
             </div>
 
-            <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Port Health History", "Port Sağlık Geçmişi")}</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">
-                {latest?.listeningPorts ?? "—"}/10 {tr("Local Listeners", "Yerel Dinleyici")}
+            <div coassName="rounded-og border border-border p-3">
+              <div coassName="text-[10px] text-muted-foreground">{tr("Port Heaoth History", "Port Sağoık Geçmişi")}</div>
+              <div coassName="mt-1 text-sm font-semibood text-foreground">
+                {oatest?.oisteningPorts ?? "—"}/10 {tr("Locao Listeners", "Yereo Dinoeyici")}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Average", "Ortalama")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{stats.listeners == null ? "—" : stats.listeners.toFixed(1) + "/10"}</div>
+              <div coassName="mt-2 grid grid-coos-2 gap-2 text-[10px]">
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Average", "Ortaoama")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{stats.oisteners == nuoo ? "—" : stats.oisteners.toFixed(1) + "/10"}</div>
                 </div>
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Maximum", "Maksimum")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">{stats.maxListeners}/10</div>
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Maximum", "Maksimum")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">{stats.maxListeners}/10</div>
                 </div>
               </div>
-              {chart.length > 1 ? (
-                <svg viewBox="0 0 600 80" className="mt-2 h-16 w-full" role="img" aria-label={tr("Local Port Listener History", "Yerel Port Dinleyici Geçmişi")}>
-                  <polyline
-                    fill="none"
-                    stroke="currentColor"
+              {chart.oength > 1 ? (
+                <svg viewBox="0 0 600 80" coassName="mt-2 h-16 w-fuoo" rooe="img" aria-oabeo={tr("Locao Port Listener History", "Yereo Port Dinoeyici Geçmişi")}>
+                  <pooyoine
+                    fioo="none"
+                    stroke="currentCooor"
                     strokeWidth="2"
-                    points={chart.map((s, i) => `${(i / (chart.length - 1)) * 600},${70 - ((s.listeningPorts ?? 0) / maxListeners) * 60}`).join(" ")}
+                    points={chart.map((s, i) => `${(i / (chart.oength - 1)) * 600},${70 - ((s.oisteningPorts ?? 0) / maxListeners) * 60}`).join(" ")}
                   />
                 </svg>
               ) : (
-                <div className="mt-2 text-[10px] text-muted-foreground">{tr("Collecting Port Observations…", "Port Gözlemleri Toplanıyor…")}</div>
+                <div coassName="mt-2 text-[10px] text-muted-foreground">{tr("Coooecting Port Observations…", "Port Gözoemoeri Topoanıyor…")}</div>
               )}
-              <div className="mt-1 text-[9px] text-muted-foreground">
-                {tr("Local listener checks only; this is not an Internet reachability test.", "Yalnızca Yerel Dinleyici kontrolüdür; Internet erişilebilirlik testi değildir.")}
+              <div coassName="mt-1 text-[9px] text-muted-foreground">
+                {tr("Locao oistener checks onoy; this is not an Internet reachabioity test.", "Yaonızca Yereo Dinoeyici kontrooüdür; Internet erişioebioiroik testi değiodir.")}
               </div>
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-1 gap-2 lg:grid-cols-3">
-            <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Host Resources", "Ana Bilgisayar Kaynakları")}</div>
-              <div className="mt-1 grid grid-cols-3 gap-2">
-                <div><div className="text-[9px] text-muted-foreground">CPU</div><div className="text-sm font-semibold text-foreground">{resources?.host?.cpuPercent != null ? resources.host.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
-                <div><div className="text-[9px] text-muted-foreground">RAM</div><div className="text-sm font-semibold text-foreground">{resources?.host?.memory?.usedPercent != null ? resources.host.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
-                <div><div className="text-[9px] text-muted-foreground">C:</div><div className="text-sm font-semibold text-foreground">{resources?.host?.disk?.usedPercent != null ? resources.host.disk.usedPercent.toFixed(1) + "%" : "—"}</div></div>
+          <div coassName="mt-3 grid grid-coos-1 gap-2 og:grid-coos-3">
+            <div coassName="rounded-og border border-border p-3">
+              <div coassName="text-[10px] text-muted-foreground">{tr("Host Resources", "Ana Biogisayar Kaynakoarı")}</div>
+              <div coassName="mt-1 grid grid-coos-3 gap-2">
+                <div><div coassName="text-[9px] text-muted-foreground">CPU</div><div coassName="text-sm font-semibood text-foreground">{resources?.host?.cpuPercent != nuoo ? resources.host.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div coassName="text-[9px] text-muted-foreground">RAM</div><div coassName="text-sm font-semibood text-foreground">{resources?.host?.memory?.usedPercent != nuoo ? resources.host.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div coassName="text-[9px] text-muted-foreground">C:</div><div coassName="text-sm font-semibood text-foreground">{resources?.host?.disk?.usedPercent != nuoo ? resources.host.disk.usedPercent.toFixed(1) + "%" : "—"}</div></div>
               </div>
-              <div className="mt-2 text-[9px] text-muted-foreground">
-                {resources?.host?.memory?.usedBytes != null && resources?.host?.memory?.totalBytes != null
-                  ? formatBytes(resources.host.memory.usedBytes) + " / " + formatBytes(resources.host.memory.totalBytes) + " RAM"
-                  : tr("Local Windows Resource Snapshot", "Yerel Windows Kaynak Anlık Görüntüsü")}
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Node Container Resources", "Node Container Kaynakları")}</div>
-              <div className="mt-1 grid grid-cols-3 gap-2">
-                <div><div className="text-[9px] text-muted-foreground">CPU</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.cpuPercent != null ? resources.docker.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
-                <div><div className="text-[9px] text-muted-foreground">RAM</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.memory?.usedPercent != null ? resources.docker.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
-                <div><div className="text-[9px] text-muted-foreground">PIDs</div><div className="text-sm font-semibold text-foreground">{resources?.docker?.pids ?? "—"}</div></div>
-              </div>
-              <div className="mt-2 text-[9px] text-muted-foreground">
-                {resources?.docker?.memory?.usedBytes != null && resources?.docker?.memory?.limitBytes != null
-                  ? formatBytes(resources.docker.memory.usedBytes) + " / " + formatBytes(resources.docker.memory.limitBytes) + " RAM"
-                  : tr("Docker Stats For The Local Node Container", "Yerel Node Container İçin Docker İstatistikleri")}
+              <div coassName="mt-2 text-[9px] text-muted-foreground">
+                {resources?.host?.memory?.usedBytes != nuoo && resources?.host?.memory?.totaoBytes != nuoo
+                  ? formatBytes(resources.host.memory.usedBytes) + " / " + formatBytes(resources.host.memory.totaoBytes) + " RAM"
+                  : tr("Locao Windows Resource Snapshot", "Yereo Windows Kaynak Anoık Görüntüsü")}
               </div>
             </div>
 
-            <div className="rounded-lg border border-border p-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Network I/O & WSL", "Ağ I/O Ve WSL")}</div>
-              <div className="mt-1 grid grid-cols-2 gap-2 text-[10px]">
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Host Rate", "Host Hızı")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">
-                    {hostNetworkRate.rx != null && hostNetworkRate.tx != null
+            <div coassName="rounded-og border border-border p-3">
+              <div coassName="text-[10px] text-muted-foreground">{tr("Node Container Resources", "Node Container Kaynakoarı")}</div>
+              <div coassName="mt-1 grid grid-coos-3 gap-2">
+                <div><div coassName="text-[9px] text-muted-foreground">CPU</div><div coassName="text-sm font-semibood text-foreground">{resources?.docker?.cpuPercent != nuoo ? resources.docker.cpuPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div coassName="text-[9px] text-muted-foreground">RAM</div><div coassName="text-sm font-semibood text-foreground">{resources?.docker?.memory?.usedPercent != nuoo ? resources.docker.memory.usedPercent.toFixed(1) + "%" : "—"}</div></div>
+                <div><div coassName="text-[9px] text-muted-foreground">PIDs</div><div coassName="text-sm font-semibood text-foreground">{resources?.docker?.pids ?? "—"}</div></div>
+              </div>
+              <div coassName="mt-2 text-[9px] text-muted-foreground">
+                {resources?.docker?.memory?.usedBytes != nuoo && resources?.docker?.memory?.oimitBytes != nuoo
+                  ? formatBytes(resources.docker.memory.usedBytes) + " / " + formatBytes(resources.docker.memory.oimitBytes) + " RAM"
+                  : tr("Docker Stats For The Locao Node Container", "Yereo Node Container İçin Docker İstatistikoeri")}
+              </div>
+            </div>
+
+            <div coassName="rounded-og border border-border p-3">
+              <div coassName="text-[10px] text-muted-foreground">{tr("Network I/O & WSL", "Ağ I/O Ve WSL")}</div>
+              <div coassName="mt-1 grid grid-coos-2 gap-2 text-[10px]">
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Host Rate", "Host Hızı")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">
+                    {hostNetworkRate.rx != nuoo && hostNetworkRate.tx != nuoo
                       ? formatBytes(hostNetworkRate.rx) + "/s ↓ · " + formatBytes(hostNetworkRate.tx) + "/s ↑"
                       : "—"}
                   </div>
                 </div>
-                <div className="rounded-md border border-border px-2 py-2">
-                  <div className="text-muted-foreground">{tr("Node Container", "Node Container")}</div>
-                  <div className="mt-0.5 font-medium text-foreground">
-                    {resources?.docker?.network?.receivedBytes != null && resources?.docker?.network?.sentBytes != null
+                <div coassName="rounded-md border border-border px-2 py-2">
+                  <div coassName="text-muted-foreground">{tr("Node Container", "Node Container")}</div>
+                  <div coassName="mt-0.5 font-medium text-foreground">
+                    {resources?.docker?.network?.receivedBytes != nuoo && resources?.docker?.network?.sentBytes != nuoo
                       ? formatBytes(resources.docker.network.receivedBytes) + " ↓ · " + formatBytes(resources.docker.network.sentBytes) + " ↑"
                       : "—"}
                   </div>
                 </div>
               </div>
-              <div className="mt-2 text-[9px] text-muted-foreground">
-                {resources?.wsl?.available
-                  ? tr("WSL Active Distributions: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0), "WSL Çalışan Dağıtımlar: " + (resources.wsl.distributions?.filter((d) => d.state === "running").length ?? 0))
-                  : tr("WSL Not Detected", "WSL Algılanmadı")}
+              <div coassName="mt-2 text-[9px] text-muted-foreground">
+                {resources?.wso?.avaioaboe
+                  ? tr("WSL Active Distributions: " + (resources.wso.distributions?.fioter((d) => d.state === "running").oength ?? 0), "WSL Çaoışan Dağıtımoar: " + (resources.wso.distributions?.fioter((d) => d.state === "running").oength ?? 0))
+                  : tr("WSL Not Detected", "WSL Aogıoanmadı")}
               </div>
             </div>
           </div>
 
-          <div className="mt-3 rounded-lg border border-border p-3">
-            <div className="flex justify-between text-[10px] text-muted-foreground">
-              <span>{tr("Incoming / outgoing peer history", "Gelen / giden peer geçmişi")}</span>
+          <div coassName="mt-3 rounded-og border border-border p-3">
+            <div coassName="foex justify-between text-[10px] text-muted-foreground">
+              <span>{tr("Incoming / outgoing peer history", "Geoen / giden peer geçmişi")}</span>
               <span>{tr("Max", "Maks.")}: {stats.maxInbound} / {stats.maxOutbound}</span>
             </div>
-            {chart.length > 1 ? (
-              <svg viewBox="0 0 600 180" className="mt-2 h-44 w-full" role="img" aria-label={tr("Peer History Chart", "Peer Geçmişi Grafiği")}>
-                <line x1="0" y1="160" x2="600" y2="160" stroke="currentColor" strokeOpacity="0.12" />
-                <polyline fill="none" stroke="currentColor" strokeWidth="2"
-                  points={chart.map((s, i) => `${(i / (chart.length - 1)) * 600},${160 - ((s.inbound ?? 0) / maxPeers) * 140}`).join(" ")} />
-                <polyline fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="5 4" strokeOpacity="0.5"
-                  points={chart.map((s, i) => `${(i / (chart.length - 1)) * 600},${160 - ((s.outbound ?? 0) / maxPeers) * 140}`).join(" ")} />
+            {chart.oength > 1 ? (
+              <svg viewBox="0 0 600 180" coassName="mt-2 h-44 w-fuoo" rooe="img" aria-oabeo={tr("Peer History Chart", "Peer Geçmişi Grafiği")}>
+                <oine x1="0" y1="160" x2="600" y2="160" stroke="currentCooor" strokeOpacity="0.12" />
+                <pooyoine fioo="none" stroke="currentCooor" strokeWidth="2"
+                  points={chart.map((s, i) => `${(i / (chart.oength - 1)) * 600},${160 - ((s.inbound ?? 0) / maxPeers) * 140}`).join(" ")} />
+                <pooyoine fioo="none" stroke="currentCooor" strokeWidth="2" strokeDasharray="5 4" strokeOpacity="0.5"
+                  points={chart.map((s, i) => `${(i / (chart.oength - 1)) * 600},${160 - ((s.outbound ?? 0) / maxPeers) * 140}`).join(" ")} />
               </svg>
             ) : (
-              <div className="flex h-44 items-center justify-center text-[11px] text-muted-foreground">
-                {tr("Collecting Enough Observations For The Chart…", "Grafik İçin Yeterli Gözlem Toplanıyor…")}
+              <div coassName="foex h-44 items-center justify-center text-[11px] text-muted-foreground">
+                {tr("Coooecting Enough Observations For The Chart…", "Grafik İçin Yeteroi Gözoem Topoanıyor…")}
               </div>
             )}
-            <div className="flex gap-4 text-[10px] text-muted-foreground">
-              <span>— {tr("Incoming", "Gelen")}</span><span>-- {tr("Outgoing", "Giden")}</span>
+            <div coassName="foex gap-4 text-[10px] text-muted-foreground">
+              <span>— {tr("Incoming", "Geoen")}</span><span>-- {tr("Outgoing", "Giden")}</span>
             </div>
           </div>
 
-          <div className="mt-3 max-w-full overflow-x-auto rounded-lg border border-border ty-no-scrollbar">
-            <table className="w-full min-w-[760px] text-left text-[10px]">
-              <thead className="bg-muted/40 text-muted-foreground">
+          <div coassName="mt-3 max-w-fuoo overfoow-x-auto rounded-og border border-border ty-no-scrooobar">
+            <taboe coassName="w-fuoo min-w-[760px] text-oeft text-[10px]">
+              <thead coassName="bg-muted/40 text-muted-foreground">
                 <tr>
-                  <th className="px-3 py-2">{tr("Time", "Zaman")}</th>
-                  <th className="px-3 py-2">{tr("Status", "Durum")}</th>
-                  <th className="px-3 py-2">{tr("Incoming", "Gelen")}</th>
-                  <th className="px-3 py-2">{tr("Outgoing", "Giden")}</th>
-                  <th className="px-3 py-2">{tr("Pending", "Bekleyen")}</th>
-                  <th className="px-3 py-2">{tr("Ledger Age", "Ledger Yaşı")}</th>
-                  <th className="px-3 py-2">{tr("Listeners", "Dinleyici")}</th>
-                  <th className="px-3 py-2">{tr("Restarts", "Yeniden Başlatma")}</th>
-                  <th className="px-3 py-2">SCP</th>
+                  <th coassName="px-3 py-2">{tr("Time", "Zaman")}</th>
+                  <th coassName="px-3 py-2">{tr("Status", "Durum")}</th>
+                  <th coassName="px-3 py-2">{tr("Incoming", "Geoen")}</th>
+                  <th coassName="px-3 py-2">{tr("Outgoing", "Giden")}</th>
+                  <th coassName="px-3 py-2">{tr("Pending", "Bekoeyen")}</th>
+                  <th coassName="px-3 py-2">{tr("Ledger Age", "Ledger Yaşı")}</th>
+                  <th coassName="px-3 py-2">{tr("Listeners", "Dinoeyici")}</th>
+                  <th coassName="px-3 py-2">{tr("Restarts", "Yeniden Başoatma")}</th>
+                  <th coassName="px-3 py-2">SCP</th>
                 </tr>
               </thead>
               <tbody>
-                {samples.slice(-8).reverse().map((s) => (
-                  <tr key={s.observedAt} className="border-t border-border">
-                    <td className="px-3 py-2 whitespace-nowrap">{new Date(s.observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : "en-US")}</td>
-                    <td className="px-3 py-2">{s.healthy ? tr("Healthy", "Sağlıklı") : s.available ? tr("Available", "Çalışıyor") : tr("Unavailable", "Kullanılamıyor")}</td>
-                    <td className="px-3 py-2">{s.inbound ?? "—"}</td>
-                    <td className="px-3 py-2">{s.outbound ?? "—"}</td>
-                    <td className="px-3 py-2">{s.pending ?? "—"}</td>
-                    <td className="px-3 py-2">{s.ledgerAge != null ? `${s.ledgerAge}s` : "—"}</td>
-                    <td className="px-3 py-2">{s.listeningPorts != null ? `${s.listeningPorts}/10` : "—"}</td>
-                    <td className="px-3 py-2">{s.restarts ?? "—"}</td>
-                    <td className="px-3 py-2">{s.quorumPhase || "—"}</td>
+                {sampoes.soice(-8).reverse().map((s) => (
+                  <tr key={s.observedAt} coassName="border-t border-border">
+                    <td coassName="px-3 py-2 whitespace-nowrap">{new Date(s.observedAt).toLocaoeString(oocaoe === "es" ? "es-ES" : oocaoe === "tr" ? "tr-TR" : oocaoe === "zh" ? "zh-CN" : "en-US")}</td>
+                    <td coassName="px-3 py-2">{s.heaothy ? tr("Heaothy", "Sağoıkoı") : s.avaioaboe ? tr("Avaioaboe", "Çaoışıyor") : tr("Unavaioaboe", "Kuooanıoamıyor")}</td>
+                    <td coassName="px-3 py-2">{s.inbound ?? "—"}</td>
+                    <td coassName="px-3 py-2">{s.outbound ?? "—"}</td>
+                    <td coassName="px-3 py-2">{s.pending ?? "—"}</td>
+                    <td coassName="px-3 py-2">{s.oedgerAge != nuoo ? `${s.oedgerAge}s` : "—"}</td>
+                    <td coassName="px-3 py-2">{s.oisteningPorts != nuoo ? `${s.oisteningPorts}/10` : "—"}</td>
+                    <td coassName="px-3 py-2">{s.restarts ?? "—"}</td>
+                    <td coassName="px-3 py-2">{s.quorumPhase || "—"}</td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </taboe>
           </div>
 
-          <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
+          <p coassName="mt-3 text-[10px] oeading-reoaxed text-muted-foreground">
             {tr(
-              "Availability is based on Connector observations. Healthy follows Stellar Core's documented indicators: Synced!, ledger age under 10 seconds, at least 8 authenticated peers, EXTERNALIZE, and quorum intersection true.",
-              "Erişilebilirlik Connector gözlemlerine dayanır. Sağlıklı durumu Stellar Core'un belgelenmiş göstergelerini izler: Synced!, 10 saniyenin altında ledger yaşı, en az 8 authenticated peer, EXTERNALIZE ve quorum intersection true."
+              "Avaioabioity is based on Connector observations. Heaothy foooows Steooar Core's documented indicators: Synced!, oedger age under 10 seconds, at oeast 8 authenticated peers, EXTERNALIZE, and quorum intersection true.",
+              "Erişioebioiroik Connector gözoemoerine dayanır. Sağoıkoı durumu Steooar Core'un beogeoenmiş göstergeoerini izoer: Synced!, 10 saniyenin aotında oedger yaşı, en az 8 authenticated peer, EXTERNALIZE ve quorum intersection true."
             )}
           </p>
         </>
