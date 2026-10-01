@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 import type { Locale } from "@/lib/zaf/i18n";
 import { localeLabels } from "@/lib/zaf/i18n";
-import { ZafEcosystemNavigation, type ZafSection } from "@/components/zaf-ecosystem-navigation";
+import { ZafEcosystemNavigation, ZAF_SECTION_TABS, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
 import { ZafAppHealth } from "@/components/zaf-app-health";
 import { ZafDeveloperTools } from "@/components/zaf-developer-tools";
@@ -261,7 +261,7 @@ export function ZafTechApp() {
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Read-only", "Salt-okunur")}</span>
             <span className={`rounded-full border px-2.5 py-1 ${sourceOnline ? "border-ty-active/40 text-foreground" : "border-border text-muted-foreground"}`}>{sourceOnline ? tr("Ecosystem Source Online", "Ekosistem Kaynağı Çevrimiçi") : tr("Source Unavailable", "Kaynak Kullanılamıyor")}</span>
           </div>
-          <ZafEcosystemNavigation locale={locale} section={section} subtab={subtab} onSectionChange={(next) => { setSection(next); const first = { overview: "Ecosystem", apps: "App Directory", node: "Node", intelligence: "Radar", wallet: "" }[next] ?? ""; setSubtab(first); }} onSubtabChange={setSubtab} />
+          <ZafEcosystemNavigation locale={locale} section={section} subtab={subtab} onSectionChange={(next) => { setSection(next); const first = ZAF_SECTION_TABS[next][0] ?? ""; setSubtab(first); }} onSubtabChange={setSubtab} />
           <div className="mt-2 flex items-center justify-end gap-3 text-[10px] text-muted-foreground">
             <span><span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-ty-active" />{tr("Live Observations", "Canlı Gözlemler")}</span>
             <span>{tr("Updated", "Güncellendi")} {age(snapshot?.generatedAt, locale)}</span>
