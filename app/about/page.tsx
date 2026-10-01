@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type Locale = "en" | "tr";
+type Locale = "en" | "es" | "tr";
 
 const copy = {
   en: {
@@ -18,6 +18,13 @@ const copy = {
     verificationText: "ZAF TECH separates observed facts from unverified claims. Pi-specific capabilities are not marked as verified unless an observable check supports them.",
     future: "Future Direction",
     futureText: "The next planned phase extends ZAF TECH with Wallet Intelligence: public Pi wallet address lookup, Mainnet/Testnet selection, observable balances and claimable balances, account metadata, recent public transactions and operations, and explorer navigation. Private wallet access, signing and authentication are outside this scope.",
+  },
+  es: {
+    back: "← Volver A ZAF TECH", title: "Acerca De ZAF TECH", subtitle: "Observatorio Del Ecosistema Pi",
+    what: "Qué Es", whatText: "ZAF TECH es una capa tecnológica independiente y de solo lectura para descubrir, comprobar y observar datos públicos del ecosistema Pi Network.",
+    scope: "Alcance Actual", scopeText: "La versión actual incluye el Observatorio Del Ecosistema Pi, el Directorio De Aplicaciones, los Detalles De Aplicaciones, el Comprobador De URL, la vista de Red, las Herramientas Para Desarrolladores, las observaciones de Node Y Cómputo y el Observatorio De Billetera, con soporte de interfaz en English, Español y Türkçe.",
+    verification: "Principio De Verificación", verificationText: "ZAF TECH separa los hechos observados de las afirmaciones no verificadas. Las capacidades específicas de Pi no se marcan como verificadas a menos que una comprobación observable las respalde.",
+    future: "Dirección Futura", futureText: "La siguiente fase planificada amplía ZAF TECH con observaciones de billeteras Pi públicas, selección de Mainnet/Testnet, saldos observables y reclamables, metadatos de cuenta, transacciones y operaciones públicas recientes y navegación al explorador. El acceso privado a la billetera, la firma y la autenticación están fuera de este alcance.",
   },
   tr: {
     back: "← ZAF TECH'e Dön",
@@ -39,7 +46,7 @@ export default function AboutPage() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem("zaf-tech-locale-v1");
-    if (saved === "tr" || saved === "en") setLocale(saved);
+    if (saved === "tr" || saved === "es" || saved === "en") setLocale(saved);
   }, []);
 
   const t = copy[locale];
@@ -54,13 +61,11 @@ export default function AboutPage() {
       <article className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="text-xs underline underline-offset-2">{t.back}</Link>
-          <div className="flex gap-1 rounded-md border p-1 text-xs">
-            {(["en", "tr"] as Locale[]).map((item) => (
-              <button key={item} onClick={() => changeLocale(item)} className={`rounded px-2 py-1 ${locale === item ? "bg-foreground text-background" : ""}`}>
-                {locale === "en" ? "English" : "Türkçe"}
-              </button>
+          <select value={locale} onChange={(e) => changeLocale(e.target.value as Locale)} aria-label="Language" className="rounded-md border bg-background px-2 py-1 text-xs">
+            {(["en", "es", "tr"] as Locale[]).sort((a, b) => ({ en: "English", es: "Español", tr: "Türkçe" }[a]).localeCompare(({ en: "English", es: "Español", tr: "Türkçe" }[b]), "en")).map((item) => (
+              <option key={item} value={item}>{({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
             ))}
-          </div>
+          </select>
         </div>
         <h1 className="mt-6 text-2xl font-bold">{t.title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{t.subtitle}</p>
