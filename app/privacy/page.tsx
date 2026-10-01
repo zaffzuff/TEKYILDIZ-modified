@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type Locale = "en" | "tr";
+type Locale = "en" | "es" | "tr";
 
 const copy = {
   en: {
@@ -13,6 +13,14 @@ const copy = {
     local: "Local Preferences", localText: "Language and theme preferences may be stored locally in the browser. They are used to preserve the user's interface settings.",
     public: "Public Sources", publicText: "Network, ecosystem, Node and wallet observations are derived from public or explicitly observable sources. ZAF TECH distinguishes observed data from unverified claims and does not claim that its observations represent the entire Pi Network. Where a source does not directly expose a value, ZAF TECH does not infer it as fact; for example, private Pi lockup commitments are not presented as publicly verified locked balances.",
     boundary: "Important Boundary", boundaryText: "ZAF TECH is an independent community-developed project and is not an official Pi Core Team product.",
+  },
+  es: {
+    back: "← Volver A ZAF TECH", title: "Privacidad", subtitle: "Observatorio Del Ecosistema Pi De ZAF TECH",
+    scope: "Alcance De Datos", scopeText: "ZAF TECH es una capa tecnológica independiente y de solo lectura. Lee fuentes públicas y observables del ecosistema Pi, la Red, Mainnet/Testnet y Node, y puede ejecutar comprobaciones de URL públicas solicitadas por el usuario. La función de observación de billetera solo utiliza una dirección pública de billetera Pi para obtener datos observables de blockchain.",
+    wallet: "Sin Acceso A La Billetera", walletText: "El inspector de direcciones de Developer Tools solo realiza validación local del formato. El Observatorio De Billetera no accede a claves privadas, frases semilla ni credenciales de billetera, no conecta una billetera de usuario y no firma transacciones blockchain. Las consultas de billetera se basan en datos de blockchain públicamente observables.",
+    local: "Preferencias Locales", localText: "Las preferencias de idioma y tema pueden almacenarse localmente en el navegador. Se utilizan para conservar la configuración de la interfaz del usuario.",
+    public: "Fuentes Públicas", publicText: "Las observaciones de Red, ecosistema, Node y billetera se derivan de fuentes públicas o explícitamente observables. ZAF TECH distingue los datos observados de las afirmaciones no verificadas y no afirma que sus observaciones representen toda la red Pi. Cuando una fuente no expone directamente un valor, ZAF TECH no lo presenta como un hecho; por ejemplo, los compromisos privados de lockup de Pi no se muestran como saldos bloqueados verificados públicamente.",
+    boundary: "Límite Importante", boundaryText: "ZAF TECH es un proyecto independiente desarrollado por la comunidad y no es un producto oficial de Pi Core Team.",
   },
   tr: {
     back: "← ZAF TECH'e Dön", title: "Gizlilik", subtitle: "ZAF TECH Pi Ekosistem Gözlem Merkezi",
@@ -29,7 +37,7 @@ export default function PrivacyPage() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem("zaf-tech-locale-v1");
-    if (saved === "tr" || saved === "en") setLocale(saved);
+    if (saved === "tr" || saved === "es" || saved === "en") setLocale(saved);
   }, []);
 
   const t = copy[locale];
@@ -43,13 +51,11 @@ export default function PrivacyPage() {
       <article className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="text-xs underline underline-offset-2">{t.back}</Link>
-          <div className="flex gap-1 rounded-md border p-1 text-xs">
-            {(["en", "tr"] as Locale[]).map((item) => (
-              <button key={item} onClick={() => changeLocale(item)} className={`rounded px-2 py-1 ${locale === item ? "bg-foreground text-background" : ""}`}>
-                {locale === "en" ? "English" : "Türkçe"}
-              </button>
+          <select value={locale} onChange={(e) => changeLocale(e.target.value as Locale)} aria-label="Language" className="rounded-md border bg-background px-2 py-1 text-xs">
+            {(["en", "es", "tr"] as Locale[]).sort((a, b) => ({ en: "English", es: "Español", tr: "Türkçe" }[a]).localeCompare(({ en: "English", es: "Español", tr: "Türkçe" }[b]), "en")).map((item) => (
+              <option key={item} value={item}>{({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
             ))}
-          </div>
+          </select>
         </div>
         <h1 className="mt-6 text-2xl font-bold">{t.title}</h1>
         <p className="mt-2 text-xs text-muted-foreground">{t.subtitle}</p>
