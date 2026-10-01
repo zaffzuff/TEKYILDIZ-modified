@@ -5,7 +5,8 @@ import Link from "next/link";
 import type { DirectoryApp } from "@/lib/zaf/app-directory";
 import { useEffect, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
-import { localeLabels, translate } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
+import { LanguageSelector } from "@/components/zaf-language-selector";
 
 function displayStatus(value: string | null | undefined) {
   if (!value) return "—";
@@ -27,9 +28,7 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
         <header className="border-b border-border pb-5 pt-7">
           <div className="flex items-center justify-between gap-3">
             <Link href="/" className="text-xs font-medium text-muted-foreground hover:text-foreground">{tr("← Back To ZAF TECH", "← ZAF TECH'e Dön")}</Link>
-            <select value={locale} onChange={e => { const next = e.target.value as Locale; setLocale(next);  }} aria-label={tr("Language", "Dil")} className="rounded-md border bg-background px-2 py-1 text-[10px] text-foreground">
-              {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>{<span className="inline-block h-3 w-4 shrink-0 rounded-[2px] bg-cover bg-center" style={{ backgroundImage: `url(https://flagcdn.com/20x15/${option === "en" ? "gb" : option === "es" ? "es" : "tr"}.png)` }} aria-hidden="true" />} {localeLabels[option]}</option>)}
-            </select>
+            <LanguageSelector locale={locale} onChange={setLocale} />
             <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={38} height={38} className="h-9 w-9 object-contain" priority />
           </div>
           <div className="mt-6">
