@@ -75,7 +75,7 @@ export function ZafDeveloperTools({ locale }: { locale: Locale }) {
           <div className="text-xs font-semibold text-foreground">{tr("Pi Address Inspector", "Pi Adres İnceleyici")}</div>
           <div className="mt-1 text-[10px] text-muted-foreground">{tr("Local format validation only; no wallet access.", "Yalnızca yerel format doğrulaması; cüzdan erişimi yok.")}</div>
           <input value={address} onChange={e => setAddress(e.target.value.toUpperCase())} placeholder="G..." className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs font-mono text-foreground outline-none focus:ring-2 focus:ring-ring" />
-          <div className="mt-2 text-[10px] text-muted-foreground">{address ? valid ? tr("Format Valid", "Format Geçerli") : tr("Format Invalid", "Format Geçersiz") : tr("Enter a public Pi address", "Herkese açık Pi adresi girin")}</div>
+          <div className="mt-2 text-[10px] text-muted-foreground">{address ? valid ? tr("Format Valid", "Format Geçerli") : tr("Format Invalid", "Format Geçersiz") : tr("Enter A Public Pi Address", "Herkese Açık Pi Adresi Girin")}</div>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-4">
