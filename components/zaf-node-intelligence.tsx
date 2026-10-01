@@ -137,7 +137,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         fetch("http://127.0.0.1:39100/resources", { cache: "no-store", signal: controller.signal }),
       ]);
       window.clearTimeout(timeout);
-      if (!nodeResponse.ok) throw new Error("Local connector unavailable");
+      if (!nodeResponse.ok) throw new Error("Local Connector Unavailable");
       setLocalNode((await nodeResponse.json()) as LocalNodeData);
       setLocalResources(resourcesResponse.ok ? ((await resourcesResponse.json()) as LocalResourcesData) : null);
       setLocalNodeError(false);
@@ -382,18 +382,18 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             disabled={localNodeLoading}
             className="w-full shrink-0 rounded-lg border border-border px-3 py-2 text-center text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50 sm:w-auto"
           >
-            {localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : tr("Refresh local Node", "Yerel Node'u yenile")}
+            {localNodeLoading ? tr("Checking…", "Kontrol ediliyor…") : tr("Refresh Local Node", "Yerel Node'u Yenile")}
           </button>
         </div>
 
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {[
             [
-              tr("Local connector", "Yerel bağlantı"),
+              tr("Local Connector", "Yerel Bağlantı"),
               localNodeLoading
                 ? tr("Checking…", "Kontrol ediliyor…")
                 : localNodeError
-                  ? tr("Not detected", "Bulunamadı")
+                  ? tr("Not Detected", "Bulunamadı")
                   : tr("Connected", "Bağlı"),
             ],
             [
@@ -409,7 +409,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
               ["synced", "synced!"].includes(String(localNode?.node?.sync || "").toLowerCase())
                 ? tr("Synced", "Senkronize")
                 : localNode?.node?.sync === "catching_up"
-                  ? tr("Catching up", "Yetişiyor")
+                  ? tr("Catching Up", "Yetişiyor")
                   : localNode?.node?.sync === "joining_scp"
                     ? "Joining SCP"
                     : localNode?.node?.sync === "error"
@@ -428,7 +428,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Protocol", "Protokol")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.protocol || "—"}</div>
-            <div className="mt-1 min-w-0 break-words text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
+            <div className="mt-1 min-w-0 break-words text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi Container Detected", "Pi Container Bulunamadı")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Protocol Support", "Protokol Desteği")}</div>
@@ -495,7 +495,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
                     `Incoming ${localNode.node.peers.inbound} / Outgoing ${localNode.node.peers.outbound}`,
                     `Gelen ${localNode.node.peers.inbound} / Giden ${localNode.node.peers.outbound}`
                   )
-                : tr("Direction data unavailable", "Yön verisi kullanılamıyor")}
+                : tr("Direction Data Unavailable", "Yön verisi kullanılamıyor")}
             </div>
             <div className="mt-1 text-[10px] text-muted-foreground">
               {localNode?.node?.peers?.pending != null
