@@ -2,9 +2,9 @@ export type Locale = "en" | "es" | "tr" | "zh";
 
 export const localeLabels: Record<Locale, string> = {
   en: "English",
-  es: "Español",
-  tr: "Türkçe",
-  zh: "Çince",
+  es: "Spanish",
+  tr: "Turkish",
+  zh: "Chinese",
 };
 
 const translations: Record<Locale, Record<string, string>> = {
