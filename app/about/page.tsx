@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { LanguageSelector } from "@/components/zaf-language-selector";
 
 type Locale = "en" | "es" | "tr";
 
@@ -58,11 +59,7 @@ export default function AboutPage() {
       <article className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="text-xs underline underline-offset-2">{t.back}</Link>
-          <select value={locale} onChange={(e) => changeLocale(e.target.value as Locale)} aria-label="Language" className="rounded-md border bg-background px-2 py-1 text-xs">
-            {(["en", "es", "tr"] as Locale[]).sort((a, b) => ({ en: "English", es: "Español", tr: "Türkçe" }[a]).localeCompare(({ en: "English", es: "Español", tr: "Türkçe" }[b]), "en")).map((item) => (
-              <option key={item} value={item}>{<span className="inline-block h-3 w-4 shrink-0 rounded-[2px] bg-cover bg-center" style={{ backgroundImage: `url(https://flagcdn.com/20x15/${item === "en" ? "gb" : item === "es" ? "es" : "tr"}.png)` }} aria-hidden="true" />} {({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
-            ))}
-          </select>
+          <LanguageSelector locale={locale} onChange={changeLocale} />
         </div>
         <h1 className="mt-6 text-2xl font-bold">{t.title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{t.subtitle}</p>
