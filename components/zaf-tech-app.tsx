@@ -24,6 +24,28 @@ type EcosystemPayload = {
 function number(value: number | null | undefined, digits = 0) {
   return value == null || !Number.isFinite(value) ? "—" : value.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
+function displayStatus(value: string | null | undefined, locale: Locale) {
+  if (!value) return "—";
+  const normalized = value.replace(/[_-]+/g, " ").trim().toLowerCase();
+  const known: Record<string, [string, string]> = {
+    online: ["Online", "Çevrimiçi"],
+    offline: ["Offline", "Çevrimdışı"],
+    available: ["Available", "Kullanılabilir"],
+    unavailable: ["Unavailable", "Kullanılamıyor"],
+    error: ["Error", "Hata"],
+    active: ["Active", "Aktif"],
+    "not configured": ["Not configured", "Yapılandırılmadı"],
+    rising: ["Rising", "Yükseliyor"],
+    stable: ["Stable", "Sabit"],
+    falling: ["Falling", "Düşüyor"],
+    observed: ["Observed", "Gözlemlendi"],
+    unverified: ["Unverified", "Doğrulanmadı"],
+  };
+  const pair = known[normalized];
+  if (pair) return locale === "tr" ? pair[1] : pair[0];
+  const label = normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  return label;
+}
 function age(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
   const ms = Date.now() - Date.parse(value);
@@ -60,7 +82,7 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
       <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
         <Card title={tr("Observed", "Gözlemlenen")} value={number(directoryApps.length)} detail={tr("Current source response", "Mevcut kaynak yanıtı")} />
         <Card title={tr("Matching", "Eşleşen")} value={number(filtered.length)} detail={tr("Current filters", "Mevcut filtreler")} />
-        <Card title={tr("Source", "Kaynak")} value={sourceOnline ? "ONLINE" : "OFFLINE"} detail={age(generatedAt, locale)} />
+        <Card title={tr("Source", "Kaynak")} value={displayStatus(sourceOnline ? "online" : "offline", locale)} detail={age(generatedAt, locale)} />
       </div>
       <div className="rounded-xl border border-border bg-card p-3">
         <input value={query} onChange={e => setQuery(e.target.value)} placeholder={tr("Search apps or URLs…", "Uygulama veya URL ara…")} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring" />
@@ -100,6 +122,66 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
 }
 
 
+
+function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
+  apps: AppItem[];
+  sources: EcosystemPayload["sources"];
+  snapshot: ZafSnapshot | null;
+  locale: Locale;
+  tr: (en: string, trText: string) => string;
+}) {
+  return (
+    <section className="mt-5 sm:mt-7">
+      <div className="mb-3">
+        <h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Explorer", "Ekosistem Explorer")}</h2>
+        <p className="text-[11px] text-muted-foreground">{tr("Explore the public ecosystem sources and applications currently observable by ZAF TECH.", "ZAF TECH tarafından şu anda gözlemlenebilen herkese açık ekosistem kaynaklarını ve uygulamaları keşfedin.")}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(apps.length)} />
+        <Card title={tr("Public Sources", "Herkese Açık Kaynaklar")} value={number(sources.length)} />
+        <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence?.toString() ?? "—"} />
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Public Ecosystem Sources", "Herkese Açık Ekosistem Kaynakları")}</div>
+        <div className="mt-3 space-y-2">
+          {sources.length ? sources.map(source => (
+            <div key={source.url} className="flex items-start justify-between gap-3 rounded-lg border border-border p-3">
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold text-foreground">{source.label}</div>
+                <div className="mt-1 break-all text-[10px] text-muted-foreground">{source.detail}</div>
+              </div>
+              <a href={source.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open Source", "Kaynağı Aç")}</a>
+            </div>
+          )) : (
+            <div className="text-[10px] text-muted-foreground">{tr("No public sources are currently available.", "Şu anda kullanılabilir herkese açık kaynak yok.")}</div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Observed Applications", "Gözlemlenen Uygulamalar")}</div>
+        <div className="mt-3 space-y-2">
+          {apps.slice(0, 10).map(app => (
+            <div key={app.url} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold text-foreground">{app.name}</div>
+                <div className="mt-1 truncate text-[10px] text-muted-foreground">{app.url}</div>
+              </div>
+              <a href={app.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open", "Aç")}</a>
+            </div>
+          ))}
+          {!apps.length ? <div className="text-[10px] text-muted-foreground">{tr("No observed applications are currently available.", "Şu anda gözlemlenen uygulama yok.")}</div> : null}
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Explorer Boundary", "Explorer Sınırı")}</div>
+        <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">{tr("Explorer exposes only public sources and records already observed by ZAF TECH. It does not add unverified ecosystem claims or perform Pi-side integration.", "Explorer yalnızca ZAF TECH tarafından gözlemlenmiş herkese açık kaynakları ve kayıtları gösterir. Doğrulanmamış ekosistem iddiaları eklemez ve Pi tarafı entegrasyonu gerçekleştirmez.")}</p>
+      </div>
+    </section>
+  );
+}
 
 export function ZafTechApp() {
   const [locale, setLocale] = useState<Locale>("en");
@@ -179,7 +261,7 @@ export function ZafTechApp() {
             <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tr("Read-only", "Salt-okunur")}</span>
             <span className={`rounded-full border px-2.5 py-1 ${sourceOnline ? "border-ty-active/40 text-foreground" : "border-border text-muted-foreground"}`}>{sourceOnline ? tr("Ecosystem Source Online", "Ekosistem Kaynağı Çevrimiçi") : tr("Source Unavailable", "Kaynak Kullanılamıyor")}</span>
           </div>
-          <ZafEcosystemNavigation locale={locale} section={section} subtab={subtab} onSectionChange={(next) => { setSection(next); const first = { overview: "Ecosystem", apps: "App Directory", node: "Node", intelligence: "Radar" }[next] ?? ""; if (first) setSubtab(first); }} onSubtabChange={setSubtab} />
+          <ZafEcosystemNavigation locale={locale} section={section} subtab={subtab} onSectionChange={(next) => { setSection(next); const first = { overview: "Ecosystem", apps: "App Directory", node: "Node", intelligence: "Radar", wallet: "" }[next] ?? ""; setSubtab(first); }} onSubtabChange={setSubtab} />
           <div className="mt-2 flex items-center justify-end gap-3 text-[10px] text-muted-foreground">
             <span><span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-ty-active" />{tr("Live Observations", "Canlı Gözlemler")}</span>
             <span>{tr("Updated", "Güncellendi")} {age(snapshot?.generatedAt, locale)}</span>
@@ -209,19 +291,21 @@ export function ZafTechApp() {
 
         {!loading && section === "apps" && subtab === "App Directory" ? <AppDirectoryView apps={apps} sourceOnline={sourceOnline} generatedAt={ecosystem?.generatedAt} note={ecosystem?.apps.note} locale={locale} tr={tr} /> : null}
 
-        {!loading && section === "intelligence" && subtab !== "Wallet" ? (
+        {!loading && section === "intelligence" && subtab === "Radar" ? (
           <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Observatory", "Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={snapshot?.intelligence.activityState ?? "—"} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
+            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Radar", "Ekosistem Radarı")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.", "Bu sinyaller yalnızca örneklenen herkese açık blockchain verisini tanımlar. Pi Network için puan değildir, kullanıcı niyeti çıkarmaz ve gelecekteki ağ davranışını tahmin etmez.")}</p></div>
           </section>
         ) : null}
 
         {!loading && section === "node" ? <ZafNodeCompute locale={locale} data={snapshot} subtab={subtab} /> : null}
 
-        {!loading && section === "intelligence" && subtab === "Wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
+        {!loading && section === "wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
 
         {!loading && section === "intelligence" && subtab === "Activity Signals" ? <ObservatoryStatisticsView locale={locale} tr={tr} /> : null}
+
+        {!loading && section === "intelligence" && subtab === "Explorer" ? <ObservatoryExplorerView apps={apps} sources={ecosystem?.sources ?? []} snapshot={snapshot} locale={locale} tr={tr} /> : null}
 
         {!loading && section === "overview" && subtab === "Network" ? (
           <section className="mt-5 sm:mt-7">
@@ -233,7 +317,7 @@ export function ZafTechApp() {
               <Card title={tr("Network", "Ağ")} value={snapshot?.network ?? "—"} detail={tr("Observed Source", "Gözlemlenen Kaynak")} />
               <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed Ledger", "Son Gözlemlenen Ledger")} />
               <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence ?? "—"} detail={snapshot?.latestLedger?.closedAt ? age(snapshot.latestLedger.closedAt, locale) : "—"} />
-              <Card title={tr("Data Status", "Veri Durumu")} value={snapshot?.error ? "ERROR" : snapshot?.latestLedger ? "AVAILABLE" : "UNAVAILABLE"} detail={snapshot?.error ?? tr("Pi Mainnet Horizon response observed.", "Pi Mainnet Horizon yanıtı gözlemlendi.")} />
+              <Card title={tr("Data Status", "Veri Durumu")} value={displayStatus(snapshot?.error ? "error" : snapshot?.latestLedger ? "available" : "unavailable", locale)} detail={snapshot?.error ?? tr("Pi Mainnet Horizon response observed.", "Pi Mainnet Horizon yanıtı gözlemlendi.")} />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current Sample", "Mevcut Örnek")} />
@@ -424,10 +508,10 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
       <TrendView points={trends?.points ?? []} locale={locale} tr={tr} />
 
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <Card title="Launchpad" value={data?.current.defi.launchpad.toUpperCase() ?? "—"} />
-        <Card title="DEX" value={data?.current.defi.dex.toUpperCase() ?? "—"} />
-        <Card title="AMM" value={data?.current.defi.amm.toUpperCase() ?? "—"} />
-        <Card title={tr("Mainnet Trading", "Mainnet İşlemleri")} value={data?.current.defi.mainnetTrading.toUpperCase() ?? "—"} />
+        <Card title="Launchpad" value={displayStatus(data?.current.defi.launchpad, locale)} />
+        <Card title="DEX" value={displayStatus(data?.current.defi.dex, locale)} />
+        <Card title="AMM" value={displayStatus(data?.current.defi.amm, locale)} />
+        <Card title={tr("Mainnet Trading", "Mainnet İşlemleri")} value={displayStatus(data?.current.defi.mainnetTrading, locale)} />
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
@@ -440,7 +524,7 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
         <div className="text-xs font-semibold text-foreground">{tr("Historical Snapshots", "Tarihsel Snapshot'lar")}</div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Card title={tr("Stored Snapshots", "Kayıtlı Snapshot'lar")} value={number(data?.history.snapshots)} />
-          <Card title={tr("Storage", "Depolama")} value={data?.history.configured ? "ACTIVE" : "NOT CONFIGURED"} detail={tr("DATABASE_URL", "DATABASE_URL")} />
+          <Card title={tr("Storage", "Depolama")} value={displayStatus(data?.history.configured ? "active" : "not configured", locale)} detail={tr("DATABASE_URL", "DATABASE_URL")} />
           <Card title={tr("First Snapshot", "İlk Snapshot")} value={age(data?.history.firstObservedAt, locale)} />
           <Card title={tr("Latest Snapshot", "Son Snapshot")} value={age(data?.history.latestObservedAt, locale)} />
         </div>
