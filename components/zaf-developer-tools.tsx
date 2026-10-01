@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
 
 type UrlResult = {
   url: string;
@@ -16,7 +17,7 @@ type UrlResult = {
 };
 
 export function ZafDeveloperTools({ locale }: { locale: Locale }) {
-  const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+  const tr = (en: string, trText: string) => translate(locale, en, trText);
   const [address, setAddress] = useState("");
   const [tx, setTx] = useState("");
   const [txResult, setTxResult] = useState<Record<string, unknown> | null>(null);
