@@ -15,8 +15,8 @@ function age(value: string | null, locale: Locale) {
   const ms = Date.now() - Date.parse(value);
   if (!Number.isFinite(ms)) return "—";
   const min = Math.floor(ms / 60000);
-  if (locale === "tr") return min < 1 ? "az önce" : min < 60 ? `${min} dk önce` : `${Math.floor(min / 60)} sa önce`;
-  return min < 1 ? "just now" : min < 60 ? `${min}m ago` : `${Math.floor(min / 60)}h ago`;
+  if (locale === "tr") return min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`;
+  return min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`;
 }
 
 function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
@@ -64,7 +64,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
 
     <div className="rounded-xl border border-border bg-card p-3 sm:p-4">
       <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
-        <input value={address} onChange={e => setAddress(e.target.value)} onKeyDown={e => { if (e.key === "Enter") void lookup(); }} placeholder={tr("Public Pi wallet address (G...)", "Herkese açık Pi cüzdan adresi (G...)")} className="min-w-0 rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring" />
+        <input value={address} onChange={e => setAddress(e.target.value)} onKeyDown={e => { if (e.key === "Enter") void lookup(); }} placeholder={tr("Public Pi Wallet Address (G...)", "Herkese Açık Pi Cüzdan Adresi (G...)")} className="min-w-0 rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring" />
         <select value={network} onChange={e => setNetwork(e.target.value as "mainnet" | "testnet")} className="rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground">
           <option value="mainnet">{tr("Pi Mainnet", "Pi Mainnet")}</option>
           <option value="testnet">{tr("Pi Testnet", "Pi Testnet")}</option>
@@ -113,7 +113,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
         <div className="text-xs font-semibold text-foreground">{tr("Observable Claimable Balances", "Gözlemlenebilir Claimable Bakiyeler")}</div>
         <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{tr("This section reports public native claimable balances returned by Horizon. It does not infer private Pi lockup commitments.", "Bu bölüm Horizon'un döndürdüğü herkese açık native claimable bakiyeleri raporlar. Özel Pi lockup taahhütlerini çıkarımsamaz.")}</p>
         <div className="mt-2 space-y-2">
-          {Array.isArray(data.lockup?.items) && data.lockup.items.length ? data.lockup.items.map((item: any) => <div key={String(item.id)} className="rounded-lg border border-border p-2.5 text-[10px]"><div className="flex justify-between gap-2"><span className="font-mono text-foreground">{String(item.id)}</span><span className="text-foreground">{fmt(Number(item.amountPi))} Pi</span></div><div className="mt-1 text-muted-foreground">{item.unlockAt ? `${tr("Unlock", "Açılma")}: ${new Date(String(item.unlockAt)).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}` : tr("Unlock time not observable", "Açılma zamanı gözlemlenemiyor")}</div></div>) : <div className="text-[11px] text-muted-foreground">{tr("No publicly observable native claimable balances were returned.", "Herkese açık gözlemlenebilir native claimable bakiye döndürülmedi.")}</div>}
+          {Array.isArray(data.lockup?.items) && data.lockup.items.length ? data.lockup.items.map((item: any) => <div key={String(item.id)} className="rounded-lg border border-border p-2.5 text-[10px]"><div className="flex justify-between gap-2"><span className="font-mono text-foreground">{String(item.id)}</span><span className="text-foreground">{fmt(Number(item.amountPi))} Pi</span></div><div className="mt-1 text-muted-foreground">{item.unlockAt ? `${tr("Unlock", "Açılma")}: ${new Date(String(item.unlockAt)).toLocaleString(locale === "tr" ? "tr-TR" : "en-US")}` : tr("Unlock Time Not Observable", "Açılma Zamanı Gözlemlenemiyor")}</div></div>) : <div className="text-[11px] text-muted-foreground">{tr("No publicly observable native claimable balances were returned.", "Herkese açık gözlemlenebilir native claimable bakiye döndürülmedi.")}</div>}
         </div>
       </div>
 
