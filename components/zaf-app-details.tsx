@@ -2,6 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import type { DirectoryApp } from "@/lib/zaf/app-directory";
 
+function displayStatus(value: string | null | undefined) {
+  if (!value) return "—";
+  if (value === "unknown") return "Not Checked";
+  return value.replace(/[_-]+/g, " ").trim().toLowerCase().replace(/^./, char => char.toUpperCase());
+}
 function verification(value: DirectoryApp["piAuthentication"]) {
   if (value === "verified") return "Verified";
   return "Not Verified";
@@ -17,12 +22,12 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
             <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={38} height={38} className="h-9 w-9 object-contain" priority />
           </div>
           <div className="mt-6">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Pi App Directory</div>
+            <div className="text-[10px] tracking-wider text-muted-foreground">Pi App Directory</div>
             <h1 className="mt-1 text-xl font-bold tracking-tight text-foreground">{app.name}</h1>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.category}</span>
-              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.network === "unknown" ? "Network Not Verified" : app.network}</span>
-              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.status === "unknown" ? "Status Not Checked" : app.status}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.network)}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.status)}</span>
             </div>
           </div>
         </header>
@@ -39,8 +44,8 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
               ["Pi Authentication", verification(app.piAuthentication)],
               ["Pi Payments", verification(app.piPayments)],
               ["PiNet", verification(app.piNet)],
-              ["Network", app.network === "unknown" ? "Not Verified" : app.network],
-              ["Status", app.status === "unknown" ? "Not Checked" : app.status],
+              ["Network", displayStatus(app.network)],
+              ["Status", displayStatus(app.status)],
               ["Last Checked", new Date(app.lastChecked).toLocaleString("en-GB")],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl border border-border bg-card p-3">
