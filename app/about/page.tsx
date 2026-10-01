@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/zaf-language-selector";
 
-type Locale = "en" | "es" | "tr" | "zh";
+type Locale = "en" | "es" | "tr" | "zh" | "hi";
 
 const copy = {
   en: {
@@ -39,6 +39,18 @@ const copy = {
     verificationText: "ZAF TECH 将已观测事实与未经验证的声明分开。除非可观测检查提供支持，否则不会将 Pi 特定功能标记为已验证。",
     future: "未来方向",
     futureText: "下一阶段将继续扩展 ZAF TECH 的钱包观测能力，包括公开 Pi 钱包地址查询、Mainnet/Testnet 选择、可观测余额和可领取余额、账户元数据、近期公开交易与操作以及区块浏览器导航。私有钱包访问、签名和身份验证不在此范围内。",
+  },  hi: {
+    back: "← ZAF TECH पर वापस जाएँ",
+    title: "ZAF TECH के बारे में",
+    subtitle: "Pi इकोसिस्टम ऑब्ज़र्वेटरी",
+    what: "यह क्या है",
+    whatText: "ZAF TECH सार्वजनिक Pi Network इकोसिस्टम डेटा को खोजने, जाँचने और देखने के लिए एक स्वतंत्र, केवल-पठन तकनीकी परत है।",
+    scope: "वर्तमान दायरा",
+    scopeText: "वर्तमान संस्करण में Pi Ecosystem Observatory, App Directory, App Details, App URL Checker, Network view, Developer Tools, Node & Compute observations और Wallet Intelligence शामिल हैं। इंटरफ़ेस English, Spanish, Turkish, Chinese और Hindi में उपलब्ध है।",
+    verification: "सत्यापन सिद्धांत",
+    verificationText: "ZAF TECH देखे गए तथ्यों को असत्यापित दावों से अलग रखता है। Pi की विशिष्ट क्षमताओं को तब तक सत्यापित नहीं माना जाता जब तक कोई observable check उनका समर्थन न करे।",
+    future: "भविष्य की दिशा",
+    futureText: "अगला चरण ZAF TECH की सार्वजनिक Pi wallet observations, Mainnet/Testnet चयन, observable balances और claimable balances, account metadata, हाल के सार्वजनिक transactions और operations तथा explorer navigation क्षमताओं को आगे बढ़ाता है। Private wallet access, signing और authentication इस दायरे से बाहर हैं।",
   },  tr: {
     back: "← ZAF TECH'e Dön",
     title: "ZAF TECH Hakkında",
