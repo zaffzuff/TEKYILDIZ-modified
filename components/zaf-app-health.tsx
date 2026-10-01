@@ -142,7 +142,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
               <span className="shrink-0 text-muted-foreground">{item.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.responseTimeMs} ms</span>
             </div>)}
           {trendLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading Trend…","Trend Yükleniyor…")}</div>:<AppTrend points={trend ?? []} summary={trendSummary} locale={locale} tr={tr}/>}
-          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No stored history is available yet.","Henüz kaydedilmiş geçmiş bulunmuyor.")}</div>}
+          </div>:<div className="mt-3 text-[10px] text-muted-foreground">{tr("No Stored History Is Available Yet.","Henüz Kaydedilmiş Geçmiş Bulunmuyor.")}</div>}
         </div>:null}
       </div>:null}
     </div>
