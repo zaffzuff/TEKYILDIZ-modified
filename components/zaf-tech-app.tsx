@@ -196,8 +196,6 @@ export function ZafTechApp() {
   const tr = (en: string, trText: string) => translate(locale, en, trText);
 
   useEffect(() => {
-    const l = window.localStorage.getItem("zaf-tech-locale-v1");
-    if (l === "en" || l === "es" || l === "tr") setLocale(l);
     const t = window.localStorage.getItem("zaf-tech-theme-v1");
     if (t === "light" || t === "dark") setTheme(t);
   }, []);
@@ -207,7 +205,6 @@ export function ZafTechApp() {
     window.localStorage.setItem("zaf-tech-theme-v1", theme);
   }, [theme]);
   useEffect(() => {
-    window.localStorage.setItem("zaf-tech-locale-v1", locale);
     document.documentElement.lang = locale;
   }, [locale]);
 
@@ -249,7 +246,7 @@ export function ZafTechApp() {
             </div>
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
               <select value={locale} onChange={e => setLocale(e.target.value as Locale)} aria-label={tr("Language", "Dil")} className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground">
-                {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>{localeLabels[option]}</option>)}
+                {(["en", "es", "tr"] as Locale[]).sort((a, b) => localeLabels[a].localeCompare(localeLabels[b], "en")).map(option => <option key={option} value={option}>{({ en: "🇬🇧", es: "🇪🇸", tr: "🇹🇷" }[option])} {localeLabels[option]}</option>)}
               </select>
               <button type="button" onClick={() => setTheme(theme === "light" ? "dark" : "light")} className="rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground">{theme === "light" ? `☾ ${tr("Dark", "Koyu")}` : `☀ ${tr("Light", "Açık")}`}</button>
               <button type="button" onClick={() => void load()} disabled={refreshing} className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">{refreshing ? tr("Refreshing…", "Yenileniyor…") : tr("Refresh", "Yenile")}</button>
