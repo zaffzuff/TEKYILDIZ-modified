@@ -88,7 +88,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         <Card title={tr("Account Balance", "Hesap Bakiyesi")} value={fmt(data.accountBalancePi)} detail="Pi" />
-        <Card title={tr("Observable Claimable", "Gözlemlenebilir Talep Edilebilir")} value={fmt(data.observableClaimablePi)} detail={tr("Native claimable balances", "Native claimable bakiyeler")} />
+        <Card title={tr("Observable Claimable", "Gözlemlenebilir Talep Edilebilir")} value={fmt(data.observableClaimablePi)} detail={tr("Native Claimable Balances", "Native Claimable Bakiyeler")} />
         <Card title={tr("Last Activity", "Son Aktivite")} value={age(data.lastActivity, locale)} detail={tr("Transactions + Operations", "İşlemler + Operasyonlar")} />
       </div>
 
