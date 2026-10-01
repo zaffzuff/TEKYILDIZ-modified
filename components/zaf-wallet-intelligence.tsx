@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
 import type { ZafWalletSnapshot } from "@/lib/zaf/types";
 
 function fmt(value: number | null) {
@@ -30,7 +31,7 @@ export function ZafWalletIntelligence({ locale }: { locale: Locale }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+  const tr = (en: string, trText: string) => translate(locale, en, trText);
   const explorerBase = network === "mainnet" ? "https://blockexplorer.minepi.com/mainnet" : "https://blockexplorer.minepi.com/testnet";
 
   async function lookup() {
