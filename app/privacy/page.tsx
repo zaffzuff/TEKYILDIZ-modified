@@ -23,7 +23,21 @@ const copy = {
     public: "Fuentes Públicas", publicText: "Las observaciones de Red, ecosistema, Node y billetera se derivan de fuentes públicas o explícitamente observables. ZAF TECH distingue los datos observados de las afirmaciones no verificadas y no afirma que sus observaciones representen toda la red Pi. Cuando una fuente no expone directamente un valor, ZAF TECH no lo presenta como un hecho; por ejemplo, los compromisos privados de lockup de Pi no se muestran como saldos bloqueados verificados públicamente.",
     boundary: "Límite Importante", boundaryText: "ZAF TECH es un proyecto independiente desarrollado por la comunidad y no es un producto oficial de Pi Core Team.",
   },
-  tr: {
+  zh: {
+    back: "← 返回 ZAF TECH",
+    title: "隐私",
+    subtitle: "ZAF TECH Pi 生态观测中心",
+    scope: "数据范围",
+    scopeText: "ZAF TECH 是一个独立的只读技术层。它读取可观测的公开 Pi 生态、Network、Mainnet/Testnet 和 Node 相关来源，并可以执行用户请求的公开 URL 检查。钱包观测功能仅使用公开 Pi 钱包地址获取可观测的区块链数据。",
+    wallet: "无钱包访问",
+    walletText: "Developer Tools 地址检查器仅执行本地格式验证。钱包观测不会访问私钥、助记词或钱包凭据，不连接用户钱包，也不会签署区块链交易。钱包查询基于公开可观测的区块链数据。",
+    local: "本地偏好",
+    localText: "语言和主题偏好可以保存在浏览器本地，用于保留用户的界面设置。",
+    public: "公开来源",
+    publicText: "Network、生态、Node 和钱包观测来自公开或明确可观测的来源。ZAF TECH 区分已观测数据和未经验证的声明，并不声称其观测代表整个 Pi Network。如果来源没有直接提供某个值，ZAF TECH 不会将其推断为事实；例如，私有 Pi lockup 承诺不会被展示为公开验证的锁定余额。",
+    boundary: "重要边界",
+    boundaryText: "ZAF TECH 是一个独立的社区开发项目，不是 Pi Core Team 的官方产品。",
+  },  tr: {
     back: "← ZAF TECH'e Dön", title: "Gizlilik", subtitle: "ZAF TECH Pi Ekosistem Gözlem Merkezi",
     scope: "Veri Kapsamı", scopeText: "ZAF TECH bağımsız, salt-okunur bir teknoloji katmanıdır. Gözlemlenebilir herkese açık Pi ekosistemi, Network, Mainnet/Testnet ve Node kaynaklarını okur ve kullanıcı tarafından istenen herkese açık URL kontrollerini çalıştırabilir. Wallet Intelligence özelliği yalnızca herkese açık Pi cüzdan adresi üzerinden gözlemlenebilir blockchain verilerini kullanır.",
     wallet: "Cüzdan Erişimi Yok", walletText: "Developer Tools adres denetleyicisi yalnızca yerel format doğrulaması yapar. Wallet Intelligence özel anahtarlara, seed phrase'lere veya cüzdan kimlik bilgilerine erişmez; kullanıcı cüzdanına bağlanmaz ve blockchain işlemlerini imzalamaz. Cüzdan sorguları herkese açık olarak gözlemlenebilir blockchain verilerine dayanır.",
