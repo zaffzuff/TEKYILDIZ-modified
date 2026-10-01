@@ -207,9 +207,9 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
         <NodeMetric label={tr("Connector Status", "Connector Durumu")} value={localNodeLoading ? "…" : localNodeError ? tr("Offline", "Çevrimdışı") : tr("Connected", "Bağlı")} detail={tr("Live localhost diagnostic connection", "Canlı localhost teşhis bağlantısı")} />
         <NodeMetric label={tr("Observed Protocol", "Gözlemlenen Protokol")} value={localNode?.node?.protocol != null ? `v${localNode.node.protocol}` : "—"} detail={tr("Reported by the local Pi Node when available", "Yerel Pi Node tarafından bildirildiğinde gösterilir")} />
-        <NodeMetric label={tr("Local Listeners", "Yerel Dinleyiciler")} value={localNode?.ports ? `${localNode.ports.filter((item) => item.listeningLocally).length}/10` : "—"} detail={tr("Local port listeners only; not an Internet reachability test", "Yalnızca yerel port dinleyicileri; Internet erişilebilirlik testi değildir")} />
+        <NodeMetric label={tr("Local Listeners", "Yerel Dinleyiciler")} value={localNode?.ports ? `${localNode.ports.filter((item) => item.listeningLocally).length}/10` : "—"} detail={tr("Local port listeners only; not an Internet reachability test", "Yalnızca Yerel port dinleyicileri; Internet erişilebilirlik testi değildir")} />
         <NodeMetric label={tr("Ledger Age", "Ledger Yaşı")} value={localNode?.node?.ledger?.age != null ? `${localNode.node.ledger.age}s` : "—"} detail={tr("Age reported by local Stellar Core", "Yerel Stellar Core tarafından bildirilen yaş")} />
-        <NodeMetric label={tr("Restart Count", "Yeniden Başlatma")} value={localNode?.node?.restartCount != null ? formatNumber(localNode.node.restartCount) : "—"} detail={tr("Docker restart counter for the detected Node container", "Algılanan Node container'ının Docker yeniden başlatma sayacı")} />
+        <NodeMetric label={tr("Restart Count", "Yeniden Başlatma")} value={localNode?.node?.restartCount != null ? formatNumber(localNode.node.restartCount) : "—"} detail={tr("Docker restart counter for the detected Node Container", "Algılanan Node Container'ının Docker yeniden başlatma sayacı")} />
         <NodeMetric label={tr("Mainnet Observation", "Mainnet Gözlemi")} value={formatNumber(data?.metrics.recentLedgerCount ?? null)} detail={tr("Public Pi Mainnet ledger window used by ZAF TECH", "ZAF TECH'in kullandığı herkese açık Pi Mainnet ledger penceresi")} />
       </div>
       <div className="mt-3 rounded-xl border border-border bg-card p-3 sm:mt-4 sm:p-4">
@@ -229,7 +229,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             rel="noreferrer"
             className="w-full shrink-0 rounded-lg border border-border px-3 py-2 text-center text-xs font-medium text-foreground hover:bg-muted sm:w-auto"
           >
-            {tr("Open official Node ranking", "Resmi Node sıralamasını aç")}
+            {tr("Open Official Node Ranking", "Resmi Node Sıralamasını Aç")}
           </a>
         </div>
 
@@ -242,7 +242,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
               setCopied(false);
             }}
             placeholder="G..."
-            aria-label={tr("Node public key", "Node public key")}
+            aria-label={tr("Node Public Key", "Node Public Key")}
             className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-xs font-mono text-foreground outline-none focus:ring-2 focus:ring-ring"
           />
           <button
@@ -251,30 +251,30 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             disabled={!keyValid}
             className="rounded-lg border border-border bg-foreground px-4 py-2 text-xs font-medium text-background disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {saved ? tr("Identity saved", "Kimlik kaydedildi") : tr("Save identity", "Kimliği kaydet")}
+            {saved ? tr("Identity Saved", "Kimlik Kaydedildi") : tr("Save Identity", "Kimliği Kaydet")}
           </button>
         </div>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]">
           <span className={keyValid ? "text-foreground" : "text-muted-foreground"}>
             {keyValid
-              ? tr("Valid Pi public-key format", "Geçerli Pi public key formatı")
+              ? tr("Valid Pi Public-Key Format", "Geçerli Pi Public Key Formatı")
               : tr("Expected format: G + 55 characters", "Beklenen format: G + 55 karakter")}
           </span>
           {saved && keyValid ? (
             <>
               <span className="text-muted-foreground">
-                {tr("Stored locally", "Yerel olarak saklandı")}: <span className="font-mono">{shortenKey(publicKey)}</span>
+                {tr("Stored Locally", "Yerel Olarak Saklandı")}: <span className="font-mono">{shortenKey(publicKey)}</span>
               </span>
               <button type="button" onClick={copyIdentity} className="text-foreground underline underline-offset-2">
-                {copied ? tr("Copied", "Kopyalandı") : tr("Copy key", "Anahtarı kopyala")}
+                {copied ? tr("Copied", "Kopyalandı") : tr("Copy Key", "Anahtarı Kopyala")}
               </button>
             </>
           ) : null}
         </div>
 
         <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
-          <span className="font-medium text-foreground">{tr("What saving does now", "Kaydetmenin şu an yaptığı")}: </span>
+          <span className="font-medium text-foreground">{tr("What Saving Does Now", "Kaydetmenin Şu An Yaptığı")}: </span>
           {tr(
             "It creates a persistent Node identity for this ZAF TECH installation. The public Blockexplorer ranking is still the authoritative place for the published Node ranking; ZAF TECH will not invent ranking values when a machine-readable public feed is unavailable.",
             "Bu işlem bu ZAF TECH kurulumu için kalıcı bir Node kimliği oluşturur. Yayımlanan Node sıralaması için yetkili kaynak hâlâ Blockexplorer'dır; makine tarafından okunabilen herkese açık bir akış yoksa ZAF TECH sıralama değerleri uydurmaz."
@@ -306,20 +306,20 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             trDescription={tr("Published by Pi's ranking system.", "Pi'nin sıralama sisteminde yayımlanır.")}
           />
           <SignalCard
-            label="Open ports"
-            trLabel={tr("Open ports", "Açık portlar")}
+            label="Open Ports"
+            trLabel={tr("Open Ports", "Açık Portlar")}
             description={tr("Tracks network reachability through Node ports.", "Node portları üzerinden ağ erişilebilirliğini izler.")}
             trDescription={tr("Pi documents ports 31400–31409 for Node connectivity.", "Pi Node bağlantısı için 31400–31409 portlarını belgeler.")}
           />
           <SignalCard
-            label="Total active days"
-            trLabel={tr("Total active days", "Toplam aktif gün")}
+            label="Total Active Days"
+            trLabel={tr("Total Active Days", "Toplam Aktif Gün")}
             description={tr("Represents accumulated Node activity history.", "Biriken Node çalışma geçmişini ifade eder.")}
             trDescription={tr("Longer history is part of Pi's published ranking signals.", "Daha uzun geçmiş Pi'nin yayımladığı sıralama sinyallerindendir.")}
           />
           <SignalCard
-            label="CPU performance"
-            trLabel={tr("CPU performance", "CPU performansı")}
+            label="CPU Performance"
+            trLabel={tr("CPU Performance", "CPU Performansı")}
             description={tr("Represents the computer's available processing contribution.", "Bilgisayarın sağladığı işlem kapasitesi katkısını ifade eder.")}
             trDescription={tr("Pi also describes CPU as a Node performance factor.", "Pi CPU'yu ayrıca Node performans faktörü olarak açıklar.")}
           />
@@ -343,20 +343,20 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             rel="noreferrer"
             className="shrink-0 rounded-lg border border-border bg-foreground px-4 py-2 text-xs font-medium text-background hover:opacity-90"
           >
-            {tr("Download for Windows", "Windows için indir")}
+            {tr("Download For Windows", "Windows İçin İndir")}
           </a>
         </div>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="rounded-lg border border-border px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
-            <div className="font-medium text-foreground">{tr("Local-only", "Yalnızca yerel")}</div>
+            <div className="font-medium text-foreground">{tr("Local-Only", "Yalnızca Yerel")}</div>
             <div className="mt-1">{tr("Listens on 127.0.0.1 only.", "Yalnızca 127.0.0.1 üzerinde dinler.")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
-            <div className="font-medium text-foreground">{tr("Read-only diagnostics", "Salt-okunur teşhis")}</div>
+            <div className="font-medium text-foreground">{tr("Read-Only Diagnostics", "Salt-Okunur Teşhis")}</div>
             <div className="mt-1">{tr("Reads Docker and Stellar Core state; it does not control your Node.", "Docker ve Stellar Core durumunu okur; Node'unuzu yönetmez.")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
-            <div className="font-medium text-foreground">{tr("Wallet-safe design", "Cüzdan güvenliği")}</div>
+            <div className="font-medium text-foreground">{tr("Wallet-Safe Design", "Cüzdan Güvenliği")}</div>
             <div className="mt-1">{tr("Never asks for a wallet passphrase, seed phrase, or private key.", "Cüzdan parolası, seed phrase veya private key istemez.")}</div>
           </div>
         </div>
@@ -401,7 +401,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
               localNode?.connector?.docker ? tr("Available", "Hazır") : tr("Unavailable", "Kullanılamıyor"),
             ],
             [
-              tr("Node container", "Node container"),
+              tr("Node Container", "Node Container"),
               localNode?.node?.containerName || "—",
             ],
             [
@@ -431,7 +431,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="mt-1 min-w-0 break-words text-[10px] text-muted-foreground">{localNode?.node?.image || tr("No Pi container detected", "Pi container bulunamadı")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
-            <div className="text-[10px] text-muted-foreground">{tr("Protocol support", "Protokol desteği")}</div>
+            <div className="text-[10px] text-muted-foreground">{tr("Protocol Support", "Protokol Desteği")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.node?.protocolSupport === "supported"
                 ? tr("Supported", "Destekleniyor")
@@ -449,7 +449,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             </div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
-            <div className="text-[10px] text-muted-foreground">{tr("Local ports", "Yerel portlar")}</div>
+            <div className="text-[10px] text-muted-foreground">{tr("Local Ports", "Yerel Portlar")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.ports ? localNode.ports.filter((item) => item.listeningLocally).length : 0}/10
             </div>
@@ -465,7 +465,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Restarts", "Yeniden Başlatma")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.restartCount ?? "—"}</div>
-            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Docker restart count", "Docker yeniden başlatma sayısı")}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Docker Restart Count", "Docker Yeniden Başlatma Sayısı")}</div>
           </div>
         </div>
 
@@ -504,7 +504,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             </div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
-            <div className="text-[10px] text-muted-foreground">{tr("SCP quorum", "SCP quorum")}</div>
+            <div className="text-[10px] text-muted-foreground">{tr("SCP Quorum", "SCP Quorum")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">{localNode?.node?.quorum?.phase || "—"}</div>
             <div className="mt-1 text-[10px] text-muted-foreground">
               {localNode?.node?.quorum
@@ -513,7 +513,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             </div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
-            <div className="text-[10px] text-muted-foreground">{tr("SCP lag", "SCP gecikmesi")}</div>
+            <div className="text-[10px] text-muted-foreground">{tr("SCP Lag", "SCP Gecikmesi")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.node?.quorum?.lagMs != null ? `${localNode.node.quorum.lagMs} ms` : "—"}
             </div>
@@ -528,7 +528,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
 
         <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3">
           <div className="mb-2">
-            <div className="text-xs font-semibold text-foreground">{tr("Host & Docker resources", "Host ve Docker kaynakları")}</div>
+            <div className="text-xs font-semibold text-foreground">{tr("Host & Docker Resources", "Host Ve Docker Kaynakları")}</div>
             <div className="mt-1 text-[10px] text-muted-foreground">{tr("Read-only live resource telemetry from the local Connector.", "Yerel Connector'dan salt-okunur canlı kaynak telemetrisi.")}</div>
           </div>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -538,27 +538,27 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
               <div className="mt-1 text-[10px] text-muted-foreground">{tr("RAM", "RAM")}: {formatPercent(localResources?.host?.memory?.usedPercent)} · {formatBytes(localResources?.host?.memory?.usedBytes)} / {formatBytes(localResources?.host?.memory?.totalBytes)}</div>
             </div>
             <div className="rounded-lg border border-border px-3 py-3">
-              <div className="text-[10px] text-muted-foreground">{tr("C: disk", "C: disk")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("C: Disk", "C: Disk")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.host?.disk?.usedPercent)}</div>
               <div className="mt-1 text-[10px] text-muted-foreground">{formatBytes(localResources?.host?.disk?.usedBytes)} / {formatBytes(localResources?.host?.disk?.totalBytes)}</div>
             </div>
             <div className="rounded-lg border border-border px-3 py-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Node container", "Node container")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Node Container", "Node Container")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">{formatPercent(localResources?.docker?.cpuPercent)}</div>
               <div className="mt-1 text-[10px] text-muted-foreground">{tr("RAM", "RAM")}: {formatPercent(localResources?.docker?.memory?.usedPercent)} · {formatBytes(localResources?.docker?.memory?.usedBytes)} / {formatBytes(localResources?.docker?.memory?.limitBytes)} · {tr("PIDs", "PID")}: {localResources?.docker?.pids ?? "—"}</div>
             </div>
             <div className="rounded-lg border border-border px-3 py-3">
-              <div className="text-[10px] text-muted-foreground">{tr("Docker network", "Docker ağı")}</div>
+              <div className="text-[10px] text-muted-foreground">{tr("Docker Network", "Docker Ağı")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">↓ {formatBytes(localResources?.docker?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.docker?.network?.sentBytes)}</div>
               <div className="mt-1 text-[10px] text-muted-foreground">{tr("WSL", "WSL")}: {localResources?.wsl?.available ? tr("Available", "Hazır") : tr("Unavailable", "Kullanılamıyor")}</div>
             </div>
           </div>
-          <div className="mt-2 text-[10px] text-muted-foreground">{tr("Host network", "Host ağı")}: ↓ {formatBytes(localResources?.host?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.host?.network?.sentBytes)} · {tr("Docker block I/O", "Docker block I/O")}: R {formatBytes(localResources?.docker?.blockIO?.readBytes)} / W {formatBytes(localResources?.docker?.blockIO?.writeBytes)}</div>
+          <div className="mt-2 text-[10px] text-muted-foreground">{tr("Host Network", "Host Ağı")}: ↓ {formatBytes(localResources?.host?.network?.receivedBytes)} · ↑ {formatBytes(localResources?.host?.network?.sentBytes)} · {tr("Docker Block I/O", "Docker Block I/O")}: R {formatBytes(localResources?.docker?.blockIO?.readBytes)} / W {formatBytes(localResources?.docker?.blockIO?.writeBytes)}</div>
         </div>
 
         {!localNodeError && localNode?.connector?.version && compareVersions(localNode.connector.version, MIN_CONNECTOR_VERSION) < 0 ? (
           <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
-            <span className="font-medium text-foreground">{tr("Connector update required", "Connector güncellemesi gerekli")}: </span>
+            <span className="font-medium text-foreground">{tr("Connector Update Required", "Connector Güncellemesi Gerekli")}: </span>
             {tr(
               "This ZAF TECH version requires Connector v" + MIN_CONNECTOR_VERSION + " or newer. Your local Connector is v" + localNode.connector.version + ". Download the current Windows release before using local diagnostics.",
               "Bu ZAF TECH sürümü Connector v" + MIN_CONNECTOR_VERSION + " veya daha yenisini gerektiriyor. Yerel Connector sürümünüz v" + localNode.connector.version + ". Yerel teşhisleri kullanmadan önce güncel Windows sürümünü indirin."
@@ -568,7 +568,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
 
         {localNodeError ? (
           <div className="mt-3 rounded-lg border border-border bg-background px-3 py-3 text-[10px] leading-relaxed text-muted-foreground">
-            <span className="font-medium text-foreground">{tr("Connector not detected", "Connector bulunamadı")}: </span>
+            <span className="font-medium text-foreground">{tr("Connector Not Detected", "Connector Bulunamadı")}: </span>
             {tr(
               "Install and start ZAF TECH Node Connector on this Windows computer, then refresh the local Node diagnostics.",
               "Bu Windows bilgisayara ZAF TECH Node Connector'ı kurup çalıştırın, ardından yerel Node teşhislerini yenileyin."
@@ -585,10 +585,10 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <h3 className="text-sm font-semibold text-foreground">{tr("Why your Node matters", "Node'unuz neden önemli")}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{tr("Why Your Node Matters", "Node'unuz Neden Önemli")}</h3>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
-            <div className="font-medium text-foreground">{tr("Blockchain contribution", "Blockchain katkısı")}</div>
+            <div className="font-medium text-foreground">{tr("Blockchain Contribution", "Blockchain Katkısı")}</div>
             <div className="mt-1">{tr("Pi describes Nodes as computers that verify blockchain validity and support the distributed ledger.", "Pi, Node'ları blockchain geçerliliğini doğrulayan ve dağıtık ledger'a katkı sağlayan bilgisayarlar olarak tanımlar.")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
@@ -596,7 +596,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="mt-1">{tr("Pi's published Node metrics include availability and open-port signals, making connectivity an observable part of Node performance.", "Pi'nin yayımladığı Node metrikleri arasında erişilebilirlik ve açık port sinyalleri bulunur; bağlantı Node performansının gözlemlenebilir bir parçasıdır.")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
-            <div className="font-medium text-foreground">{tr("Future compute utility", "Gelecekteki hesaplama kullanımı")}</div>
+            <div className="font-medium text-foreground">{tr("Future Compute Utility", "Gelecekteki hesaplama kullanımı")}</div>
             <div className="mt-1">{tr("Pi is also developing Node-based distributed computing use cases through SoloHost.", "Pi ayrıca SoloHost üzerinden Node tabanlı dağıtık hesaplama kullanım alanları geliştiriyor.")}</div>
           </div>
         </div>
