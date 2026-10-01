@@ -9,9 +9,6 @@
     "node:connector": "node tools/zaf-node-connector.mjs"
   },
   "dependencies": {
-    "@swetate/auth": "^0.1.0",
-    "@swetate/core": "^0.1.0",
-    "@swetate/user-state": "^0.1.0",
     "geist": "latest",
     "next": "15.5.26",
     "react": "^19",
