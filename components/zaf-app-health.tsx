@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
 
 type Result = {
   url: string;
@@ -44,7 +45,7 @@ type BatchResult = {
 };
 
 export function ZafAppHealth({locale}:{locale:Locale}){
- const tr=(en:string,trText:string)=>locale==="tr"?trText:en;
+ const tr=(en:string,trText:string)=>translate(locale,en,trText);
  const [url,setUrl]=useState("");
  const [result,setResult]=useState<Result|null>(null);
  const [batch,setBatch]=useState<BatchResult|null>(null);
