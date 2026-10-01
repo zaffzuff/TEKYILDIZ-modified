@@ -832,7 +832,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Public Sources": "公开来源",
     "Loading Statistics…": "正在加载统计数据…",
     "About": "关于",
-    "Privacy": "隐私"
+    "Privacy": "隐私",
     "Structured discovery of applications observed from the public Pi ecosystem source.": "来自公开 Pi 生态来源的已观测应用结构化发现。",
     "Matching": "匹配结果",
     "Current Filters": "当前筛选",
