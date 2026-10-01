@@ -27,7 +27,19 @@ const copy = {
     verification: "Principio De Verificación", verificationText: "ZAF TECH separa los hechos observados de las afirmaciones no verificadas. Las capacidades específicas de Pi no se marcan como verificadas a menos que una comprobación observable las respalde.",
     future: "Dirección Futura", futureText: "La siguiente fase planificada amplía ZAF TECH con observaciones de billeteras Pi públicas, selección de Mainnet/Testnet, saldos observables y reclamables, metadatos de cuenta, transacciones y operaciones públicas recientes y navegación al explorador. El acceso privado a la billetera, la firma y la autenticación están fuera de este alcance.",
   },
-  tr: {
+  zh: {
+    back: "← 返回 ZAF TECH",
+    title: "关于 ZAF TECH",
+    subtitle: "Pi 生态观测中心",
+    what: "项目简介",
+    whatText: "ZAF TECH 是一个独立的只读技术层，用于发现、检查和观测公开的 Pi Network 生态数据。",
+    scope: "当前范围",
+    scopeText: "当前版本包括 Pi 生态观测中心、应用目录、应用详情、应用 URL 检查器、网络视图、开发者工具、Node 与计算观测以及钱包观测，并支持英语、西班牙语、土耳其语和中文界面。",
+    verification: "验证原则",
+    verificationText: "ZAF TECH 将已观测事实与未经验证的声明分开。除非可观测检查提供支持，否则不会将 Pi 特定功能标记为已验证。",
+    future: "未来方向",
+    futureText: "下一阶段将继续扩展 ZAF TECH 的钱包观测能力，包括公开 Pi 钱包地址查询、Mainnet/Testnet 选择、可观测余额和可领取余额、账户元数据、近期公开交易与操作以及区块浏览器导航。私有钱包访问、签名和身份验证不在此范围内。",
+  },  tr: {
     back: "← ZAF TECH'e Dön",
     title: "ZAF TECH Hakkında",
     subtitle: "Pi Ekosistem Gözlem Merkezi",
