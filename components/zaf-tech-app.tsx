@@ -374,7 +374,7 @@ function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["poin
       <div className="mt-3 space-y-1.5">
         {points.length ? points.slice(-12).map((point) => (
           <div key={point.generatedAt} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 text-[10px]">
-            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : "en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
             <span className="text-foreground">{point.observedAppCount ?? "—"} {tr("apps", "uygulama")}</span>
             <span className="text-muted-foreground">{point.signalCount} {tr("signals", "sinyal")}</span>
           </div>
@@ -488,7 +488,7 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
           {changes?.changes.slice(0, 8).map(change => (
             <div key={`${change.type}-${change.title}`} className="rounded-lg border border-border p-3">
               <div className="text-[11px] font-semibold text-foreground">{change.title}</div>
-              <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : change.detail}</p>
+              <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : locale === "es" ? translate(locale, change.detail, change.detailTr) : change.detail}</p>
               {(change.previous != null || change.current != null) ? (
                 <div className="mt-2 text-[10px] text-muted-foreground">
                   {String(change.previous ?? "—")} → {String(change.current ?? "—")}
