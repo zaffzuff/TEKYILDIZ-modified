@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
@@ -118,7 +119,7 @@ function SignalCard({
 }
 
 export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: ZafSnapshot | null }) {
-  const tr = (en: string, trText: string) => locale === "tr" ? trText : en;
+  const tr = (en: string, trText: string) => translate(locale, en, trText);
   const [publicKey, setPublicKey] = useState("");
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
