@@ -44,16 +44,13 @@ const copy = {
 export default function AboutPage() {
   const [locale, setLocale] = useState<Locale>("en");
 
-  useEffect(() => {
-    const saved = window.localStorage.getItem("zaf-tech-locale-v1");
-    if (saved === "tr" || saved === "es" || saved === "en") setLocale(saved);
-  }, []);
+
 
   const t = copy[locale];
 
   const changeLocale = (next: Locale) => {
     setLocale(next);
-    window.localStorage.setItem("zaf-tech-locale-v1", next);
+    
   };
 
   return (
@@ -63,7 +60,7 @@ export default function AboutPage() {
           <Link href="/" className="text-xs underline underline-offset-2">{t.back}</Link>
           <select value={locale} onChange={(e) => changeLocale(e.target.value as Locale)} aria-label="Language" className="rounded-md border bg-background px-2 py-1 text-xs">
             {(["en", "es", "tr"] as Locale[]).sort((a, b) => ({ en: "English", es: "Español", tr: "Türkçe" }[a]).localeCompare(({ en: "English", es: "Español", tr: "Türkçe" }[b]), "en")).map((item) => (
-              <option key={item} value={item}>{({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
+              <option key={item} value={item}>{({ en: "🇬🇧", es: "🇪🇸", tr: "🇹🇷" }[item])} {({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
             ))}
           </select>
         </div>
