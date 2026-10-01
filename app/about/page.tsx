@@ -60,7 +60,7 @@ export default function AboutPage() {
           <Link href="/" className="text-xs underline underline-offset-2">{t.back}</Link>
           <select value={locale} onChange={(e) => changeLocale(e.target.value as Locale)} aria-label="Language" className="rounded-md border bg-background px-2 py-1 text-xs">
             {(["en", "es", "tr"] as Locale[]).sort((a, b) => ({ en: "English", es: "Español", tr: "Türkçe" }[a]).localeCompare(({ en: "English", es: "Español", tr: "Türkçe" }[b]), "en")).map((item) => (
-              <option key={item} value={item}>{({ en: "🇬🇧", es: "🇪🇸", tr: "🇹🇷" }[item])} {({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
+              <option key={item} value={item}>{<span className="inline-block h-3 w-4 shrink-0 rounded-[2px] bg-cover bg-center" style={{ backgroundImage: `url(https://flagcdn.com/20x15/${item === "en" ? "gb" : item === "es" ? "es" : "tr"}.png)` }} aria-hidden="true" />} {({ en: "English", es: "Español", tr: "Türkçe" }[item])}</option>
             ))}
           </select>
         </div>
