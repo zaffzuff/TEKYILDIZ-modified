@@ -197,7 +197,7 @@ export function ZafTechApp() {
 
   useEffect(() => {
     const l = window.localStorage.getItem("zaf-tech-locale-v1");
-    if (l === "en" || l === "tr") setLocale(l);
+    if (l === "en" || l === "es" || l === "tr") setLocale(l);
     const t = window.localStorage.getItem("zaf-tech-theme-v1");
     if (t === "light" || t === "dark") setTheme(t);
   }, []);
