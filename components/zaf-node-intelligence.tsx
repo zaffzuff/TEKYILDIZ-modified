@@ -460,7 +460,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.node?.startedAt ? new Date(localNode.node.startedAt).toLocaleString(locale === "tr" ? "tr-TR" : "en-US") : "—"}
             </div>
-            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Container start timestamp", "Container başlangıç zamanı")}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">{tr("Container Start Timestamp", "Container Başlangıç Zamanı")}</div>
           </div>
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Restarts", "Yeniden Başlatma")}</div>
@@ -486,7 +486,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <div className="mt-1 text-sm font-semibold text-foreground">
               {localNode?.node?.peers?.authenticated ?? "—"}
               <span className="ml-1 text-[10px] font-normal text-muted-foreground">
-                {tr("authenticated", "doğrulanmış")}
+                {tr("Authenticated", "Doğrulanmış")}
               </span>
             </div>
             <div className="mt-1 text-[10px] text-muted-foreground">
@@ -499,7 +499,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             </div>
             <div className="mt-1 text-[10px] text-muted-foreground">
               {localNode?.node?.peers?.pending != null
-                ? tr(`${localNode.node.peers.pending} pending`, `${localNode.node.peers.pending} beklemede`)
+                ? tr(`${localNode.node.peers.pending} Pending`, `${localNode.node.peers.pending} Beklemede`)
                 : "—"}
             </div>
           </div>
@@ -519,7 +519,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             </div>
             <div className="mt-1 text-[10px] text-muted-foreground">
               {localNode?.node?.quorum?.intersection === true
-                ? tr("Intersection: true", "Intersection: true")
+                ? tr("Intersection: True", "Intersection: True")
                 : tr("Intersection: —", "Intersection: —")}
             </div>
           </div>
@@ -603,7 +603,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
       </div>
 
       <div className="mt-4 rounded-xl border border-border px-3 py-3 text-[11px] leading-relaxed text-muted-foreground">
-        <span className="font-medium text-foreground">{tr("Data boundary", "Veri sınırı")}: </span>
+        <span className="font-medium text-foreground">{tr("Data Boundary", "Veri Sınırı")}: </span>
         {tr(
           "ZAF TECH does not infer individual Node location from IP addresses or display a fabricated global Node map. It only presents data that can be tied to a documented public source or an explicit local connector.",
           "ZAF TECH IP adreslerinden tek tek Node konumu çıkarmaz ve uydurma küresel Node haritası göstermez. Yalnızca belgelenmiş herkese açık bir kaynağa veya açık bir yerel bağlantıya bağlanabilen verileri sunar."
