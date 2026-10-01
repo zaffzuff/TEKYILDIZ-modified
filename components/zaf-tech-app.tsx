@@ -51,7 +51,7 @@ function age(value: string | null | undefined, locale: Locale) {
   const ms = Date.now() - Date.parse(value);
   if (!Number.isFinite(ms)) return "—";
   const min = Math.floor(ms / 60000);
-  return locale === "tr" ? (min < 1 ? "az önce" : min < 60 ? `${min} dk önce` : `${Math.floor(min / 60)} sa önce`) : (min < 1 ? "just now" : min < 60 ? `${min}m ago` : `${Math.floor(min / 60)}h ago`);
+  return locale === "tr" ? (min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`) : (min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`);
 }
 function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
   return <div className="rounded-xl border border-border bg-card p-3 sm:p-4"><div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div><div className="mt-1 text-xs font-medium text-foreground">{title}</div>{detail ? <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div> : null}</div>;
@@ -108,7 +108,7 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
               <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{app.category}</span>
-              <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Pi features: not verified", "Pi özellikleri: doğrulanmadı")}</span>
+              <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Pi Features: Not Verified", "Pi Özellikleri: Doğrulanmadı")}</span>
             </div>
           </article>
         ))}
