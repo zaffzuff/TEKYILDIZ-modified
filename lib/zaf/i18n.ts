@@ -954,7 +954,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Pi Payments": "Pi 支付",
     "Last Checked": "上次检查",
     "Verification Boundary": "验证边界",
-    "ZAF TECH does not claim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or application health until the relevant property has been independently verified by an observable check. Category is a ZAF TECH classification based on the public name/URL signal and is not an official Pi category.": "在相关属性通过可观测检查独立验证之前，ZAF TECH 不会声称 Pi Authentication、Pi Payments、PiNet、Mainnet/Testnet 状态或应用状态已得到验证。分类是基于公开名称/URL 信号的 ZAF TECH 分类，并非官方 Pi 分类。",,
+    "ZAF TECH does not claim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or application health until the relevant property has been independently verified by an observable check. Category is a ZAF TECH classification based on the public name/URL signal and is not an official Pi category.": "在相关属性通过可观测检查独立验证之前，ZAF TECH 不会声称 Pi Authentication、Pi Payments、PiNet、Mainnet/Testnet 状态或应用状态已得到验证。分类是基于公开名称/URL 信号的 ZAF TECH 分类，并非官方 Pi 分类。",
   },
 };
 
