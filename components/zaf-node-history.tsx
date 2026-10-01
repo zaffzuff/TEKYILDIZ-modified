@@ -163,9 +163,9 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
   const latestHealthReasons = latest ? [
     !latest.available ? tr("Connector / Node unavailable", "Connector / Node kullanılamıyor") : null,
     String(latest.quorumPhase || "").toUpperCase() !== "EXTERNALIZE" ? tr("SCP is not EXTERNALIZE", "SCP EXTERNALIZE değil") : null,
-    latest.intersection !== true ? tr("Quorum intersection is not true", "Quorum intersection true değil") : null,
+    latest.intersection !== true ? tr("Quorum Intersection Is Not True", "Quorum Intersection True Değil") : null,
     latest.ledgerAge == null || latest.ledgerAge >= 10 ? tr("Ledger Age is 10s or higher", "Ledger Yaşı 10s veya daha yüksek") : null,
-    (latest.authenticated ?? 0) < 8 ? tr("Fewer than 8 authenticated peers", "8'den az authenticated peer") : null,
+    (latest.authenticated ?? 0) < 8 ? tr("Fewer Than 8 Authenticated Peers", "8'den Az Authenticated Peer") : null,
   ].filter(Boolean) as string[] : [];
   const hostNetworkRate = rateFromSamples(samples, "hostNetworkReceivedBytes", "hostNetworkSentBytes");
   const chart = samples.slice(-60);
