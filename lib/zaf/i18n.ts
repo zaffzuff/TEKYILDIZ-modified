@@ -543,7 +543,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Pi Developers": "Pi डेवलपर्स",
     "Developer Docs": "डेवलपर दस्तावेज़",
     "Pi Ecosystem": "Pi इकोसिस्टम",
-    "Ecosystem Radar": "इकोसिस्टम रडार",
+
     "Measured signals from public sources and observable Mainnet activity.": "सार्वजनिक स्रोतों और देखी जा सकने वाली Mainnet गतिविधि से मापे गए संकेत।",
     "Activity State": "गतिविधि स्थिति",
     "Descriptive, Not Predictive": "वर्णनात्मक, भविष्यवाणी नहीं",
@@ -566,7 +566,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "signals": "संकेत",
     "No stored trend points yet.": "अभी कोई संग्रहीत ट्रेंड पॉइंट नहीं है।",
     "Loading Statistics…": "आँकड़े लोड हो रहे हैं…",
-    "Activity Signals": "गतिविधि संकेत",
+
     "Current observations, stored snapshots and detected changes from public ecosystem sources.": "सार्वजनिक इकोसिस्टम स्रोतों से वर्तमान अवलोकन, संग्रहीत स्नैपशॉट और पहचाने गए बदलाव।",
     "Available Sources": "उपलब्ध स्रोत",
     "Observed Signals": "देखे गए संकेत",
@@ -728,7 +728,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Blockchain Contribution": "ब्लॉकचेन योगदान",
     "Connectivity": "कनेक्टिविटी",
     "Future Compute Utility": "भविष्य की कंप्यूट उपयोगिता",
-    "Data Boundary": "डेटा सीमा",
+
     "Wallet Observatory": "वॉलेट ऑब्ज़र्वेटरी",
     "Public, read-only wallet observations from Pi Horizon. No wallet connection or signing is required.": "Pi Horizon से सार्वजनिक, केवल-पठन वॉलेट अवलोकन। वॉलेट कनेक्शन या साइनिंग आवश्यक नहीं है।",
     "Public Pi Wallet Address (G...)": "सार्वजनिक Pi वॉलेट पता (G...)",
@@ -737,7 +737,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Inspect": "जाँचें",
     "Public Address": "सार्वजनिक पता",
     "Copy": "कॉपी",
-    "Explorer": "एक्सप्लोरर",
+
     "Public Data Only": "केवल सार्वजनिक डेटा",
     "Account Balance": "खाता शेष",
     "Observable Claimable": "देखा जा सकने वाला Claimable",
