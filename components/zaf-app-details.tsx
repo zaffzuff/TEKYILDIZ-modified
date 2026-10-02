@@ -8,14 +8,22 @@ import type { Locale } from "@/lib/zaf/i18n";
 import { intlLocale, translate } from "@/lib/zaf/i18n";
 import { LanguageSelector } from "@/components/zaf-language-selector";
 
-function displayStatus(value: string | null | undefined) {
+function displayStatus(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
-  if (value === "unknown") return "Not Checked";
-  return value.replace(/[_-]+/g, " ").trim().toLowerCase().replace(/^./, char => char.toUpperCase());
+  const normalized = value.replace(/[_-]+/g, " ").trim().toLowerCase();
+  const labels: Record<string, Record<Locale, string>> = {
+    unknown: { en: "Not Checked", es: "No Comprobado", tr: "Kontrol Edilmedi", zh: "未检查", it: "Non Controllato", fr: "Non Vérifié" },
+    online: { en: "Online", es: "En Línea", tr: "Çevrimiçi", zh: "在线", it: "Online", fr: "En Ligne" },
+    offline: { en: "Offline", es: "Fuera De Línea", tr: "Çevrimdışı", zh: "离线", it: "Offline", fr: "Hors Ligne" },
+    available: { en: "Available", es: "Disponible", tr: "Kullanılabilir", zh: "可用", it: "Disponibile", fr: "Disponible" },
+    unavailable: { en: "Unavailable", es: "No Disponible", tr: "Kullanılamıyor", zh: "不可用", it: "Non Disponibile", fr: "Indisponible" },
+  };
+  return labels[normalized]?.[locale] ?? normalized.replace(/^./, char => char.toUpperCase());
 }
-function verification(value: DirectoryApp["piAuthentication"]) {
-  if (value === "verified") return "Verified";
-  return "Not Verified";
+function verification(value: DirectoryApp["piAuthentication"], locale: Locale) {
+  return value === "verified"
+    ? translate(locale, "Verified", "Doğrulandı")
+    : translate(locale, "Not Verified", "Doğrulanmadı");
 }
 
 export function AppDetails({ app }: { app: DirectoryApp }) {
@@ -36,8 +44,8 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
             <h1 className="mt-1 text-xl font-bold tracking-tight text-foreground">{app.name}</h1>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.category}</span>
-              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.network)}</span>
-              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.status)}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.network, locale)}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.status, locale)}</span>
             </div>
           </div>
         </header>
@@ -51,11 +59,11 @@ export function AppDetails({ app }: { app: DirectoryApp }) {
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {[
-              [tr("Pi Authentication", "Pi Kimlik Doğrulama"), verification(app.piAuthentication)],
-              [tr("Pi Payments", "Pi Ödemeleri"), verification(app.piPayments)],
-              ["PiNet", verification(app.piNet)],
-              [tr("Network", "Ağ"), displayStatus(app.network)],
-              [tr("Status", "Durum"), displayStatus(app.status)],
+              [tr("Pi Authentication", "Pi Kimlik Doğrulama"), verification(app.piAuthentication, locale)],
+              [tr("Pi Payments", "Pi Ödemeleri"), verification(app.piPayments, locale)],
+              [tr("PiNet", "PiNet"), verification(app.piNet, locale)],
+              [tr("Network", "Ağ"), displayStatus(app.network, locale)],
+              [tr("Status", "Durum"), displayStatus(app.status, locale)],
               [tr("Last Checked", "Son Kontrol"), new Date(app.lastChecked).toLocaleString(intlLocale(locale))],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl border border-border bg-card p-3">
