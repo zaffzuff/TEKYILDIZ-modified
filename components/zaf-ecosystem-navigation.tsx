@@ -31,7 +31,7 @@ export function ZafEcosystemNavigation({ locale, section, subtab, onSectionChang
 }) {
   const sections: Array<[ZafSection, string]> = [["overview", "Overview"], ["apps", "Apps"], ["node", "Node & Compute"], ["intelligence", "Observatory"], ["wallet", "Wallet"]];
   const subtabs = ZAF_SECTION_TABS[section];
-  return <nav className="mt-4 border-t border-border pt-3" aria-label={locale === "tr" ? "Ekosistem Bölümleri" : locale === "es" ? "Secciones Del Ecosistema" : locale === "zh" ? "生态系统分区" : locale === "it" ? "Sezioni Dell’Ecosistema" : locale === "fr" ? "Sections De L’Écosystème" : "Ecosystem Sections"}>
+  return <nav className="mt-4 border-t border-border pt-3" aria-label={locale === "tr" ? "Ekosistem Bölümleri" : locale === "es" ? "Secciones Del Ecosistema" : locale === "zh" ? "生态系统分区" : locale === "it" ? "Sezioni Dell’Ecosistema" : locale === "fr" ? "Sections De L’Écosystème" : locale === "de" ? "Ökosystembereiche" : locale === "pt" ? "Seções do Ecossistema" : locale === "ru" ? "Разделы экосистемы" : "Ecosystem Sections"}>
     <div className="overflow-x-auto ty-no-scrollbar"><div className="flex min-w-max gap-1 rounded-xl border border-border bg-card p-1 sm:min-w-0 sm:flex-wrap">
       {sections.map(([id, title]) => <button key={id} type="button" onClick={() => { onSectionChange(id); const first = ZAF_SECTION_TABS[id][0]; onSubtabChange(first ?? ""); }} className={"min-h-9 shrink-0 rounded-lg px-3 py-2 text-[11px] font-medium transition-colors " + (section === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground")}>{label(title, locale)}</button>)}
     </div></div>
