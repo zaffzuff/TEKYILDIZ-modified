@@ -51,7 +51,7 @@ const copy = {
     publicText: "Le osservazioni Network, ecosystem, Node e wallet provengono da fonti pubbliche o chiaramente osservabili. ZAF TECH distingue i dati osservati dalle affermazioni non verificate e non dichiara che le proprie osservazioni rappresentino l’intera Pi Network. Quando una fonte non fornisce direttamente un valore, ZAF TECH non lo deduce come fatto.",
     boundary: "Limite Importante",
     boundaryText: "ZAF TECH è un progetto indipendente sviluppato dalla comunità e non è un prodotto ufficiale di Pi Core Team."
-  }
+  },
   fr: {
     back: "← Retour À ZAF TECH",
     title: "Confidentialité",
