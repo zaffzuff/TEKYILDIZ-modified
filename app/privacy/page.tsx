@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/zaf-language-selector";
 
-type Locale = "en" | "es" | "tr" | "zh" | "hi";
+type Locale = "en" | "es" | "tr" | "zh" | "it";
 
 const copy = {
   en: {
@@ -37,20 +37,20 @@ const copy = {
     publicText: "Network、生态、Node 和钱包观测来自公开或明确可观测的来源。ZAF TECH 区分已观测数据和未经验证的声明，并不声称其观测代表整个 Pi Network。如果来源没有直接提供某个值，ZAF TECH 不会将其推断为事实；例如，私有 Pi lockup 承诺不会被展示为公开验证的锁定余额。",
     boundary: "重要边界",
     boundaryText: "ZAF TECH 是一个独立的社区开发项目，不是 Pi Core Team 的官方产品。",
-  },  hi: {
-    back: "← ZAF TECH पर वापस जाएँ",
-    title: "गोपनीयता",
+  },  it: {
+    back: "← Torna A ZAF TECH",
+    title: "Privacy",
     subtitle: "ZAF TECH Pi Ecosystem Observatory",
-    scope: "डेटा दायरा",
-    scopeText: "ZAF TECH एक स्वतंत्र, केवल-पठन तकनीकी परत है। यह सार्वजनिक और observable Pi ecosystem, Network, Mainnet/Testnet और Node स्रोतों को पढ़ता है तथा उपयोगकर्ता द्वारा अनुरोधित सार्वजनिक URL checks चला सकता है। Wallet Intelligence केवल observable blockchain data के लिए सार्वजनिक Pi wallet address का उपयोग करता है।",
-    wallet: "वॉलेट एक्सेस नहीं",
-    walletText: "Developer Tools address inspector केवल स्थानीय format validation करता है। Wallet Intelligence private keys, seed phrases या wallet credentials तक पहुँच नहीं रखता, उपयोगकर्ता के wallet से connect नहीं होता और blockchain transactions sign नहीं करता। Wallet lookups सार्वजनिक रूप से observable blockchain data पर आधारित हैं।",
-    local: "स्थानीय प्राथमिकताएँ",
-    localText: "Language और theme preferences ब्राउज़र में स्थानीय रूप से संग्रहीत की जा सकती हैं ताकि interface settings बनी रहें।",
-    public: "सार्वजनिक स्रोत",
-    publicText: "Network, ecosystem, Node और wallet observations सार्वजनिक या स्पष्ट रूप से observable sources से प्राप्त होते हैं। ZAF TECH observed data और unverified claims में अंतर करता है और यह दावा नहीं करता कि उसके observations पूरे Pi Network का प्रतिनिधित्व करते हैं। जहाँ कोई source किसी value को सीधे उपलब्ध नहीं कराता, ZAF TECH उसे तथ्य के रूप में infer नहीं करता।",
-    boundary: "महत्वपूर्ण सीमा",
-    boundaryText: "ZAF TECH एक स्वतंत्र community-developed project है और Pi Core Team का आधिकारिक product नहीं है।",
+    scope: "Ambito Dei Dati",
+    scopeText: "ZAF TECH è un livello tecnologico indipendente e di sola lettura. Legge fonti pubbliche e osservabili di Pi ecosystem, Network, Mainnet/Testnet e Node e può eseguire controlli su URL pubblici richiesti dall’utente. Wallet Intelligence utilizza solo un indirizzo wallet Pi pubblico per dati blockchain osservabili.",
+    wallet: "Nessun Accesso Al Wallet",
+    walletText: "Pi Address Inspector esegue solo la validazione locale del formato. Wallet Intelligence non accede a chiavi private, seed phrase o credenziali del wallet, non si connette al wallet dell’utente e non firma transazioni blockchain. Le ricerche del wallet si basano su dati blockchain pubblicamente osservabili.",
+    local: "Preferenze Locali",
+    localText: "Le preferenze di lingua e tema possono essere memorizzate localmente nel browser per mantenere le impostazioni dell’interfaccia.",
+    public: "Fonti Pubbliche",
+    publicText: "Le osservazioni Network, ecosystem, Node e wallet provengono da fonti pubbliche o chiaramente osservabili. ZAF TECH distingue i dati osservati dalle affermazioni non verificate e non dichiara che le proprie osservazioni rappresentino l’intera Pi Network. Quando una fonte non fornisce direttamente un valore, ZAF TECH non lo deduce come fatto.",
+    boundary: "Limite Importante",
+    boundaryText: "ZAF TECH è un progetto indipendente sviluppato dalla comunità e non è un prodotto ufficiale di Pi Core Team."
   },  tr: {
     back: "← ZAF TECH'e Dön", title: "Gizlilik", subtitle: "ZAF TECH Pi Ekosistem Gözlem Merkezi",
     scope: "Veri Kapsamı", scopeText: "ZAF TECH bağımsız, salt-okunur bir teknoloji katmanıdır. Gözlemlenebilir herkese açık Pi ekosistemi, Network, Mainnet/Testnet ve Node kaynaklarını okur ve kullanıcı tarafından istenen herkese açık URL kontrollerini çalıştırabilir. Wallet Intelligence özelliği yalnızca herkese açık Pi cüzdan adresi üzerinden gözlemlenebilir blockchain verilerini kullanır.",
