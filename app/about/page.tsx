@@ -14,11 +14,11 @@ const copy = {
     what: "What It Is",
     whatText: "ZAF TECH is an independent, read-only technology layer for discovering, checking and observing public Pi Network ecosystem data.",
     scope: "Current Scope",
-    scopeText: "The current release includes the Pi Ecosystem Observatory, App Directory, App Details, App URL Checker, Network view, Developer Tools, Node & Compute observations and Wallet Intelligence, with English and Turkish interface support.",
+    scopeText: "The current release includes the Pi Ecosystem Observatory, App Directory, App Details, App URL Checker, Network view, Developer Tools, Node & Compute observations and Wallet Observatory, with English and Turkish interface support.",
     verification: "Verification Principle",
     verificationText: "ZAF TECH separates observed facts from unverified claims. Pi-specific capabilities are not marked as verified unless an observable check supports them.",
     future: "Future Direction",
-    futureText: "The next planned phase extends ZAF TECH with Wallet Intelligence: public Pi wallet address lookup, Mainnet/Testnet selection, observable balances and claimable balances, account metadata, recent public transactions and operations, and explorer navigation. Private wallet access, signing and authentication are outside this scope.",
+    futureText: "The next planned phase extends ZAF TECH with Wallet Observatory: public Pi wallet address lookup, Mainnet/Testnet selection, observable balances and claimable balances, account metadata, recent public transactions and operations, and explorer navigation. Private wallet access, signing and authentication are outside this scope.",
   },
   es: {
     back: "← Volver A ZAF TECH", title: "Acerca De ZAF TECH", subtitle: "Observatorio Del Ecosistema Pi",
@@ -46,7 +46,7 @@ const copy = {
     what: "Che Cos’è",
     whatText: "ZAF TECH è un livello tecnologico indipendente e di sola lettura per scoprire, verificare e osservare i dati pubblici dell’ecosistema Pi Network.",
     scope: "Ambito Attuale",
-    scopeText: "La versione attuale include Pi Ecosystem Observatory, App Directory, App Details, App URL Checker, vista Network, Developer Tools, osservazioni Node & Compute e Wallet Intelligence. L’interfaccia è disponibile in English, Spanish, Turkish, Chinese e Italian.",
+    scopeText: "La versione attuale include Pi Ecosystem Observatory, App Directory, App Details, App URL Checker, vista Network, Developer Tools, osservazioni Node & Compute e Wallet Observatory. L’interfaccia è disponibile in English, Spanish, Turkish, Chinese e Italian.",
     verification: "Principio Di Verifica",
     verificationText: "ZAF TECH mantiene separati i fatti osservati dalle affermazioni non verificate. Le funzionalità specifiche di Pi non vengono considerate verificate finché un controllo osservabile non le supporta.",
     future: "Direzione Futura",
@@ -59,7 +59,7 @@ const copy = {
     what: "Qu’est-Ce Que C’est",
     whatText: "ZAF TECH est un niveau technologique indépendant et en lecture seule permettant de découvrir, vérifier et observer les données publiques de l’écosystème Pi Network.",
     scope: "Périmètre Actuel",
-    scopeText: "La version actuelle comprend l’Observatoire de l’écosystème Pi, le répertoire des applications, les détails des applications, le vérificateur d’URL, la vue réseau, les outils développeur, les observations Node & Compute et Wallet Intelligence. L’interface est disponible en English, Spanish, Turkish, Chinese, Italian et French.",
+    scopeText: "La version actuelle comprend l’Observatoire de l’écosystème Pi, le répertoire des applications, les détails des applications, le vérificateur d’URL, la vue réseau, les outils développeur, les observations Node & Compute et Wallet Observatory. L’interface est disponible en English, Spanish, Turkish, Chinese, Italian et French.",
     verification: "Principe De Vérification",
     verificationText: "ZAF TECH sépare les faits observés des affirmations non vérifiées. Les fonctionnalités spécifiques à Pi ne sont pas considérées comme vérifiées tant qu’un contrôle observable ne les confirme pas.",
     future: "Orientation Future",
@@ -68,21 +68,21 @@ const copy = {
   de: {
     back: "← Zurück Zu ZAF TECH", title: "Über ZAF TECH", subtitle: "Pi Ökosystem Beobachtungszentrum",
     what: "Was Es Ist", whatText: "ZAF TECH ist eine unabhängige, schreibgeschützte Technologieebene zum Entdecken, Prüfen und Beobachten öffentlicher Daten des Pi Network Ökosystems.",
-    scope: "Aktueller Umfang", scopeText: "Die aktuelle Version umfasst das Pi Ökosystem Beobachtungszentrum, App-Verzeichnis, App-Details, URL-Prüfer, Netzwerkansicht, Entwicklerwerkzeuge, Node- und Compute-Beobachtungen sowie Wallet Intelligence und unterstützt Englisch, Spanisch, Türkisch, Chinesisch, Italienisch, Französisch, Deutsch, Portugiesisch und Russisch.",
+    scope: "Aktueller Umfang", scopeText: "Die aktuelle Version umfasst das Pi Ökosystem Beobachtungszentrum, App-Verzeichnis, App-Details, URL-Prüfer, Netzwerkansicht, Entwicklerwerkzeuge, Node- und Compute-Beobachtungen sowie Wallet Observatory und unterstützt Englisch, Spanisch, Türkisch, Chinesisch, Italienisch, Französisch, Deutsch, Portugiesisch und Russisch.",
     verification: "Verifizierungsprinzip", verificationText: "ZAF TECH trennt beobachtete Fakten von nicht verifizierten Aussagen. Pi-spezifische Funktionen werden nur dann als verifiziert markiert, wenn eine beobachtbare Prüfung sie bestätigt.",
     future: "Zukünftige Richtung", futureText: "Die nächste geplante Phase erweitert ZAF TECH um öffentliche Beobachtungen von Pi-Wallets, Mainnet/Testnet-Auswahl, beobachtbare Guthaben und Claimable-Guthaben, Kontometadaten, aktuelle öffentliche Transaktionen und Operationen sowie Explorer-Navigation. Privater Wallet-Zugriff, Signaturen und Authentifizierung liegen außerhalb dieses Umfangs."
   },
   pt: {
     back: "← Voltar Para ZAF TECH", title: "Sobre A ZAF TECH", subtitle: "Observatório Do Ecossistema Pi",
     what: "O Que É", whatText: "A ZAF TECH é uma camada tecnológica independente e somente leitura para descobrir, verificar e observar dados públicos do ecossistema Pi Network.",
-    scope: "Escopo Atual", scopeText: "A versão atual inclui o Observatório Do Ecossistema Pi, Diretório De Aplicativos, Detalhes Dos Aplicativos, Verificador De URL, visão da Rede, Ferramentas Para Desenvolvedores, observações de Node e Compute e Wallet Intelligence, com suporte para inglês, espanhol, turco, chinês, italiano, francês, alemão, português e russo.",
+    scope: "Escopo Atual", scopeText: "A versão atual inclui o Observatório Do Ecossistema Pi, Diretório De Aplicativos, Detalhes Dos Aplicativos, Verificador De URL, visão da Rede, Ferramentas Para Desenvolvedores, observações de Node e Compute e Wallet Observatory, com suporte para inglês, espanhol, turco, chinês, italiano, francês, alemão, português e russo.",
     verification: "Princípio De Verificação", verificationText: "A ZAF TECH separa fatos observados de afirmações não verificadas. Recursos específicos do Pi só são marcados como verificados quando uma verificação observável os confirma.",
     future: "Direção Futura", futureText: "A próxima fase planejada amplia a ZAF TECH com observações públicas de carteiras Pi, seleção Mainnet/Testnet, saldos observáveis e saldos claimable, metadados da conta, transações e operações públicas recentes e navegação para o explorer. O acesso privado à carteira, assinaturas e autenticação estão fora deste escopo."
   },
   ru: {
     back: "← Назад В ZAF TECH", title: "О ZAF TECH", subtitle: "Наблюдательный Центр Экосистемы Pi",
     what: "Что Это", whatText: "ZAF TECH — независимый технологический слой только для чтения, предназначенный для обнаружения, проверки и наблюдения за общедоступными данными экосистемы Pi Network.",
-    scope: "Текущий Охват", scopeText: "Текущая версия включает наблюдательный центр экосистемы Pi, каталог приложений, сведения о приложениях, проверку URL, представление сети, инструменты разработчика, наблюдения Node и Compute и Wallet Intelligence, с поддержкой английского, испанского, турецкого, китайского, итальянского, французского, немецкого, португальского и русского языков.",
+    scope: "Текущий Охват", scopeText: "Текущая версия включает наблюдательный центр экосистемы Pi, каталог приложений, сведения о приложениях, проверку URL, представление сети, инструменты разработчика, наблюдения Node и Compute и Wallet Observatory, с поддержкой английского, испанского, турецкого, китайского, итальянского, французского, немецкого, португальского и русского языков.",
     verification: "Принцип Проверки", verificationText: "ZAF TECH отделяет наблюдаемые факты от непроверенных утверждений. Возможности Pi помечаются как проверенные только при наличии подтверждающей наблюдаемой проверки.",
     future: "Будущее Развитие", futureText: "Следующий запланированный этап расширит ZAF TECH наблюдением за публичными Pi-кошельками, выбором Mainnet/Testnet, наблюдаемыми балансами и доступными к получению балансами, метаданными аккаунта, последними публичными транзакциями и операциями и переходом к explorer. Приватный доступ к кошельку, подпись и аутентификация не входят в этот охват."
   },
@@ -93,11 +93,11 @@ const copy = {
     what: "Nedir?",
     whatText: "ZAF TECH, herkese açık Pi Network ekosistem verilerini keşfetmek, kontrol etmek ve gözlemlemek için geliştirilmiş bağımsız, salt-okunur bir teknoloji katmanıdır.",
     scope: "Mevcut Kapsam",
-    scopeText: "Mevcut sürüm; Pi Ekosistem Gözlem Merkezi, App Directory, App Details, App URL Checker, Network görünümü, Developer Tools, Node & Compute gözlemleri ve Wallet Intelligence bölümlerini İngilizce ve Türkçe arayüz desteğiyle içerir.",
+    scopeText: "Mevcut sürüm; Pi Ekosistem Gözlem Merkezi, App Directory, App Details, App URL Checker, Network görünümü, Developer Tools, Node & Compute gözlemleri ve Wallet Observatory bölümlerini İngilizce ve Türkçe arayüz desteğiyle içerir.",
     verification: "Doğrulama İlkesi",
     verificationText: "ZAF TECH, gözlemlenen gerçekleri doğrulanmamış iddialardan ayırır. Gözlemlenebilir bir kontrol desteklemedikçe Pi'ye özgü yetenekler doğrulanmış olarak işaretlenmez.",
     future: "Gelecek Yönü",
-    futureText: "Sonraki planlanan aşama Wallet Intelligence kapsamını genişletir: herkese açık Pi cüzdan adresi sorgulama, Mainnet/Testnet seçimi, gözlemlenebilir bakiyeler ve claimable bakiyeler, hesap meta verileri, son herkese açık işlemler ve operasyonlar ile explorer bağlantıları. Özel cüzdan erişimi, imzalama ve kimlik doğrulama bu kapsamın dışındadır.",
+    futureText: "Sonraki planlanan aşama Wallet Observatory kapsamını genişletir: herkese açık Pi cüzdan adresi sorgulama, Mainnet/Testnet seçimi, gözlemlenebilir bakiyeler ve claimable bakiyeler, hesap meta verileri, son herkese açık işlemler ve operasyonlar ile explorer bağlantıları. Özel cüzdan erişimi, imzalama ve kimlik doğrulama bu kapsamın dışındadır.",
   },
 };
 
