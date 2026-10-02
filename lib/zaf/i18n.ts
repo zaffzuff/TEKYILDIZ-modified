@@ -1416,7 +1416,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Observatory metrics are derived from public ecosystem responses and stored snapshots. They describe what ZAF TECH could observe at collection time; missing, unavailable or unverified signals are not inferred.": "Le metriche dell’Osservatorio derivano dalle risposte pubbliche dell’ecosistema e dagli snapshot memorizzati. Descrivono ciò che ZAF TECH ha potuto osservare al momento della raccolta; i segnali mancanti, non disponibili o non verificati non vengono dedotti.",
     "Category is a ZAF TECH classification based on the public app name/URL signal, not an official Pi category. Pi Authentication, Pi Payments, PiNet, network and health fields remain unverified until a dedicated observable check confirms them.": "La categoria è una classificazione di ZAF TECH basata sul nome/URL pubblico dell’app, non una categoria ufficiale Pi. I campi Pi Authentication, Pi Payments, PiNet, rete e stato rimangono non verificati finché un controllo osservabile dedicato non li conferma.",
     "Explorer exposes only public sources and records already observed by ZAF TECH. It does not add unverified ecosystem claims or perform Pi-side integration.": "Explorer espone solo fonti pubbliche e record già osservati da ZAF TECH. Non aggiunge affermazioni non verificate sull’ecosistema né esegue integrazioni lato Pi.",
-    "Activity Signals": "Segnali Di Attività",
     "Ecosystem": "Ecosistema",
     "Tools": "Strumenti",
     "App Directory": "Directory Delle App",
