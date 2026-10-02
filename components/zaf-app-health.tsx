@@ -28,9 +28,9 @@ function AppTrend({points,summary,locale,tr}:{points:TrendPoint[];summary:TrendS
   <div className="text-xs font-semibold text-foreground">{tr("Response Time Trend","Yanıt Süresi Trendi")}</div>
   <p className="mt-1 text-[10px] text-muted-foreground">{tr("Historical response-time observations for this application.","Bu uygulama için tarihsel yanıt süresi gözlemleri.")}</p>
   <div className="mt-3 flex h-24 items-end gap-1 overflow-x-auto">
-   {points.map(p=><div key={p.checkedAt} title={`${p.responseTimeMs} ms · ${new Date(p.checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":"en-US")}`} className="min-w-[7px] flex-1 rounded-t-sm bg-foreground/70" style={{height:`${Math.max(8,(p.responseTimeMs/max)*100)}%`}} />)}
+   {points.map(p=><div key={p.checkedAt} title={`${p.responseTimeMs} ms · ${new Date(p.checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":locale==="hi"?"hi-IN":"en-US")}`} className="min-w-[7px] flex-1 rounded-t-sm bg-foreground/70" style={{height:`${Math.max(8,(p.responseTimeMs/max)*100)}%`}} />)}
   </div>
-  <div className="mt-2 flex justify-between text-[9px] text-muted-foreground"><span>{new Date(points[0].checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":"en-US")}</span><span>{new Date(points[points.length-1].checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":"en-US")}</span></div>
+  <div className="mt-2 flex justify-between text-[9px] text-muted-foreground"><span>{new Date(points[0].checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":locale==="hi"?"hi-IN":"en-US")}</span><span>{new Date(points[points.length-1].checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":locale==="hi"?"hi-IN":"en-US")}</span></div>
  </div>;
 }
 
@@ -139,7 +139,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
           <div className="mt-1 truncate text-[10px] text-muted-foreground">{historyUrl}</div>
           {historyLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading History…","Geçmiş Yükleniyor…")}</div>:history?.length?<div className="mt-3 space-y-1.5">
             {history.slice(0,10).map((item,index)=><div key={item.checkedAt+"-"+index} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-[10px]">
-              <span className="text-foreground">{new Date(item.checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":"en-US")}</span>
+              <span className="text-foreground">{new Date(item.checkedAt).toLocaleString(locale==="es"?"es-ES":locale==="tr"?"tr-TR":locale==="zh"?"zh-CN":locale==="hi"?"hi-IN":"en-US")}</span>
               <span className="shrink-0 text-muted-foreground">{item.reachable?tr("Reachable","Erişilebilir"):tr("Offline","Çevrimdışı")} · {item.responseTimeMs} ms</span>
             </div>)}
           {trendLoading?<div className="mt-3 text-[10px] text-muted-foreground">{tr("Loading Trend…","Trend Yükleniyor…")}</div>:<AppTrend points={trend ?? []} summary={trendSummary} locale={locale} tr={tr}/>}
