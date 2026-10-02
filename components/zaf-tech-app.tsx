@@ -28,22 +28,22 @@ function number(value: number | null | undefined, digits = 0, locale: Locale = "
 function displayStatus(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
   const normalized = value.replace(/[_-]+/g, " ").trim().toLowerCase();
-  const known: Record<string, [string, string, string, string, string, string]> = {
-    online: ["Online", "Çevrimiçi", "En Línea", "在线", "Online", "En Ligne"],
-    offline: ["Offline", "Çevrimdışı", "Fuera De Línea", "离线", "Offline", "Hors Ligne"],
-    available: ["Available", "Kullanılabilir", "Disponible", "可用", "Disponibile", "Disponible"],
-    unavailable: ["Unavailable", "Kullanılamıyor", "No Disponible", "不可用", "Non Disponibile", "Indisponible"],
-    error: ["Error", "Hata", "Error", "错误", "Errore", "Erreur"],
-    active: ["Active", "Aktif", "Activo", "活跃", "Attivo", "Actif"],
-    "not configured": ["Not Configured", "Yapılandırılmadı", "No Configurado", "未配置", "Non Configurato", "Non Configuré"],
-    rising: ["Rising", "Yükseliyor", "Subiendo", "上升", "In Aumento", "En Hausse"],
-    stable: ["Stable", "Sabit", "Estable", "稳定", "Stabile", "Stable"],
-    falling: ["Falling", "Düşüyor", "Bajando", "下降", "In Calo", "En Baisse"],
-    observed: ["Observed", "Gözlemlendi", "Observado", "已观测", "Osservato", "Observé"],
-    unverified: ["Unverified", "Doğrulanmadı", "No Verificado", "未验证", "Non Verificato", "Non Vérifié"],
+  const known: Record<string, [string, string, string, string, string, string, string, string, string]> = {
+    online: ["Online", "Çevrimiçi", "En Línea", "在线", "Online", "En Ligne", "Online", "Online", "Онлайн"],
+    offline: ["Offline", "Çevrimdışı", "Fuera De Línea", "离线", "Offline", "Hors Ligne", "Offline", "Offline", "Офлайн"],
+    available: ["Available", "Kullanılabilir", "Disponible", "可用", "Disponibile", "Disponible", "Verfügbar", "Disponível", "Доступно"],
+    unavailable: ["Unavailable", "Kullanılamıyor", "No Disponible", "不可用", "Non Disponibile", "Indisponible", "Nicht Verfügbar", "Indisponível", "Недоступно"],
+    error: ["Error", "Hata", "Error", "错误", "Errore", "Erreur", "Fehler", "Erro", "Ошибка"],
+    active: ["Active", "Aktif", "Activo", "活跃", "Attivo", "Actif", "Aktiv", "Ativo", "Активно"],
+    "not configured": ["Not Configured", "Yapılandırılmadı", "No Configurado", "未配置", "Non Configurato", "Non Configuré", "Nicht Konfiguriert", "Não Configurado", "Не Настроено"],
+    rising: ["Rising", "Yükseliyor", "Subiendo", "上升", "In Aumento", "En Hausse", "Steigend", "Em Alta", "Растёт"],
+    stable: ["Stable", "Sabit", "Estable", "稳定", "Stabile", "Stable", "Stabil", "Estável", "Стабильно"],
+    falling: ["Falling", "Düşüyor", "Bajando", "下降", "In Calo", "En Baisse", "Fallend", "Em Queda", "Падает"],
+    observed: ["Observed", "Gözlemlendi", "Observado", "已观测", "Osservato", "Observé", "Beobachtet", "Observado", "Наблюдается"],
+    unverified: ["Unverified", "Doğrulanmadı", "No Verificado", "未验证", "Non Verificato", "Non Vérifié", "Nicht Verifiziert", "Não Verificado", "Не Проверено"],
   };
   const pair = known[normalized];
-  if (pair) return locale === "tr" ? pair[1] : locale === "es" ? pair[2] : locale === "zh" ? pair[3] : locale === "it" ? pair[4] : locale === "fr" ? pair[5] : pair[0];
+  if (pair) return pair[locale === "tr" ? 1 : locale === "es" ? 2 : locale === "zh" ? 3 : locale === "it" ? 4 : locale === "fr" ? 5 : locale === "de" ? 6 : locale === "pt" ? 7 : locale === "ru" ? 8 : 0];
   const label = normalized.charAt(0).toUpperCase() + normalized.slice(1);
   return label;
 }
@@ -52,7 +52,15 @@ function age(value: string | null | undefined, locale: Locale) {
   const ms = Date.now() - Date.parse(value);
   if (!Number.isFinite(ms)) return "—";
   const min = Math.floor(ms / 60000);
-  return locale === "tr" ? (min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`) : locale === "es" ? (min < 1 ? "Ahora Mismo" : min < 60 ? `${min} Min Antes` : `${Math.floor(min / 60)} H Antes`) : locale === "zh" ? (min < 1 ? "刚刚" : min < 60 ? `${min} 分钟前` : `${Math.floor(min / 60)} 小时前`) : locale === "it" ? (min < 1 ? "Proprio Ora" : min < 60 ? `${min} Min Fa` : `${Math.floor(min / 60)} Ore Fa`) : locale === "fr" ? (min < 1 ? "À L’Instant" : min < 60 ? `${min} Min Plus Tôt` : `${Math.floor(min / 60)} H Plus Tôt`) : (min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`);
+  if (locale === "tr") return min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`;
+  if (locale === "es") return min < 1 ? "Ahora Mismo" : min < 60 ? `${min} Min Antes` : `${Math.floor(min / 60)} H Antes`;
+  if (locale === "zh") return min < 1 ? "刚刚" : min < 60 ? `${min} 分钟前` : `${Math.floor(min / 60)} 小时前`;
+  if (locale === "it") return min < 1 ? "Proprio Ora" : min < 60 ? `${min} Min Fa` : `${Math.floor(min / 60)} Ore Fa`;
+  if (locale === "fr") return min < 1 ? "À L’Instant" : min < 60 ? `${min} Min Plus Tôt` : `${Math.floor(min / 60)} H Plus Tôt`;
+  if (locale === "de") return min < 1 ? "Gerade eben" : min < 60 ? `Vor ${min} Min.` : `Vor ${Math.floor(min / 60)} Std.`;
+  if (locale === "pt") return min < 1 ? "Agora mesmo" : min < 60 ? `Há ${min} min` : `Há ${Math.floor(min / 60)} h`;
+  if (locale === "ru") return min < 1 ? "Только что" : min < 60 ? `${min} мин назад` : `${Math.floor(min / 60)} ч назад`;
+  return min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`;
 }
 function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
   return <div className="rounded-xl border border-border bg-card p-3 sm:p-4"><div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div><div className="mt-1 text-xs font-medium text-foreground">{title}</div>{detail ? <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div> : null}</div>;
