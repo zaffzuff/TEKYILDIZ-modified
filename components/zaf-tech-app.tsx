@@ -180,7 +180,7 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
               <div className="min-w-0">
                 <div className="text-[11px] font-semibold text-foreground">{source.label}</div>
                 <div className="mt-1 break-all text-[10px] text-muted-foreground">{source.detail}</div>
-                <div className="mt-1 text-[10px] text-muted-foreground">{displayStatus(source.status, locale)} · {age(source.checkedAt, locale)}</div>
+                <div className="mt-1 text-[10px] text-muted-foreground">{displayStatus(source.status, locale)}</div>
               </div>
               <a href={source.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open Source", "Kaynağı Aç")}</a>
             </div>
@@ -199,7 +199,7 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
                 <div className="text-[11px] font-semibold text-foreground">{app.name}</div>
                 <div className="mt-1 truncate text-[10px] text-muted-foreground">{app.url}</div>
               </div>
-              <a href={`/ecosystem/${app.url}`} target="_self" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Details", "Detay")}</a>
+              <a href={app.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open", "Aç")}</a>
             </div>
           ))}
           {!apps.length ? <div className="text-[10px] text-muted-foreground">{tr("No observed applications are currently available.", "Şu anda gözlemlenen uygulama yok.")}</div> : null}
