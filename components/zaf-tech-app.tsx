@@ -376,8 +376,8 @@ export function ZafTechApp() {
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(ecosystem?.apps.totalCount, 0, locale)} detail={tr("Current Observation", "Mevcut Gözlem")} />
                 <Card title={tr("Available Sources", "Kullanılabilir Kaynaklar")} value={ecosystem ? \`\${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/\${ecosystem.sources.length}\` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
-                <Card title={tr("Launchpad", "Launchpad")} value={displayStatus(snapshot?.intelligence.defiStatus?.launchpad, locale)} />
-                <Card title={tr("DEX", "DEX")} value={displayStatus(snapshot?.intelligence.defiStatus?.dex, locale)} />
+                <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence?.toString() ?? "—"} detail={tr("Observed Network Signal", "Gözlemlenen Ağ Sinyali")} />
+                <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed", "Son Gözlemlenen")} />
               </div>
               <div className="mt-3 space-y-2">
                 {ecosystem?.sources.filter(source => source.status !== "online" && source.status !== "available").slice(0, 3).map(source => (
