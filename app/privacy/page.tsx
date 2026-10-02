@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/zaf-language-selector";
 
-type Locale = "en" | "es" | "tr" | "zh" | "it" | "fr";
+import type { Locale } from "@/lib/zaf/i18n";
 
 const copy = {
   en: {
