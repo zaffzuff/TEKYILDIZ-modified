@@ -1408,7 +1408,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Show filtered records": "Mostra Record Filtrati",
     "Filters and search apply to the latest transaction sample returned by Pi Mainnet Horizon.": "I filtri e la ricerca si applicano all’ultimo campione di transazioni restituito da Pi Mainnet Horizon.",
     "Pi App Directory": "Directory Delle App Pi",
-    "Language": "Lingua",
     "ZAF TECH is an independent, read-only technology project. It observes public ecosystem sources and local Node diagnostics; it does not represent Pi Core Team and does not assign subjective network health scores.": "ZAF TECH è un progetto tecnologico indipendente e di sola lettura. Osserva fonti pubbliche dell’ecosistema e diagnostica locale del Node; non rappresenta Pi Core Team e non assegna punteggi soggettivi alla salute della rete.",
     "These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.": "Questi segnali descrivono esclusivamente i dati blockchain pubblici campionati. Non costituiscono un punteggio per Pi Network, non deducono le intenzioni degli utenti e non prevedono il comportamento futuro della rete.",
     "Observable Mainnet data from Pi Mainnet Horizon. This is a read-only view, not a claim of full-network coverage.": "Dati Mainnet osservabili da Pi Mainnet Horizon. Questa è una vista di sola lettura e non dichiara una copertura completa della rete.",
