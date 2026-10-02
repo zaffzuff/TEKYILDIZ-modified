@@ -22,8 +22,8 @@ type EcosystemPayload = {
   sources: Array<{ label: string; status: string; url: string; detail: string }>;
 };
 
-function number(value: number | null | undefined, digits = 0) {
-  return value == null || !Number.isFinite(value) ? "—" : value.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+function number(value: number | null | undefined, digits = 0, locale: Locale = "en") {
+  return value == null || !Number.isFinite(value) ? "—" : value.toLocaleString(intlLocale(locale), { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
 function displayStatus(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
@@ -81,8 +81,8 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
         <p className="text-[11px] text-muted-foreground">{tr("Structured discovery of applications observed from the public Pi ecosystem source.", "Herkese açık Pi ekosistem kaynağında gözlemlenen uygulamaların yapılandırılmış keşfi.")}</p>
       </div>
       <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <Card title={tr("Observed", "Gözlemlenen")} value={number(directoryApps.length)} detail={tr("Current Source Response", "Mevcut Kaynak Yanıtı")} />
-        <Card title={tr("Matching", "Eşleşen")} value={number(filtered.length)} detail={tr("Current Filters", "Mevcut Filtreler")} />
+        <Card title={tr("Observed", "Gözlemlenen")} value={number(directoryApps.length, 0, locale)} detail={tr("Current Source Response", "Mevcut Kaynak Yanıtı")} />
+        <Card title={tr("Matching", "Eşleşen")} value={number(filtered.length, 0, locale)} detail={tr("Current Filters", "Mevcut Filtreler")} />
         <Card title={tr("Source", "Kaynak")} value={displayStatus(sourceOnline ? "online" : "offline", locale)} detail={age(generatedAt, locale)} />
       </div>
       <div className="rounded-xl border border-border bg-card p-3">
@@ -138,8 +138,8 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
         <p className="text-[11px] text-muted-foreground">{tr("Explore the public ecosystem sources and applications currently observable by ZAF TECH.", "ZAF TECH tarafından şu anda gözlemlenebilen herkese açık ekosistem kaynaklarını ve uygulamaları keşfedin.")}</p>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(apps.length)} />
-        <Card title={tr("Public Sources", "Herkese Açık Kaynaklar")} value={number(sources.length)} />
+        <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(apps.length, 0, locale)} />
+        <Card title={tr("Public Sources", "Herkese Açık Kaynaklar")} value={number(sources.length, 0, locale)} />
         <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence?.toString() ?? "—"} />
       </div>
 
@@ -270,9 +270,9 @@ export function ZafTechApp() {
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(ecosystem?.apps.totalCount)} detail={tr("Current Public Source Response", "Mevcut Herkese Açık Kaynak Yanıtı")} />
-              <Card title={tr("Recent Ledgers", "Son Ledger'lar")} value={number(snapshot?.metrics.recentLedgerCount)} detail={tr("Pi Mainnet Observation Window", "Pi Mainnet Gözlem Penceresi")} />
-              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current Sample", "Mevcut Örnek")} />
+              <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(ecosystem?.apps.totalCount, 0, locale)} detail={tr("Current Public Source Response", "Mevcut Herkese Açık Kaynak Yanıtı")} />
+              <Card title={tr("Recent Ledgers", "Son Ledger'lar")} value={number(snapshot?.metrics.recentLedgerCount, 0, locale)} detail={tr("Pi Mainnet Observation Window", "Pi Mainnet Gözlem Penceresi")} />
+              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
               <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed Ledger", "Son Gözlemlenen Ledger")} />
             </div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
@@ -290,7 +290,7 @@ export function ZafTechApp() {
         {!loading && section === "intelligence" && subtab === "Radar" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Radar", "Ekosistem Radarı")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} /><Card title={tr("Operations / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} /></div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1, locale)} /><Card title={tr("Operations / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1, locale)} /></div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.", "Bu sinyaller yalnızca örneklenen herkese açık blockchain verisini tanımlar. Pi Network için puan değildir, kullanıcı niyeti çıkarmaz ve gelecekteki ağ davranışını tahmin etmez.")}</p></div>
           </section>
         ) : null}
@@ -316,10 +316,10 @@ export function ZafTechApp() {
               <Card title={tr("Data Status", "Veri Durumu")} value={displayStatus(snapshot?.error ? "error" : snapshot?.latestLedger ? "available" : "unavailable", locale)} detail={snapshot?.error ?? tr("Pi Mainnet Horizon response observed.", "Pi Mainnet Horizon yanıtı gözlemlendi.")} />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions)} detail={tr("Current Sample", "Mevcut Örnek")} />
-              <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations)} detail={tr("Current Sample", "Mevcut Örnek")} />
-              <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1)} />
-              <Card title={tr("Ops / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1)} />
+              <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
+              <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
+              <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1, locale)} />
+              <Card title={tr("Ops / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1, locale)} />
             </div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
               <div className="text-xs font-semibold text-foreground">{tr("Network Measurement Boundary", "Ağ Ölçüm Sınırı")}</div>
@@ -452,17 +452,17 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
         <p className="text-[11px] text-muted-foreground">{tr("Current observations, stored snapshots and detected changes from public ecosystem sources.", "Herkese açık ekosistem kaynaklarından mevcut gözlemler, kayıtlı snapshot'lar ve tespit edilen değişiklikler.")}</p>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(data?.current.observedApps)} />
+        <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(data?.current.observedApps, 0, locale)} />
         <Card title={tr("Available Sources", "Kullanılabilir Kaynaklar")} value={data ? `${data.current.availableSources}/${data.current.totalSources}` : "—"} />
-        <Card title={tr("Observed Signals", "Gözlemlenen Sinyaller")} value={number(data?.current.observedSignals)} />
-        <Card title={tr("Official Signals", "Resmi Sinyaller")} value={number(data?.current.officialSignals)} />
+        <Card title={tr("Observed Signals", "Gözlemlenen Sinyaller")} value={number(data?.current.observedSignals, 0, locale)} />
+        <Card title={tr("Official Signals", "Resmi Sinyaller")} value={number(data?.current.officialSignals, 0, locale)} />
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
         <div className="text-xs font-semibold text-foreground">{tr("Observation Metadata", "Gözlem Metaverisi")}</div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Card title={tr("Generated", "Üretildi")} value={age(data?.generatedAt, locale)} />
-          <Card title={tr("Snapshots", "Snapshot'lar")} value={number(data?.history.snapshots)} />
+          <Card title={tr("Snapshots", "Snapshot'lar")} value={number(data?.history.snapshots, 0, locale)} />
           <Card title={tr("First Stored", "İlk Kayıt")} value={age(data?.history.firstObservedAt, locale)} />
           <Card title={tr("Latest Stored", "Son Kayıt")} value={age(data?.history.latestObservedAt, locale)} />
         </div>
@@ -478,7 +478,7 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
                 : tr("A baseline is not available yet.", "Henüz karşılaştırılacak bir temel snapshot yok.")}
             </p>
           </div>
-          <span className="rounded-full border border-border px-2 py-1 text-[10px] font-medium text-muted-foreground">{number(changes?.changes.length)} {tr("changes", "değişiklik")}</span>
+          <span className="rounded-full border border-border px-2 py-1 text-[10px] font-medium text-muted-foreground">{number(changes?.changes.length, 0, locale)} {tr("changes", "değişiklik")}</span>
         </div>
         <div className="mt-3 space-y-2">
           {changes?.changes.slice(0, 8).map(change => (
@@ -519,7 +519,7 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
         <div className="text-xs font-semibold text-foreground">{tr("Historical Snapshots", "Tarihsel Snapshot'lar")}</div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <Card title={tr("Stored Snapshots", "Kayıtlı Snapshot'lar")} value={number(data?.history.snapshots)} />
+          <Card title={tr("Stored Snapshots", "Kayıtlı Snapshot'lar")} value={number(data?.history.snapshots, 0, locale)} />
           <Card title={tr("Storage", "Depolama")} value={displayStatus(data?.history.configured ? "active" : "not configured", locale)} detail={tr("DATABASE_URL", "DATABASE_URL")} />
           <Card title={tr("First Snapshot", "İlk Snapshot")} value={age(data?.history.firstObservedAt, locale)} />
           <Card title={tr("Latest Snapshot", "Son Snapshot")} value={age(data?.history.latestObservedAt, locale)} />
