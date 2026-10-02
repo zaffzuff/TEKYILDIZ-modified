@@ -64,7 +64,28 @@ const copy = {
     verificationText: "ZAF TECH sépare les faits observés des affirmations non vérifiées. Les fonctionnalités spécifiques à Pi ne sont pas considérées comme vérifiées tant qu’un contrôle observable ne les confirme pas.",
     future: "Orientation Future",
     futureText: "La prochaine étape étendra ZAF TECH avec des observations publiques des wallets Pi, la sélection Mainnet/Testnet, les soldes et soldes claimable observables, les métadonnées de compte, les transactions et opérations publiques récentes et la navigation vers l’explorer. L’accès privé au wallet, la signature et l’authentification restent hors périmètre."
-  },  tr: {
+  de: {
+    back: "← Zurück Zu ZAF TECH", title: "Über ZAF TECH", subtitle: "Pi Ökosystem Beobachtungszentrum",
+    what: "Was Es Ist", whatText: "ZAF TECH ist eine unabhängige, schreibgeschützte Technologieebene zum Entdecken, Prüfen und Beobachten öffentlicher Daten des Pi Network Ökosystems.",
+    scope: "Aktueller Umfang", scopeText: "Die aktuelle Version umfasst das Pi Ökosystem Beobachtungszentrum, App-Verzeichnis, App-Details, URL-Prüfer, Netzwerkansicht, Entwicklerwerkzeuge, Node- und Compute-Beobachtungen sowie Wallet Intelligence und unterstützt Englisch, Spanisch, Türkisch, Chinesisch, Italienisch, Französisch, Deutsch, Portugiesisch und Russisch.",
+    verification: "Verifizierungsprinzip", verificationText: "ZAF TECH trennt beobachtete Fakten von nicht verifizierten Aussagen. Pi-spezifische Funktionen werden nur dann als verifiziert markiert, wenn eine beobachtbare Prüfung sie bestätigt.",
+    future: "Zukünftige Richtung", futureText: "Die nächste geplante Phase erweitert ZAF TECH um öffentliche Beobachtungen von Pi-Wallets, Mainnet/Testnet-Auswahl, beobachtbare Guthaben und Claimable-Guthaben, Kontometadaten, aktuelle öffentliche Transaktionen und Operationen sowie Explorer-Navigation. Privater Wallet-Zugriff, Signaturen und Authentifizierung liegen außerhalb dieses Umfangs."
+  },
+  pt: {
+    back: "← Voltar Para ZAF TECH", title: "Sobre A ZAF TECH", subtitle: "Observatório Do Ecossistema Pi",
+    what: "O Que É", whatText: "A ZAF TECH é uma camada tecnológica independente e somente leitura para descobrir, verificar e observar dados públicos do ecossistema Pi Network.",
+    scope: "Escopo Atual", scopeText: "A versão atual inclui o Observatório Do Ecossistema Pi, Diretório De Aplicativos, Detalhes Dos Aplicativos, Verificador De URL, visão da Rede, Ferramentas Para Desenvolvedores, observações de Node e Compute e Wallet Intelligence, com suporte para inglês, espanhol, turco, chinês, italiano, francês, alemão, português e russo.",
+    verification: "Princípio De Verificação", verificationText: "A ZAF TECH separa fatos observados de afirmações não verificadas. Recursos específicos do Pi só são marcados como verificados quando uma verificação observável os confirma.",
+    future: "Direção Futura", futureText: "A próxima fase planejada amplia a ZAF TECH com observações públicas de carteiras Pi, seleção Mainnet/Testnet, saldos observáveis e saldos claimable, metadados da conta, transações e operações públicas recentes e navegação para o explorer. O acesso privado à carteira, assinaturas e autenticação estão fora deste escopo."
+  },
+  ru: {
+    back: "← Назад В ZAF TECH", title: "О ZAF TECH", subtitle: "Наблюдательный Центр Экосистемы Pi",
+    what: "Что Это", whatText: "ZAF TECH — независимый технологический слой только для чтения, предназначенный для обнаружения, проверки и наблюдения за общедоступными данными экосистемы Pi Network.",
+    scope: "Текущий Охват", scopeText: "Текущая версия включает наблюдательный центр экосистемы Pi, каталог приложений, сведения о приложениях, проверку URL, представление сети, инструменты разработчика, наблюдения Node и Compute и Wallet Intelligence, с поддержкой английского, испанского, турецкого, китайского, итальянского, французского, немецкого, португальского и русского языков.",
+    verification: "Принцип Проверки", verificationText: "ZAF TECH отделяет наблюдаемые факты от непроверенных утверждений. Возможности Pi помечаются как проверенные только при наличии подтверждающей наблюдаемой проверки.",
+    future: "Будущее Развитие", futureText: "Следующий запланированный этап расширит ZAF TECH наблюдением за публичными Pi-кошельками, выбором Mainnet/Testnet, наблюдаемыми балансами и доступными к получению балансами, метаданными аккаунта, последними публичными транзакциями и операциями и переходом к explorer. Приватный доступ к кошельку, подпись и аутентификация не входят в этот охват."
+  },
+  tr: {
     back: "← ZAF TECH'e Dön",
     title: "ZAF TECH Hakkında",
     subtitle: "Pi Ekosistem Gözlem Merkezi",
