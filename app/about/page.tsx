@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/zaf-language-selector";
 
-type Locale = "en" | "es" | "tr" | "zh" | "it";
+type Locale = "en" | "es" | "tr" | "zh" | "it" | "fr";
 
 const copy = {
   en: {
@@ -51,6 +51,19 @@ const copy = {
     verificationText: "ZAF TECH mantiene separati i fatti osservati dalle affermazioni non verificate. Le funzionalità specifiche di Pi non vengono considerate verificate finché un controllo osservabile non le supporta.",
     future: "Direzione Futura",
     futureText: "La fase successiva estende ZAF TECH con osservazioni pubbliche dei wallet Pi, selezione Mainnet/Testnet, saldi e saldi claimable osservabili, metadati dell’account, transazioni e operazioni pubbliche recenti e navigazione verso l’explorer. L’accesso privato al wallet, la firma e l’autenticazione sono fuori ambito."
+  }
+  fr: {
+    back: "← Retour À ZAF TECH",
+    title: "À Propos De ZAF TECH",
+    subtitle: "Observatoire De L’Écosystème Pi",
+    what: "Qu’est-Ce Que C’est",
+    whatText: "ZAF TECH est un niveau technologique indépendant et en lecture seule permettant de découvrir, vérifier et observer les données publiques de l’écosystème Pi Network.",
+    scope: "Périmètre Actuel",
+    scopeText: "La version actuelle comprend l’Observatoire de l’écosystème Pi, le répertoire des applications, les détails des applications, le vérificateur d’URL, la vue réseau, les outils développeur, les observations Node & Compute et Wallet Intelligence. L’interface est disponible en English, Spanish, Turkish, Chinese, Italian et French.",
+    verification: "Principe De Vérification",
+    verificationText: "ZAF TECH sépare les faits observés des affirmations non vérifiées. Les fonctionnalités spécifiques à Pi ne sont pas considérées comme vérifiées tant qu’un contrôle observable ne les confirme pas.",
+    future: "Orientation Future",
+    futureText: "La prochaine étape étendra ZAF TECH avec des observations publiques des wallets Pi, la sélection Mainnet/Testnet, les soldes et soldes claimable observables, les métadonnées de compte, les transactions et opérations publiques récentes et la navigation vers l’explorer. L’accès privé au wallet, la signature et l’authentification restent hors périmètre."
   },  tr: {
     back: "← ZAF TECH'e Dön",
     title: "ZAF TECH Hakkında",
