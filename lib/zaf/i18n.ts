@@ -1699,7 +1699,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Observable Claimable Balances": "Beobachtbare Beanspruchbare Guthaben",
     "Unlock": "Entsperren",
     "Unlock Time Not Observable": "Entsperrzeit Nicht Beobachtbar",
-  },
     "Pi App Directory": "Pi-App-Verzeichnis",
     "Structured discovery of applications observed from the public Pi ecosystem source.": "Strukturierte Erfassung von Anwendungen aus der öffentlichen Pi-Ökosystemquelle.",
     "Observed": "Beobachtet",
@@ -1932,6 +1931,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "This section reports public native claimable balances returned by Horizon. It does not infer private Pi lockup commitments.": "Dieser Abschnitt meldet öffentliche native beanspruchbare Guthaben, die Horizon zurückgibt. Private Pi-Lockup-Verpflichtungen werden nicht abgeleitet.",
     "No publicly observable native claimable balances were returned.": "Es wurden keine öffentlich beobachtbaren nativen beanspruchbaren Guthaben zurückgegeben.",
     "Security boundary: ZAF TECH never asks for a seed phrase, private key, wallet connection or transaction signature. Only a public wallet address is used for lookup.": "Sicherheitsgrenze: ZAF TECH fragt niemals nach Seed Phrase, privatem Schlüssel, Wallet-Verbindung oder Transaktionssignatur. Für die Abfrage wird nur eine öffentliche Wallet-Adresse verwendet.",
+  },
   pt: {
     "Overview": "Visão Geral",
     "Apps": "Aplicativos",
