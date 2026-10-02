@@ -219,7 +219,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               <div>
                 <div className="text-[10px] text-muted-foreground">{tr("Observation Coverage", "Gözlem Kapsamı")}</div>
                 <div className="mt-1 text-sm font-semibold text-foreground">
-                  {samples.length ? `${new Date(samples[0].observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "hi" ? "hi-IN" : "en-US")} → ${new Date(samples.at(-1)?.observedAt ?? samples[0].observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "hi" ? "hi-IN" : "en-US")}` : "—"}
+                  {samples.length ? `${new Date(samples[0].observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "it" ? "it-IT" : "en-US")} → ${new Date(samples.at(-1)?.observedAt ?? samples[0].observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "it" ? "it-IT" : "en-US")}` : "—"}
                 </div>
               </div>
               <div className="text-[10px] text-muted-foreground">
@@ -425,7 +425,7 @@ export function ZafNodeHistory({ locale }: { locale: Locale }) {
               <tbody>
                 {samples.slice(-8).reverse().map((s) => (
                   <tr key={s.observedAt} className="border-t border-border">
-                    <td className="px-3 py-2 whitespace-nowrap">{new Date(s.observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "hi" ? "hi-IN" : "en-US")}</td>
+                    <td className="px-3 py-2 whitespace-nowrap">{new Date(s.observedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "it" ? "it-IT" : "en-US")}</td>
                     <td className="px-3 py-2">{s.healthy ? tr("Healthy", "Sağlıklı") : s.available ? tr("Available", "Çalışıyor") : tr("Unavailable", "Kullanılamıyor")}</td>
                     <td className="px-3 py-2">{s.inbound ?? "—"}</td>
                     <td className="px-3 py-2">{s.outbound ?? "—"}</td>
