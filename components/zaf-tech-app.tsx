@@ -5,7 +5,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 import type { Locale } from "@/lib/zaf/i18n";
-import { translate } from "@/lib/zaf/i18n";
+import { intlLocale, translate } from "@/lib/zaf/i18n";
 import { LanguageSelector } from "@/components/zaf-language-selector";
 import { ZafEcosystemNavigation, ZAF_SECTION_TABS, type ZafSection } from "@/components/zaf-ecosystem-navigation";
 import { ZafNodeCompute } from "@/components/zaf-node-compute";
@@ -370,7 +370,7 @@ function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["poin
       <div className="mt-3 space-y-1.5">
         {points.length ? points.slice(-12).map((point) => (
           <div key={point.generatedAt} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 text-[10px]">
-            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "it" ? "it-IT" : "en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(intlLocale(locale), { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
             <span className="text-foreground">{point.observedAppCount ?? "—"} {tr("apps", "uygulama")}</span>
             <span className="text-muted-foreground">{point.signalCount} {tr("signals", "sinyal")}</span>
           </div>
