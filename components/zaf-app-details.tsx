@@ -12,11 +12,11 @@ function displayStatus(value: string | null | undefined, locale: Locale) {
   if (!value) return "—";
   const normalized = value.replace(/[_-]+/g, " ").trim().toLowerCase();
   const labels: Record<string, Record<Locale, string>> = {
-    unknown: { en: "Not Checked", es: "No Comprobado", tr: "Kontrol Edilmedi", zh: "未检查", it: "Non Controllato", fr: "Non Vérifié" },
-    online: { en: "Online", es: "En Línea", tr: "Çevrimiçi", zh: "在线", it: "Online", fr: "En Ligne" },
-    offline: { en: "Offline", es: "Fuera De Línea", tr: "Çevrimdışı", zh: "离线", it: "Offline", fr: "Hors Ligne" },
-    available: { en: "Available", es: "Disponible", tr: "Kullanılabilir", zh: "可用", it: "Disponibile", fr: "Disponible" },
-    unavailable: { en: "Unavailable", es: "No Disponible", tr: "Kullanılamıyor", zh: "不可用", it: "Non Disponibile", fr: "Indisponible" },
+    unknown: { en: "Not Checked", es: "No Comprobado", tr: "Kontrol Edilmedi", zh: "未检查", it: "Non Controllato", fr: "Non Vérifié", de: "Nicht Geprüft", pt: "Não Verificado", ru: "Не Проверено" },
+    online: { en: "Online", es: "En Línea", tr: "Çevrimiçi", zh: "在线", it: "Online", fr: "En Ligne", de: "Online", pt: "Online", ru: "Онлайн" },
+    offline: { en: "Offline", es: "Fuera De Línea", tr: "Çevrimdışı", zh: "离线", it: "Offline", fr: "Hors Ligne", de: "Offline", pt: "Offline", ru: "Офлайн" },
+    available: { en: "Available", es: "Disponible", tr: "Kullanılabilir", zh: "可用", it: "Disponibile", fr: "Disponible", de: "Verfügbar", pt: "Disponível", ru: "Доступно" },
+    unavailable: { en: "Unavailable", es: "No Disponible", tr: "Kullanılamıyor", zh: "不可用", it: "Non Disponibile", fr: "Indisponible", de: "Nicht Verfügbar", pt: "Indisponível", ru: "Недоступно" },
   };
   return labels[normalized]?.[locale] ?? normalized.replace(/^./, char => char.toUpperCase());
 }
