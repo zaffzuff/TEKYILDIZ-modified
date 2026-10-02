@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
 import { localeLabels } from "@/lib/zaf/i18n";
 
-const locales: Locale[] = ["en", "es", "tr", "zh", "it", "fr"];
+const locales: Locale[] = ["en", "es", "tr", "zh", "it", "fr", "de", "pt", "ru"];
 const LOCALE_STORAGE_KEY = "zaf-tech-locale-v1";
 
 function FlagIcon({ locale }: { locale: Locale }) {
-  const flag = locale === "en" ? "gb" : locale === "es" ? "es" : locale === "tr" ? "tr" : locale === "zh" ? "cn" : locale === "it" ? "it" : "fr";
+  const flag = locale === "en" ? "gb" : locale === "es" ? "es" : locale === "tr" ? "tr" : locale === "zh" ? "cn" : locale === "it" ? "it" : locale === "fr" ? "fr" : locale === "de" ? "de" : locale === "pt" ? "pt" : "ru";
 
   return (
     <img
