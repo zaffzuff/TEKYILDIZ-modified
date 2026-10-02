@@ -2061,7 +2061,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Observable Claimable Balances": "Saldos Resgatáveis Observáveis",
     "Unlock": "Desbloquear",
     "Unlock Time Not Observable": "Hora de Desbloqueio Não Observável",
-  },
     "Pi App Directory": "Diretório de Apps Pi",
     "Structured discovery of applications observed from the public Pi ecosystem source.": "Descoberta estruturada de aplicativos observados na fonte pública do ecossistema Pi.",
     "Observed": "Observados",
