@@ -43,7 +43,7 @@ function displayStatus(value: string | null | undefined, locale: Locale) {
     unverified: ["Unverified", "Doğrulanmadı", "No Verificado", "未验证", "सत्यापित नहीं"],
   };
   const pair = known[normalized];
-  if (pair) return locale === "tr" ? pair[1] : locale === "es" ? pair[2] : locale === "zh" ? pair[3] : locale === "hi" ? pair[4] : pair[0];
+  if (pair) return locale === "tr" ? pair[1] : locale === "es" ? pair[2] : locale === "zh" ? pair[3] : locale === "it" ? pair[4] : pair[0];
   const label = normalized.charAt(0).toUpperCase() + normalized.slice(1);
   return label;
 }
@@ -52,7 +52,7 @@ function age(value: string | null | undefined, locale: Locale) {
   const ms = Date.now() - Date.parse(value);
   if (!Number.isFinite(ms)) return "—";
   const min = Math.floor(ms / 60000);
-  return locale === "tr" ? (min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`) : locale === "es" ? (min < 1 ? "Ahora Mismo" : min < 60 ? `${min} Min Antes` : `${Math.floor(min / 60)} H Antes`) : locale === "zh" ? (min < 1 ? "刚刚" : min < 60 ? `${min} 分钟前` : `${Math.floor(min / 60)} 小时前`) : locale === "hi" ? (min < 1 ? "अभी" : min < 60 ? `${min} मिनट पहले` : `${Math.floor(min / 60)} घंटे पहले`) : (min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`);
+  return locale === "tr" ? (min < 1 ? "Az Önce" : min < 60 ? `${min} Dk Önce` : `${Math.floor(min / 60)} Sa Önce`) : locale === "es" ? (min < 1 ? "Ahora Mismo" : min < 60 ? `${min} Min Antes` : `${Math.floor(min / 60)} H Antes`) : locale === "zh" ? (min < 1 ? "刚刚" : min < 60 ? `${min} 分钟前` : `${Math.floor(min / 60)} 小时前`) : locale === "it" ? (min < 1 ? "Proprio Ora" : min < 60 ? `${min} Min Fa` : `${Math.floor(min / 60)} Ore Fa`) : (min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`);
 }
 function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
   return <div className="rounded-xl border border-border bg-card p-3 sm:p-4"><div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div><div className="mt-1 text-xs font-medium text-foreground">{title}</div>{detail ? <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div> : null}</div>;
@@ -370,7 +370,7 @@ function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["poin
       <div className="mt-3 space-y-1.5">
         {points.length ? points.slice(-12).map((point) => (
           <div key={point.generatedAt} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 text-[10px]">
-            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "hi" ? "hi-IN" : "en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "it" ? "it-IT" : "en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
             <span className="text-foreground">{point.observedAppCount ?? "—"} {tr("apps", "uygulama")}</span>
             <span className="text-muted-foreground">{point.signalCount} {tr("signals", "sinyal")}</span>
           </div>
