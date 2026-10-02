@@ -330,8 +330,8 @@ export function ZafTechApp() {
         {!loading && section === "intelligence" && subtab === "Radar" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Radar", "Ekosistem Radarı")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1, locale)} /><Card title={tr("Operations / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1, locale)} /></div>
-            <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("These signals describe the sampled public blockchain data only. They are not a score for Pi Network, do not infer user intent, and do not predict future network behavior.", "Bu sinyaller yalnızca örneklenen herkese açık blockchain verisini tanımlar. Pi Network için puan değildir, kullanıcı niyeti çıkarmaz ve gelecekteki ağ davranışını tahmin etmez.")}</p></div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Daily Pace", "Günlük Tempo")} value={number(snapshot?.metrics.observedTransactionsPerDay, 0, locale)} detail={tr("Observed Transactions / Day", "Gözlemlenen İşlem / Gün")} /><Card title={tr("Daily Operations", "Günlük Operasyonlar")} value={number(snapshot?.metrics.observedOperationsPerDay, 0, locale)} detail={tr("Observed Operations / Day", "Gözlemlenen Operasyon / Gün")} /></div>
+            <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("Daily pace values are derived from the latest observed Mainnet ledger window and normalized to a 24-hour period. They are not a complete calendar-day count or a forecast.", "Günlük tempo değerleri son gözlemlenen Mainnet ledger penceresinden türetilir ve 24 saatlik döneme normalize edilir. Bunlar tam bir takvim günü toplamı veya tahmin değildir.")}</p></div>
           </section>
         ) : null}
 
@@ -358,12 +358,12 @@ export function ZafTechApp() {
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
               <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
-              <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1, locale)} />
-              <Card title={tr("Ops / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1, locale)} />
+              <Card title={tr("Daily Transactions", "Günlük İşlemler")} value={number(snapshot?.metrics.observedTransactionsPerDay, 0, locale)} detail={tr("Observed Daily Pace", "Gözlemlenen Günlük Tempo")} />
+              <Card title={tr("Daily Operations", "Günlük Operasyonlar")} value={number(snapshot?.metrics.observedOperationsPerDay, 0, locale)} detail={tr("Observed Daily Pace", "Gözlemlenen Günlük Tempo")} />
             </div>
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
               <div className="text-xs font-semibold text-foreground">{tr("Network Measurement Boundary", "Ağ Ölçüm Sınırı")}</div>
-              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("ZAF TECH reads public Mainnet Horizon data and reports the observed sample. It does not use a private node as the authority for the entire Pi Network and does not assign a subjective network health score.", "ZAF TECH herkese açık Mainnet Horizon verisini okur ve gözlemlenen örneği raporlar. Özel bir node'u tüm Pi Network için otorite olarak kullanmaz ve öznel bir ağ sağlık puanı üretmez.")}</p>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("ZAF TECH reads public Mainnet Horizon data and reports the observed sample. Daily values are normalized from the observed ledger window; they are not a complete calendar-day count.", "ZAF TECH herkese açık Mainnet Horizon verisini okur ve gözlemlenen örneği raporlar. Günlük değerler gözlemlenen ledger penceresinden normalize edilir; tam bir takvim günü toplamı değildir.")}</p>
               <div className="mt-3 flex flex-wrap gap-3 text-[11px]">
                 <External href="https://api.mainnet.minepi.com">{tr("Pi Mainnet Horizon", "Pi Mainnet Horizon")}</External>
                 <span className="text-muted-foreground">{tr("Updated", "Güncellendi")} {age(snapshot?.generatedAt, locale)}</span>
@@ -393,6 +393,7 @@ export function ZafTechApp() {
 type EcosystemTrendPayload = {
   configured: boolean;
   points: Array<{
+    day: string;
     generatedAt: string;
     observedAppCount: number | null;
     sourceAvailable: boolean;
@@ -405,17 +406,17 @@ type EcosystemTrendPayload = {
 function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["points"]; locale: Locale; tr: (en: string, trText: string) => string }) {
   return (
     <div className="mt-3 rounded-xl border border-border bg-card p-4">
-      <div className="text-xs font-semibold text-foreground">{tr("Ecosystem Trend", "Ekosistem Trendi")}</div>
-      <p className="mt-1 text-[10px] text-muted-foreground">{tr("Stored observations over time.", "Zaman içindeki kayıtlı gözlemler.")}</p>
+      <div className="text-xs font-semibold text-foreground">{tr("Daily Trend", "Günlük Trend")}</div>
+      <p className="mt-1 text-[10px] text-muted-foreground">{tr("Latest stored observation for each UTC day.", "Her UTC günü için en son kayıtlı gözlem.")}</p>
       <div className="mt-3 space-y-1.5">
-        {points.length ? points.slice(-12).map((point) => (
-          <div key={point.generatedAt} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 text-[10px]">
-            <span className="text-muted-foreground">{new Date(point.generatedAt).toLocaleString(intlLocale(locale), { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+        {points.length ? points.slice(-14).map((point) => (
+          <div key={point.day} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 text-[10px]">
+            <span className="text-muted-foreground">{new Date(point.day + "T00:00:00Z").toLocaleDateString(intlLocale(locale), { year: "numeric", month: "short", day: "2-digit" })}</span>
             <span className="text-foreground">{point.observedAppCount ?? "—"} {tr("apps", "uygulama")}</span>
             <span className="text-muted-foreground">{point.signalCount} {tr("signals", "sinyal")}</span>
           </div>
         )) : (
-          <div className="text-[10px] text-muted-foreground">{tr("No stored trend points yet.", "Henüz kayıtlı trend noktası yok.")}</div>
+          <div className="text-[10px] text-muted-foreground">{tr("No stored daily trend points yet.", "Henüz kayıtlı günlük trend noktası yok.")}</div>
         )}
       </div>
     </div>
