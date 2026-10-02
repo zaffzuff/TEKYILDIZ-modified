@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
 import { localeLabels } from "@/lib/zaf/i18n";
 
-const locales: Locale[] = ["en", "es", "tr", "zh", "hi"];
+const locales: Locale[] = ["en", "es", "tr", "zh", "it"];
 
 function FlagIcon({ locale }: { locale: Locale }) {
-  const flag = locale === "en" ? "gb" : locale === "es" ? "es" : locale === "tr" ? "tr" : locale === "zh" ? "cn" : "in";
+  const flag = locale === "en" ? "gb" : locale === "es" ? "es" : locale === "tr" ? "tr" : locale === "zh" ? "cn" : "it";
 
   return (
     <img
