@@ -5,10 +5,10 @@ import type { Locale } from "@/lib/zaf/i18n";
 import { intlLocale, translate } from "@/lib/zaf/i18n";
 import type { ZafWalletSnapshot } from "@/lib/zaf/types";
 
-function fmt(value: number | null) {
+function fmt(value: number | null, locale: Locale) {
   return value == null || !Number.isFinite(value)
     ? "—"
-    : value.toLocaleString("en-US", { maximumFractionDigits: 7 });
+    : value.toLocaleString(intlLocale(locale), { maximumFractionDigits: 7 });
 }
 
 function age(value: string | null, locale: Locale) {
@@ -20,6 +20,7 @@ function age(value: string | null, locale: Locale) {
   if (locale === "es") return min < 1 ? "Ahora Mismo" : min < 60 ? `${min} Min Antes` : `${Math.floor(min / 60)} H Antes`;
   if (locale === "zh") return min < 1 ? "刚刚" : min < 60 ? `${min} 分钟前` : `${Math.floor(min / 60)} 小时前`;
   if (locale === "it") return min < 1 ? "Proprio Ora" : min < 60 ? `${min} Min Fa` : `${Math.floor(min / 60)} Ore Fa`;
+  if (locale === "fr") return min < 1 ? "À L’Instant" : min < 60 ? `${min} Min Plus Tôt` : `${Math.floor(min / 60)} H Plus Tôt`;
   return min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`;
 }
 
