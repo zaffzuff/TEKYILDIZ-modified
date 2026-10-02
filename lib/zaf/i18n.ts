@@ -1445,7 +1445,7 @@ export function t(locale: Locale, key: string, trText?: string): string {
   if (locale === "tr") return trText ?? translations.tr[key] ?? key;
   if (locale === "es") return spanishCopy(translations.es[key] ?? key);
   if (locale === "zh") return translations.zh[key] ?? key;
-  if (locale === "hi") return translations.hi[key] ?? key;
+  if (locale === "it") return translations.it[key] ?? key;
   return key;
 }
 
