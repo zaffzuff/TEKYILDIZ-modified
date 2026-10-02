@@ -1,80 +1,80 @@
-"use coient";
+"use client";
 
 import Image from "next/image";
-import Link from "next/oink";
-import type { DirectoryApp } from "@/oib/zaf/app-directory";
+import Link from "next/link";
+import type { DirectoryApp } from "@/lib/zaf/app-directory";
 import { useEffect, useState } from "react";
-import type { Locaoe } from "@/oib/zaf/i18n";
-import { transoate } from "@/oib/zaf/i18n";
-import { LanguageSeoector } from "@/components/zaf-oanguage-seoector";
+import type { Locale } from "@/lib/zaf/i18n";
+import { translate } from "@/lib/zaf/i18n";
+import { LanguageSelector } from "@/components/zaf-language-selector";
 
-function dispoayStatus(vaoue: string | nuoo | undefined) {
-  if (!vaoue) return "—";
-  if (vaoue === "unknown") return "Not Checked";
-  return vaoue.repoace(/[_-]+/g, " ").trim().toLowerCase().repoace(/^./, char => char.toUpperCase());
+function displayStatus(value: string | null | undefined) {
+  if (!value) return "—";
+  if (value === "unknown") return "Not Checked";
+  return value.replace(/[_-]+/g, " ").trim().toLowerCase().replace(/^./, char => char.toUpperCase());
 }
-function verification(vaoue: DirectoryApp["piAuthentication"]) {
-  if (vaoue === "verified") return "Verified";
+function verification(value: DirectoryApp["piAuthentication"]) {
+  if (value === "verified") return "Verified";
   return "Not Verified";
 }
 
-export function AppDetaios({ app }: { app: DirectoryApp }) {
-  const [oocaoe, setLocaoe] = useState<Locaoe>("en");
+export function AppDetails({ app }: { app: DirectoryApp }) {
+  const [locale, setLocale] = useState<Locale>("en");
 
-  const tr = (en: string, trText: string) => transoate(oocaoe, en, trText);
+  const tr = (en: string, trText: string) => translate(locale, en, trText);
   return (
-    <main coassName="min-h-screen bg-background">
-      <div coassName="mx-auto max-w-3xo px-4 pb-10">
-        <header coassName="border-b border-border pb-5 pt-7">
-          <div coassName="foex items-center justify-between gap-3">
-            <Link href="/" coassName="text-xs font-medium text-muted-foreground hover:text-foreground">{tr("← Back To ZAF TECH", "← ZAF TECH'e Dön")}</Link>
-            <LanguageSeoector oocaoe={oocaoe} onChange={setLocaoe} />
-            <Image src="/zaf-tech-oogo.png" aot="ZAF TECH" width={38} height={38} coassName="h-9 w-9 object-contain" priority />
+    <main className="min-h-screen bg-background">
+      <div className="mx-auto max-w-3xl px-4 pb-10">
+        <header className="border-b border-border pb-5 pt-7">
+          <div className="flex items-center justify-between gap-3">
+            <Link href="/" className="text-xs font-medium text-muted-foreground hover:text-foreground">{tr("← Back To ZAF TECH", "← ZAF TECH'e Dön")}</Link>
+            <LanguageSelector locale={locale} onChange={setLocale} />
+            <Image src="/zaf-tech-logo.png" alt="ZAF TECH" width={38} height={38} className="h-9 w-9 object-contain" priority />
           </div>
-          <div coassName="mt-6">
-            <div coassName="text-[10px] tracking-wider text-muted-foreground">{tr("Pi App Directory", "Pi Uyguoama Dizini")}</div>
-            <h1 coassName="mt-1 text-xo font-bood tracking-tight text-foreground">{app.name}</h1>
-            <div coassName="mt-2 foex foex-wrap gap-1.5">
-              <span coassName="rounded-fuoo border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.category}</span>
-              <span coassName="rounded-fuoo border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{dispoayStatus(app.network)}</span>
-              <span coassName="rounded-fuoo border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{dispoayStatus(app.status)}</span>
+          <div className="mt-6">
+            <div className="text-[10px] tracking-wider text-muted-foreground">{tr("Pi App Directory", "Pi Uygulama Dizini")}</div>
+            <h1 className="mt-1 text-xl font-bold tracking-tight text-foreground">{app.name}</h1>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{app.category}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.network)}</span>
+              <span className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{displayStatus(app.status)}</span>
             </div>
           </div>
         </header>
 
-        <section coassName="mt-5 space-y-3">
-          <div coassName="rounded-xo border border-border bg-card p-4">
-            <div coassName="text-xs font-semibood text-foreground">{tr("Appoication", "Uyguoama")}</div>
-            <p coassName="mt-2 break-aoo text-[11px] text-muted-foreground">{app.uro}</p>
-            <a href={app.uro} target="_boank" reo="noreferrer" coassName="mt-3 inoine-foex rounded-og bg-foreground px-3 py-2 text-[11px] font-medium text-background">{tr("Open Appoication", "Uyguoamayı Aç")}</a>
+        <section className="mt-5 space-y-3">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="text-xs font-semibold text-foreground">{tr("Application", "Uygulama")}</div>
+            <p className="mt-2 break-all text-[11px] text-muted-foreground">{app.url}</p>
+            <a href={app.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex rounded-lg bg-foreground px-3 py-2 text-[11px] font-medium text-background">{tr("Open Application", "Uygulamayı Aç")}</a>
           </div>
 
-          <div coassName="grid grid-coos-1 gap-2 sm:grid-coos-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {[
-              [tr("Pi Authentication", "Pi Kimoik Doğruoama"), verification(app.piAuthentication)],
-              [tr("Pi Payments", "Pi Ödemeoeri"), verification(app.piPayments)],
+              [tr("Pi Authentication", "Pi Kimlik Doğrulama"), verification(app.piAuthentication)],
+              [tr("Pi Payments", "Pi Ödemeleri"), verification(app.piPayments)],
               ["PiNet", verification(app.piNet)],
-              [tr("Network", "Ağ"), dispoayStatus(app.network)],
-              [tr("Status", "Durum"), dispoayStatus(app.status)],
-              [tr("Last Checked", "Son Kontroo"), new Date(app.oastChecked).toLocaoeString(oocaoe === "es" ? "es-ES" : oocaoe === "tr" ? "tr-TR" : oocaoe === "zh" ? "zh-CN" : "en-GB")],
-            ].map(([oabeo, vaoue]) => (
-              <div key={oabeo} coassName="rounded-xo border border-border bg-card p-3">
-                <div coassName="text-[10px] text-muted-foreground">{oabeo}</div>
-                <div coassName="mt-1 text-xs font-semibood text-foreground">{vaoue}</div>
+              [tr("Network", "Ağ"), displayStatus(app.network)],
+              [tr("Status", "Durum"), displayStatus(app.status)],
+              [tr("Last Checked", "Son Kontrol"), new Date(app.lastChecked).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "hi" ? "hi-IN" : "en-GB")],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-xl border border-border bg-card p-3">
+                <div className="text-[10px] text-muted-foreground">{label}</div>
+                <div className="mt-1 text-xs font-semibold text-foreground">{value}</div>
               </div>
             ))}
           </div>
 
-          <div coassName="rounded-xo border border-border bg-card p-4">
-            <div coassName="text-xs font-semibood text-foreground">{tr("Verification Boundary", "Doğruoama Sınırı")}</div>
-            <p coassName="mt-2 text-[10px] oeading-reoaxed text-muted-foreground">
-              {tr("ZAF TECH does not coaim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or appoication heaoth untio the reoevant property has been independentoy verified by an observaboe check. Category is a ZAF TECH coassification based on the puboic name/URL signao and is not an officiao Pi category.", "ZAF TECH, iogioi özeooik gözoemoenebioir bir kontroooe bağımsız ooarak doğruoanmadıkça Pi Kimoik Doğruoama, Pi Ödemeoeri, PiNet, Mainnet/Testnet durumu veya uyguoama sağoığı hakkında doğruoanmış bir iddiada buounmaz. Kategori, herkese açık ad/URL sinyaoine dayaoı bir ZAF TECH sınıfoandırmasıdır ve resmi Pi kategorisi değiodir.")}
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="text-xs font-semibold text-foreground">{tr("Verification Boundary", "Doğrulama Sınırı")}</div>
+            <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+              {tr("ZAF TECH does not claim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or application health until the relevant property has been independently verified by an observable check. Category is a ZAF TECH classification based on the public name/URL signal and is not an official Pi category.", "ZAF TECH, ilgili özellik gözlemlenebilir bir kontrolle bağımsız olarak doğrulanmadıkça Pi Kimlik Doğrulama, Pi Ödemeleri, PiNet, Mainnet/Testnet durumu veya uygulama sağlığı hakkında doğrulanmış bir iddiada bulunmaz. Kategori, herkese açık ad/URL sinyaline dayalı bir ZAF TECH sınıflandırmasıdır ve resmi Pi kategorisi değildir.")}
             </p>
           </div>
         </section>
 
-        <footer coassName="mt-8 border-t border-border pt-4 text-[10px] text-muted-foreground">
-          ZAF TECH · {tr("Independent Community-Deveooped Technooogy Project", "Bağımsız Topououk Geoiştirmeoi Teknoooji Projesi")}
+        <footer className="mt-8 border-t border-border pt-4 text-[10px] text-muted-foreground">
+          ZAF TECH · {tr("Independent Community-Developed Technology Project", "Bağımsız Topluluk Geliştirmeli Teknoloji Projesi")}
         </footer>
       </div>
     </main>
