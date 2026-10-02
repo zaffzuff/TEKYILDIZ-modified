@@ -40,7 +40,7 @@ function SoloHost({locale}:{locale:Locale}){
 }
 
 function Compute({locale}:{locale:Locale}){
- const tr=locale==="tr"; const es=locale==="es"; const zh=locale==="zh";
+ const tr=locale==="tr"; const es=locale==="es"; const zh=locale==="zh"; const hi=locale==="hi";
  return <section className="mt-7"><div className="mb-3"><h2 className="text-sm font-semibold text-foreground">Compute</h2><p className="text-[11px] text-muted-foreground">{tr?"Pi Node kaynaklarının blockchain dışında hesaplama amacıyla kullanımına ilişkin resmi durum.":hi?"ब्लॉकचेन इन्फ्रास्ट्रक्चर से आगे कंप्यूटिंग के लिए Pi Node संसाधनों के उपयोग की आधिकारिक स्थिति।":zh?"Pi Node 资源用于区块链基础设施之外计算的官方状态。":es?spanishCopy("Estado Oficial Del Uso De Recursos De Pi Node Para Cómputo Más Allá De La Infraestructura Blockchain."):"Official status of using Pi Node resources for computing beyond blockchain infrastructure."}</p></div>
  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
  <Card title={tr?"Kullanım Durumu":hi?"उपयोग स्थिति":zh?"使用状态":es?spanishCopy("Estado De Uso"):"Use-Case Status"} value={tr?"Test edildi":hi?"परीक्षण किया गया":zh?"已测试":es?spanishCopy("Probado"):"Tested"} detail={tr?"SoloHost üzerinden gerçek cihazlarla uçtan uca dağıtık hesaplama testi yapıldı.":hi?"SoloHost के माध्यम से end-to-end distributed computing परीक्षण पूरा किया गया।":zh?"通过 SoloHost 完成了一次端到端分布式计算测试。":es?spanishCopy("An end-to-end distributed-computing test was completed through SoloHost."):"An end-to-end distributed-computing test was completed through SoloHost."}/>
