@@ -908,7 +908,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Show filtered records": "फ़िल्टर किए गए रिकॉर्ड दिखाएँ",
     "Filters and search apply to the latest transaction sample returned by Pi Mainnet Horizon.": "फ़िल्टर और search Pi Mainnet Horizon द्वारा लौटाए गए नवीनतम transaction sample पर लागू होते हैं।",
   }
-  },
 };
 
 function spanishCopy(value: string) {
