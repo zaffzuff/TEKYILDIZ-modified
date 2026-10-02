@@ -1772,7 +1772,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "Verification Boundary": "Limite De Vérification",
     "Independent Community-Developed Technology Project": "Projet Technologique Indépendant Développé Par La Communauté",
     "← Back To ZAF TECH": "← Retour À ZAF TECH",
-    "Activity Signals": "Signaux D’Activité",
     "Ecosystem": "Écosystème",
     "Tools": "Outils",
     "App Directory": "Répertoire Des Applications",
