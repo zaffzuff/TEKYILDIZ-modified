@@ -484,7 +484,7 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
           {changes?.changes.slice(0, 8).map(change => (
             <div key={`${change.type}-${change.title}`} className="rounded-lg border border-border p-3">
               <div className="text-[11px] font-semibold text-foreground">{change.title}</div>
-              <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : locale === "es" ? translate(locale, change.detail, change.detailTr) : change.detail}</p>
+              <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : translate(locale, change.detail, change.detailTr)}</p>
               {(change.previous != null || change.current != null) ? (
                 <div className="mt-2 text-[10px] text-muted-foreground">
                   {String(change.previous ?? "—")} → {String(change.current ?? "—")}
