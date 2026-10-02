@@ -1,3 +1,5 @@
+import { lookup } from "node:dns/promises";
+
 export type AppHealthCheck = {
   url: string;
   status: number | null;
@@ -10,8 +12,32 @@ export type AppHealthCheck = {
   error: string | null;
 };
 
+function isPrivateIpv4(value: string) {
+  const parts = value.split(".").map(Number);
+  if (parts.length !== 4 || parts.some(part => !Number.isInteger(part) || part < 0 || part > 255)) return false;
+  const [a, b] = parts;
+  return (
+    a === 0 ||
+    a === 10 ||
+    a === 127 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168)
+  );
+}
+
+function isPrivateIpv6(value: string) {
+  const host = value.toLowerCase().split("%")[0];
+  if (host === "::1" || host === "::") return true;
+  return host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe8") || host.startsWith("fe9") || host.startsWith("fea") || host.startsWith("feb");
+}
+
+function isPrivateIp(value: string) {
+  return value.includes(":") ? isPrivateIpv6(value) : isPrivateIpv4(value);
+}
+
 function isPrivateHostname(hostname: string) {
-  const host = hostname.toLowerCase();
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (
     host === "localhost" ||
     host.endsWith(".localhost") ||
@@ -22,16 +48,12 @@ function isPrivateHostname(hostname: string) {
     host.endsWith(".internal")
   ) return true;
 
-  if (/^(10|127)\./.test(host)) return true;
-  if (/^169\.254\./.test(host)) return true;
-  if (/^192\.168\./.test(host)) return true;
-  if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(host)) return true;
-
-  return false;
+  return isPrivateIp(host);
 }
 
 export function isSafeHttpUrl(value: string) {
   try {
+    if (value.length > 2048) return false;
     const url = new URL(value);
     if (url.protocol !== "https:" && url.protocol !== "http:") return false;
     if (url.username || url.password) return false;
@@ -41,10 +63,27 @@ export function isSafeHttpUrl(value: string) {
   }
 }
 
+async function resolvesToPublicAddress(hostname: string) {
+  if (isPrivateHostname(hostname)) return false;
+  try {
+    const addresses = await lookup(hostname, { all: true, verbatim: true });
+    return addresses.length > 0 && addresses.every(({ address }) => !isPrivateIp(address));
+  } catch {
+    return false;
+  }
+}
+
 export async function checkAppHealth(target: string, timeoutMs = 8000): Promise<AppHealthCheck> {
   const started = Date.now();
   const checkedAt = new Date().toISOString();
-  const https = target.startsWith("https://");
+  let https = false;
+
+  try {
+    const parsed = new URL(target);
+    https = parsed.protocol === "https:";
+  } catch {
+    // Validation below returns the normal public-URL error.
+  }
 
   if (!isSafeHttpUrl(target)) {
     return {
@@ -57,6 +96,21 @@ export async function checkAppHealth(target: string, timeoutMs = 8000): Promise<
       redirect: false,
       checkedAt,
       error: "A public HTTP(S) URL is required.",
+    };
+  }
+
+  const parsed = new URL(target);
+  if (!(await resolvesToPublicAddress(parsed.hostname))) {
+    return {
+      url: target,
+      status: null,
+      ok: false,
+      reachable: false,
+      responseTimeMs: Date.now() - started,
+      https,
+      redirect: false,
+      checkedAt,
+      error: "The target hostname does not resolve to a public address.",
     };
   }
 
