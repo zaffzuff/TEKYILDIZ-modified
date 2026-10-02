@@ -2319,7 +2319,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Application": "Aplicativo",
     "Open Application": "Abrir Aplicativo",
     "Pi Authentication": "Autenticação Pi",
-    "Pi Payments:": "Pagamentos Pi",
+    "Pi Payments": "Pagamentos Pi",
     "PiNet": "PiNet",
     "Last Checked": "Última Verificação",
     "Verification Boundary": "Limite De Verificação",
@@ -3088,7 +3088,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "PiNet": "PiNet",
     "Verified": "Vérifié",
     "Not Verified": "Non Vérifié",
-    "Request failed:": "La Requête A Échoué",
+    "Request failed": "La Requête A Échoué",
   },
 
 };
