@@ -356,7 +356,7 @@ export function ZafTechApp() {
                 {tr("Changes are compared with the latest stored ecosystem snapshot. They describe observed differences only.", "Değişiklikler son kayıtlı ekosistem snapshot'ı ile karşılaştırılır. Yalnızca gözlemlenen farklılıkları açıklar.")}
               </p>
               <div className="mt-3 space-y-2">
-                {radarChanges?.changes?.length ? radarChanges.changes.slice(0, 6).map(change => (                  <div key={`${change.type}-${change.key}`} className="rounded-lg border border-border p-3">
+                {radarChanges?.changes?.length ? radarChanges.changes.slice(0, 6).map(change => (                  <div key={`${change.type}-${change.title}`} className="rounded-lg border border-border p-3">
                     <div className="text-[11px] font-semibold text-foreground">{change.title}</div>
                     <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : translate(locale, change.detail, change.detailTr)}</div>
                     {(change.previous != null || change.current != null) ? <div className="mt-2 text-[10px] text-muted-foreground">{String(change.previous ?? "—")} → {String(change.current ?? "—")}</div> : null}
