@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
-import { translate } from "@/lib/zaf/i18n";
+import { intlLocale, translate } from "@/lib/zaf/i18n";
 import type { ZafSnapshot } from "@/lib/zaf/types";
 
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
@@ -459,7 +459,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
           <div className="rounded-lg border border-border px-3 py-3">
             <div className="text-[10px] text-muted-foreground">{tr("Started", "Başlangıç")}</div>
             <div className="mt-1 text-sm font-semibold text-foreground">
-              {localNode?.node?.startedAt ? new Date(localNode.node.startedAt).toLocaleString(locale === "es" ? "es-ES" : locale === "tr" ? "tr-TR" : locale === "zh" ? "zh-CN" : locale === "it" ? "it-IT" : "en-US") : "—"}
+              {localNode?.node?.startedAt ? new Date(localNode.node.startedAt).toLocaleString(intlLocale(locale)) : "—"}
             </div>
             <div className="mt-1 text-[10px] text-muted-foreground">{tr("Container Start Timestamp", "Container Başlangıç Zamanı")}</div>
           </div>
