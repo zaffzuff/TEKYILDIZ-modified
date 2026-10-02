@@ -1764,7 +1764,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "No Recent Transactions Returned.": "Aucune Transaction Récente Retournée.",
     "Unlock": "Déverrouillage",
     "Unlock Time Not Observable": "Heure De Déverrouillage Non Observable",
-    "Inspect": "Inspecter",
     "Application": "Application",
     "Open Application": "Ouvrir L’Application",
     "Pi Authentication": "Authentification Pi",
