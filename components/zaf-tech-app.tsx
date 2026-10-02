@@ -409,7 +409,7 @@ function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["poin
   const previous = recent.at(-2) ?? null;
   const week = recent.slice(-7);
   const delta = (current: number | null | undefined, prior: number | null | undefined) => current != null && prior != null ? current - prior : null;
-  const deltaLabel = (value: number | null) => value == null ? "—" : \`\${value > 0 ? "+" : ""}\${number(value, 0, locale)}\`;
+  const deltaLabel = (value: number | null) => value == null ? "—" : `${value > 0 ? "+" : ""}${number(value, 0, locale)}`;
 
   return (
     <div className="mt-3 rounded-xl border border-border bg-card p-4">
