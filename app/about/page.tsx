@@ -64,6 +64,7 @@ const copy = {
     verificationText: "ZAF TECH sépare les faits observés des affirmations non vérifiées. Les fonctionnalités spécifiques à Pi ne sont pas considérées comme vérifiées tant qu’un contrôle observable ne les confirme pas.",
     future: "Orientation Future",
     futureText: "La prochaine étape étendra ZAF TECH avec des observations publiques des wallets Pi, la sélection Mainnet/Testnet, les soldes et soldes claimable observables, les métadonnées de compte, les transactions et opérations publiques récentes et la navigation vers l’explorer. L’accès privé au wallet, la signature et l’authentification restent hors périmètre."
+  },
   de: {
     back: "← Zurück Zu ZAF TECH", title: "Über ZAF TECH", subtitle: "Pi Ökosystem Beobachtungszentrum",
     what: "Was Es Ist", whatText: "ZAF TECH ist eine unabhängige, schreibgeschützte Technologieebene zum Entdecken, Prüfen und Beobachten öffentlicher Daten des Pi Network Ökosystems.",
