@@ -404,12 +404,27 @@ type EcosystemTrendPayload = {
 };
 
 function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["points"]; locale: Locale; tr: (en: string, trText: string) => string }) {
+  const recent = points.slice(-14);
+  const latest = recent.at(-1) ?? null;
+  const previous = recent.at(-2) ?? null;
+  const week = recent.slice(-7);
+  const delta = (current: number | null | undefined, prior: number | null | undefined) => current != null && prior != null ? current - prior : null;
+  const deltaLabel = (value: number | null) => value == null ? "—" : \`\${value > 0 ? "+" : ""}\${number(value, 0, locale)}\`;
+
   return (
     <div className="mt-3 rounded-xl border border-border bg-card p-4">
       <div className="text-xs font-semibold text-foreground">{tr("Daily Trend", "Günlük Trend")}</div>
       <p className="mt-1 text-[10px] text-muted-foreground">{tr("Latest stored observation for each UTC day.", "Her UTC günü için en son kayıtlı gözlem.")}</p>
+      {latest ? (
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Card title={tr("Current Day", "Mevcut Gün")} value={latest.observedAppCount == null ? "—" : number(latest.observedAppCount, 0, locale)} detail={tr("Observed Apps", "Gözlemlenen Uygulamalar")} />
+          <Card title={tr("Previous Day", "Önceki Gün")} value={previous?.observedAppCount == null ? "—" : number(previous.observedAppCount, 0, locale)} detail={tr("Observed Apps", "Gözlemlenen Uygulamalar")} />
+          <Card title={tr("App Change", "Uygulama Değişimi")} value={deltaLabel(delta(latest.observedAppCount, previous?.observedAppCount))} detail={tr("Compared With Previous Day", "Önceki Günle Karşılaştırma")} />
+          <Card title={tr("7-Day Trend", "7 Günlük Trend")} value={week.length.toLocaleString(intlLocale(locale))} detail={tr("Stored Daily Points", "Kayıtlı Günlük Nokta")} />
+        </div>
+      ) : null}
       <div className="mt-3 space-y-1.5">
-        {points.length ? points.slice(-14).map((point) => (
+        {recent.length ? recent.map((point) => (
           <div key={point.day} className="grid grid-cols-[1fr_auto_auto] items-center gap-2 text-[10px]">
             <span className="text-muted-foreground">{new Date(point.day + "T00:00:00Z").toLocaleDateString(intlLocale(locale), { year: "numeric", month: "short", day: "2-digit" })}</span>
             <span className="text-foreground">{point.observedAppCount ?? "—"} {tr("apps", "uygulama")}</span>
@@ -419,6 +434,9 @@ function TrendView({ points, locale, tr }: { points: EcosystemTrendPayload["poin
           <div className="text-[10px] text-muted-foreground">{tr("No stored daily trend points yet.", "Henüz kayıtlı günlük trend noktası yok.")}</div>
         )}
       </div>
+      {latest && new Date(latest.day + "T00:00:00Z").toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10) ? (
+        <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">{tr("The current-day point may be partial because it represents the latest stored observation, not a completed UTC day.", "Mevcut gün noktası, tamamlanmış bir UTC günü değil en son kayıtlı gözlemi temsil ettiği için kısmi olabilir.")}</p>
+      ) : null}
     </div>
   );
 }
