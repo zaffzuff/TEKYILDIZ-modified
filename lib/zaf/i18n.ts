@@ -15,6 +15,17 @@ export const localeLabels: Record<Locale, string> = {
 const translations: Record<Locale, Record<string, string>> = {
   en: {},
   tr: {
+    "A compact daily view of observed Mainnet activity and meaningful ecosystem changes.": "Gözlemlenen Mainnet aktivitesi ve anlamlı ekosistem değişikliklerinin kısa günlük görünümü.",
+    "Daily Changes": "Günlük Değişiklikler",
+    "Changes are compared with the latest stored ecosystem snapshot. They describe observed differences only.": "Değişiklikler son kayıtlı ekosistem snapshot'ı ile karşılaştırılır. Yalnızca gözlemlenen farklılıkları açıklar.",
+    "No meaningful ecosystem changes detected.": "Anlamlı bir ekosistem değişikliği tespit edilmedi.",
+    "Important Ecosystem Signals": "Önemli Ekosistem Sinyalleri",
+    "Current Observation": "Mevcut Gözlem",
+    "Observed Network Signal": "Gözlemlenen Ağ Sinyali",
+    "Latest Observed": "Son Gözlemlenen",
+    "Source Coverage": "Kaynak Kapsamı",
+    "Descriptive, Not Predictive": "Tanımlayıcı, Tahmin Edici Değil",
+    "The current-day point may be partial because it represents the latest stored observation, not a completed UTC day.": "Mevcut gün noktası, tamamlanmış bir UTC günü değil en son kayıtlı gözlemi temsil ettiği için kısmi olabilir.",
     "Overview": "Genel Bakış",
     "Apps": "Uygulamalar",
     "DeFi": "DeFi",
