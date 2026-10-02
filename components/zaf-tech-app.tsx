@@ -231,10 +231,20 @@ export function ZafTechApp() {
   const [subtab, setSubtab] = useState("Ecosystem");
   const [snapshot, setSnapshot] = useState<ZafSnapshot | null>(null);
   const [ecosystem, setEcosystem] = useState<EcosystemPayload | null>(null);
+  const [radarChanges, setRadarChanges] = useState<EcosystemChangePayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const tr = (en: string, trText: string) => translate(locale, en, trText);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/zaf/ecosystem/changes", { cache: "no-store" })
+      .then(response => response.ok ? response.json() : null)
+      .then(value => { if (active) setRadarChanges(value); })
+      .catch(() => { if (active) setRadarChanges(null); });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     const t = window.localStorage.getItem("zaf-tech-theme-v1");
@@ -329,12 +339,62 @@ export function ZafTechApp() {
 
         {!loading && section === "intelligence" && subtab === "Radar" ? (
           <section className="mt-5 sm:mt-7">
-            <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Radar", "Ekosistem Radarı")}</h2><p className="text-[11px] text-muted-foreground">{tr("Measured signals from public sources and observable Mainnet activity.", "Herkese açık kaynaklardan ve gözlemlenebilir Mainnet aktivitesinden ölçülen sinyaller.")}</p></div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3"><Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} /><Card title={tr("Daily Pace", "Günlük Tempo")} value={number(snapshot?.metrics.observedTransactionsPerDay, 0, locale)} detail={tr("Observed Transactions / Day", "Gözlemlenen İşlem / Gün")} /><Card title={tr("Daily Operations", "Günlük Operasyonlar")} value={number(snapshot?.metrics.observedOperationsPerDay, 0, locale)} detail={tr("Observed Operations / Day", "Gözlemlenen Operasyon / Gün")} /></div>
-            <div className="mt-3 rounded-xl border border-border bg-card p-4"><div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("Daily pace values are derived from the latest observed Mainnet ledger window and normalized to a 24-hour period. They are not a complete calendar-day count or a forecast.", "Günlük tempo değerleri son gözlemlenen Mainnet ledger penceresinden türetilir ve 24 saatlik döneme normalize edilir. Bunlar tam bir takvim günü toplamı veya tahmin değildir.")}</p></div>
+            <div className="mb-3">
+              <h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Radar", "Ekosistem Radarı")}</h2>
+              <p className="text-[11px] text-muted-foreground">{tr("A compact daily view of observed Mainnet activity and meaningful ecosystem changes.", "Gözlemlenen Mainnet aktivitesi ve anlamlı ekosistem değişikliklerinin kısa günlük görünümü.")}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} />
+              <Card title={tr("Daily Pace", "Günlük Tempo")} value={number(snapshot?.metrics.observedTransactionsPerDay, 0, locale)} detail={tr("Observed Transactions / Day", "Gözlemlenen İşlem / Gün")} />
+              <Card title={tr("Daily Operations", "Günlük Operasyonlar")} value={number(snapshot?.metrics.observedOperationsPerDay, 0, locale)} detail={tr("Observed Operations / Day", "Gözlemlenen Operasyon / Gün")} />
+              <Card title={tr("Source Coverage", "Kaynak Kapsamı")} value={ecosystem ? \`\${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/\${ecosystem.sources.length}\` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
+            </div>
+
+            <div className="mt-3 rounded-xl border border-border bg-card p-4">
+              <div className="text-xs font-semibold text-foreground">{tr("Daily Changes", "Günlük Değişiklikler")}</div>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                {tr("Changes are compared with the latest stored ecosystem snapshot. They describe observed differences only.", "Değişiklikler son kayıtlı ekosistem snapshot'ı ile karşılaştırılır. Yalnızca gözlemlenen farklılıkları açıklar.")}
+              </p>
+              <div className="mt-3 space-y-2">
+                {radarChanges?.changes?.length ? radarChanges.changes.slice(0, 6).map(change => (
+                  <div key={\`\${change.type}-\${change.key}\`} className="rounded-lg border border-border p-3">
+                    <div className="text-[11px] font-semibold text-foreground">{change.title}</div>
+                    <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : translate(locale, change.detail, change.detailTr)}</div>
+                    {(change.previous != null || change.current != null) ? <div className="mt-2 text-[10px] text-muted-foreground">{String(change.previous ?? "—")} → {String(change.current ?? "—")}</div> : null}
+                  </div>
+                )) : (
+                  <div className="rounded-lg border border-border p-3 text-[10px] text-muted-foreground">
+                    {radarChanges?.hasBaseline ? tr("No meaningful ecosystem changes detected.", "Anlamlı bir ekosistem değişikliği tespit edilmedi.") : tr("A baseline is not available yet.", "Henüz karşılaştırılacak bir temel snapshot yok.")}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-border bg-card p-4">
+              <div className="text-xs font-semibold text-foreground">{tr("Important Ecosystem Signals", "Önemli Ekosistem Sinyalleri")}</div>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(ecosystem?.apps.totalCount, 0, locale)} detail={tr("Current Observation", "Mevcut Gözlem")} />
+                <Card title={tr("Available Sources", "Kullanılabilir Kaynaklar")} value={ecosystem ? \`\${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/\${ecosystem.sources.length}\` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
+                <Card title={tr("Launchpad", "Launchpad")} value={displayStatus(snapshot?.intelligence.defiStatus?.launchpad, locale)} />
+                <Card title={tr("DEX", "DEX")} value={displayStatus(snapshot?.intelligence.defiStatus?.dex, locale)} />
+              </div>
+              <div className="mt-3 space-y-2">
+                {ecosystem?.sources.filter(source => source.status !== "online" && source.status !== "available").slice(0, 3).map(source => (
+                  <div key={source.url} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
+                    <span className="text-[10px] text-muted-foreground">{source.label}</span>
+                    <span className="text-[10px] font-medium text-foreground">{displayStatus(source.status, locale)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-border bg-card p-4">
+              <div className="text-xs font-semibold text-foreground">{tr("Measurement Boundary", "Ölçüm Sınırı")}</div>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{tr("Daily pace values are derived from the latest observed Mainnet ledger window and normalized to a 24-hour period. Changes and ecosystem signals are limited to public sources and stored observations; they are not forecasts or full-network measurements.", "Günlük tempo değerleri son gözlemlenen Mainnet ledger penceresinden türetilir ve 24 saatlik döneme normalize edilir. Değişiklikler ve ekosistem sinyalleri herkese açık kaynaklar ve kayıtlı gözlemlerle sınırlıdır; bunlar tahmin veya tüm ağ ölçümü değildir.")}</p>
+            </div>
           </section>
         ) : null}
-
         {!loading && section === "node" ? <ZafNodeCompute locale={locale} data={snapshot} subtab={subtab} /> : null}
 
         {!loading && section === "wallet" ? <ZafWalletIntelligence locale={locale} /> : null}
