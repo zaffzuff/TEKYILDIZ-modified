@@ -51,7 +51,7 @@ const copy = {
     verificationText: "ZAF TECH mantiene separati i fatti osservati dalle affermazioni non verificate. Le funzionalità specifiche di Pi non vengono considerate verificate finché un controllo osservabile non le supporta.",
     future: "Direzione Futura",
     futureText: "La fase successiva estende ZAF TECH con osservazioni pubbliche dei wallet Pi, selezione Mainnet/Testnet, saldi e saldi claimable osservabili, metadati dell’account, transazioni e operazioni pubbliche recenti e navigazione verso l’explorer. L’accesso privato al wallet, la firma e l’autenticazione sono fuori ambito."
-  }
+  },
   fr: {
     back: "← Retour À ZAF TECH",
     title: "À Propos De ZAF TECH",
