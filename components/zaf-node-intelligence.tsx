@@ -8,9 +8,9 @@ import type { ZafSnapshot } from "@/lib/zaf/types";
 const NODE_KEY_STORAGE = "zaf-tech-node-public-key-v1";
 const MIN_CONNECTOR_VERSION = "1.6.0";
 
-function formatNumber(value: number | null, digits = 0) {
+function formatNumber(value: number | null, locale: Locale, digits = 0) {
   if (value == null || !Number.isFinite(value)) return "—";
-  return value.toLocaleString("en-US", {
+  return value.toLocaleString(intlLocale(locale), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
@@ -210,8 +210,8 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
         <NodeMetric label={tr("Observed Protocol", "Gözlemlenen Protokol")} value={localNode?.node?.protocol != null ? `v${localNode.node.protocol}` : "—"} detail={tr("Reported by the local Pi Node when available", "Yerel Pi Node tarafından bildirildiğinde gösterilir")} />
         <NodeMetric label={tr("Local Listeners", "Yerel Dinleyiciler")} value={localNode?.ports ? `${localNode.ports.filter((item) => item.listeningLocally).length}/10` : "—"} detail={tr("Local port listeners only; not an Internet reachability test", "Yalnızca Yerel port dinleyicileri; Internet erişilebilirlik testi değildir")} />
         <NodeMetric label={tr("Ledger Age", "Ledger Yaşı")} value={localNode?.node?.ledger?.age != null ? `${localNode.node.ledger.age}s` : "—"} detail={tr("Age reported by local Stellar Core", "Yerel Stellar Core tarafından bildirilen yaş")} />
-        <NodeMetric label={tr("Restart Count", "Yeniden Başlatma")} value={localNode?.node?.restartCount != null ? formatNumber(localNode.node.restartCount) : "—"} detail={tr("Docker restart counter for the detected Node Container", "Algılanan Node Container'ının Docker yeniden başlatma sayacı")} />
-        <NodeMetric label={tr("Mainnet Observation", "Mainnet Gözlemi")} value={formatNumber(data?.metrics.recentLedgerCount ?? null)} detail={tr("Public Pi Mainnet ledger window used by ZAF TECH", "ZAF TECH'in kullandığı herkese açık Pi Mainnet ledger penceresi")} />
+        <NodeMetric label={tr("Restart Count", "Yeniden Başlatma")} value={localNode?.node?.restartCount != null ? formatNumber(localNode.node.restartCount, locale) : "—"} detail={tr("Docker restart counter for the detected Node Container", "Algılanan Node Container'ının Docker yeniden başlatma sayacı")} />
+        <NodeMetric label={tr("Mainnet Observation", "Mainnet Gözlemi")} value={formatNumber(data?.metrics.recentLedgerCount ?? null, locale)} detail={tr("Public Pi Mainnet ledger window used by ZAF TECH", "ZAF TECH'in kullandığı herkese açık Pi Mainnet ledger penceresi")} />
       </div>
       <div className="mt-3 rounded-xl border border-border bg-card p-3 sm:mt-4 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
