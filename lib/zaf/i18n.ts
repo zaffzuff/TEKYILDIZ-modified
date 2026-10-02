@@ -1037,6 +1037,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "Last Checked": "上次检查",
     "Verification Boundary": "验证边界",
     "ZAF TECH does not claim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or application health until the relevant property has been independently verified by an observable check. Category is a ZAF TECH classification based on the public name/URL signal and is not an official Pi category.": "在相关属性通过可观测检查独立验证之前，ZAF TECH 不会声称 Pi Authentication、Pi Payments、PiNet、Mainnet/Testnet 状态或应用状态已得到验证。分类是基于公开名称/URL 信号的 ZAF TECH 分类，并非官方 Pi 分类。",
+    "PiNet": "PiNet",
   },
   it: {
 "Overview": "Panoramica",
@@ -1564,6 +1565,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "ZAF TECH does not infer individual Node location from IP addresses or display a fabricated global Node map. It only presents data that can be tied to a documented public source or an explicit local connector.": "ZAF TECH non deduce la posizione individuale dei Node dagli indirizzi IP né mostra una mappa globale dei Node inventata. Presenta solo dati collegabili a una fonte pubblica documentata o a un Connector locale esplicito.",
     "ZAF TECH does not claim Pi Authentication, Pi Payments, PiNet, Mainnet/Testnet status or application health until the relevant property has been independently verified by an observable check. Category is a ZAF TECH classification based on the public name/URL signal and is not an official Pi category.": "ZAF TECH non dichiara Pi Authentication, Pi Payments, PiNet, stato Mainnet/Testnet o salute dell’applicazione finché la proprietà pertinente non viene verificata indipendentemente tramite un controllo osservabile. La categoria è una classificazione di ZAF TECH basata sul segnale pubblico di nome/URL e non è una categoria ufficiale Pi.",
     "Docker": "Docker",
+    "PiNet": "PiNet",
   },
   fr: {
     "Overview": "Vue D’Ensemble",
