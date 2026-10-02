@@ -1888,11 +1888,21 @@ function spanishCopy(value: string) {
   return sentence.replace(/@@(\d+)@@/g, (_, index) => tokens[Number(index)]);
 }
 
+export function intlLocale(locale: Locale): string {
+  if (locale === "tr") return "tr-TR";
+  if (locale === "es") return "es-ES";
+  if (locale === "zh") return "zh-CN";
+  if (locale === "it") return "it-IT";
+  if (locale === "fr") return "fr-FR";
+  return "en-US";
+}
+
 export function t(locale: Locale, key: string, trText?: string): string {
   if (locale === "tr") return trText ?? translations.tr[key] ?? key;
   if (locale === "es") return spanishCopy(translations.es[key] ?? key);
   if (locale === "zh") return translations.zh[key] ?? key;
   if (locale === "it") return translations.it[key] ?? key;
+  if (locale === "fr") return translations.fr[key] ?? key;
   return key;
 }
 
