@@ -2293,6 +2293,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "This section reports public native claimable balances returned by Horizon. It does not infer private Pi lockup commitments.": "Esta seção informa saldos nativos públicos resgatáveis retornados pelo Horizon. Não infere compromissos privados de lockup da Pi.",
     "No publicly observable native claimable balances were returned.": "Nenhum saldo nativo público resgatável observável foi retornado.",
     "Security boundary: ZAF TECH never asks for a seed phrase, private key, wallet connection or transaction signature. Only a public wallet address is used for lookup.": "Limite de segurança: a ZAF TECH nunca solicita seed phrase, chave privada, conexão com wallet ou assinatura de transação. Apenas um endereço público é usado na consulta.",
+  },
   ru: {
     "Overview": "Обзор",
     "Apps": "Приложения",
