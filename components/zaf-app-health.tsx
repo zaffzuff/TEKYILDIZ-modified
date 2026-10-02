@@ -62,7 +62,7 @@ export function ZafAppHealth({locale}:{locale:Locale}){
    if(!url.trim()) return;
    setLoading(true); setResult(null);
    try{const r=await fetch("/api/apps/check?url="+encodeURIComponent(url.trim()),{cache:"no-store"}); setResult(await r.json());}
-   catch{setResult({url:url.trim(),reachable:false,responseTimeMs:0,https:url.startsWith("https://"),redirect:false,checkedAt:new Date().toISOString(),error:"Request failed"});}
+   catch{setResult({url:url.trim(),reachable:false,responseTimeMs:0,https:url.startsWith("https://"),redirect:false,checkedAt:new Date().toISOString(),error:tr("Request failed", "La requête a échoué")});}
    finally{setLoading(false);}
  }
 
