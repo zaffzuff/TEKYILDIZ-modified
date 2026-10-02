@@ -177,8 +177,7 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
         <div className="mt-3 space-y-2">
           {sources.length ? sources.map(source => (
             <div key={source.url} className="flex items-start justify-between gap-3 rounded-lg border border-border p-3">
-              <div className="min-w-0">
-                <div className="text-[11px] font-semibold text-foreground">{source.label}</div>
+              <div className="min-w-0">                <div className="text-[11px] font-semibold text-foreground">{source.label}</div>
                 <div className="mt-1 break-all text-[10px] text-muted-foreground">{source.detail}</div>
                 <div className="mt-1 text-[10px] text-muted-foreground">{displayStatus(source.status, locale)}</div>
               </div>
@@ -348,7 +347,7 @@ export function ZafTechApp() {
               <Card title={tr("Activity State", "Aktivite Durumu")} value={displayStatus(snapshot?.intelligence.activityState, locale)} detail={tr("Descriptive, Not Predictive", "Tanımlayıcı, Tahmin Edici Değil")} />
               <Card title={tr("Daily Pace", "Günlük Tempo")} value={number(snapshot?.metrics.observedTransactionsPerDay, 0, locale)} detail={tr("Observed Transactions / Day", "Gözlemlenen İşlem / Gün")} />
               <Card title={tr("Daily Operations", "Günlük Operasyonlar")} value={number(snapshot?.metrics.observedOperationsPerDay, 0, locale)} detail={tr("Observed Operations / Day", "Gözlemlenen Operasyon / Gün")} />
-              <Card title={tr("Source Coverage", "Kaynak Kapsamı")} value={ecosystem ? \`\${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/\${ecosystem.sources.length}\` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
+              <Card title={tr("Source Coverage", "Kaynak Kapsamı")} value={ecosystem ? `${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/${ecosystem.sources.length}` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
             </div>
 
             <div className="mt-3 rounded-xl border border-border bg-card p-4">
@@ -357,8 +356,7 @@ export function ZafTechApp() {
                 {tr("Changes are compared with the latest stored ecosystem snapshot. They describe observed differences only.", "Değişiklikler son kayıtlı ekosistem snapshot'ı ile karşılaştırılır. Yalnızca gözlemlenen farklılıkları açıklar.")}
               </p>
               <div className="mt-3 space-y-2">
-                {radarChanges?.changes?.length ? radarChanges.changes.slice(0, 6).map(change => (
-                  <div key={\`\${change.type}-\${change.key}\`} className="rounded-lg border border-border p-3">
+                {radarChanges?.changes?.length ? radarChanges.changes.slice(0, 6).map(change => (                  <div key={`${change.type}-${change.key}`} className="rounded-lg border border-border p-3">
                     <div className="text-[11px] font-semibold text-foreground">{change.title}</div>
                     <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{locale === "tr" ? change.detailTr : translate(locale, change.detail, change.detailTr)}</div>
                     {(change.previous != null || change.current != null) ? <div className="mt-2 text-[10px] text-muted-foreground">{String(change.previous ?? "—")} → {String(change.current ?? "—")}</div> : null}
@@ -375,7 +373,7 @@ export function ZafTechApp() {
               <div className="text-xs font-semibold text-foreground">{tr("Important Ecosystem Signals", "Önemli Ekosistem Sinyalleri")}</div>
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(ecosystem?.apps.totalCount, 0, locale)} detail={tr("Current Observation", "Mevcut Gözlem")} />
-                <Card title={tr("Available Sources", "Kullanılabilir Kaynaklar")} value={ecosystem ? \`\${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/\${ecosystem.sources.length}\` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
+                <Card title={tr("Available Sources", "Kullanılabilir Kaynaklar")} value={ecosystem ? `${ecosystem.sources.filter(source => source.status === "online" || source.status === "available").length}/${ecosystem.sources.length}` : "—"} detail={tr("Public Sources", "Herkese Açık Kaynaklar")} />
                 <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence?.toString() ?? "—"} detail={tr("Observed Network Signal", "Gözlemlenen Ağ Sinyali")} />
                 <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} detail={tr("Latest Observed", "Son Gözlemlenen")} />
               </div>
@@ -648,4 +646,3 @@ function ObservatoryStatisticsView({ locale, tr }: { locale: Locale; tr: (en: st
     </section>
   );
 }
-
