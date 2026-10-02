@@ -139,26 +139,48 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
   locale: Locale;
   tr: (en: string, trText: string) => string;
 }) {
+  const availableSources = sources.filter(source => source.status === "available").length;
+
   return (
     <section className="mt-5 sm:mt-7">
       <div className="mb-3">
         <h2 className="text-sm font-semibold text-foreground">{tr("Ecosystem Explorer", "Ekosistem Explorer")}</h2>
-        <p className="text-[11px] text-muted-foreground">{tr("Explore the public ecosystem sources and applications currently observable by ZAF TECH.", "ZAF TECH tarafından şu anda gözlemlenebilen herkese açık ekosistem kaynaklarını ve uygulamaları keşfedin.")}</p>
+        <p className="text-[11px] text-muted-foreground">{tr("Explore the public ecosystem sources, current network observations, and applications currently observable by ZAF TECH.", "ZAF TECH tarafından şu anda gözlemlenebilen herkese açık ekosistem kaynaklarını, güncel ağ gözlemlerini ve uygulamaları keşfedin.")}</p>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Card title={tr("Observed Apps", "Gözlemlenen Uygulamalar")} value={number(apps.length, 0, locale)} />
-        <Card title={tr("Public Sources", "Herkese Açık Kaynaklar")} value={number(sources.length, 0, locale)} />
+        <Card title={tr("Public Sources", "Herkese Açık Kaynaklar")} value={sources.length.toString()} detail={tr("Available Sources", "Kullanılabilir Kaynaklar") + ": " + availableSources} />
         <Card title={tr("Latest Ledger", "Son Ledger")} value={snapshot?.latestLedger?.sequence?.toString() ?? "—"} />
+        <Card title={tr("Protocol", "Protokol")} value={snapshot?.metrics.latestProtocolVersion != null ? `v${snapshot.metrics.latestProtocolVersion}` : "—"} />
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-card p-4">
+        <div className="text-xs font-semibold text-foreground">{tr("Network", "Ağ")}</div>
+        <p className="mt-1 text-[10px] text-muted-foreground">{tr("A compact, descriptive pulse built only from the current observable sample. It is not a network-wide health score.", "Yalnızca mevcut gözlemlenebilir örnekten oluşturulan kısa ve açıklayıcı ağ görünümüdür. Ağ geneli sağlık puanı değildir.")}</p>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
+          <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
+          <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1, locale)} />
+          <Card title={tr("Ops / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1, locale)} />
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-muted-foreground">
+          <span>{tr("Activity State", "Aktivite Durumu")}: {displayStatus(snapshot?.intelligence.activityState, locale)}</span>
+          <span>•</span>
+          <span>{tr("Updated", "Güncellendi")} {age(snapshot?.generatedAt, locale)}</span>
+        </div>
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
         <div className="text-xs font-semibold text-foreground">{tr("Public Ecosystem Sources", "Herkese Açık Ekosistem Kaynakları")}</div>
+        <p className="mt-1 text-[10px] text-muted-foreground">{tr("Each source is listed with its observable status and last collection time. Source availability does not mean the underlying content is verified by ZAF TECH.", "Her kaynak gözlemlenebilir durumu ve son toplama zamanı ile listelenir. Kaynağın kullanılabilir olması, içeriğinin ZAF TECH tarafından doğrulandığı anlamına gelmez.")}</p>
         <div className="mt-3 space-y-2">
           {sources.length ? sources.map(source => (
             <div key={source.url} className="flex items-start justify-between gap-3 rounded-lg border border-border p-3">
               <div className="min-w-0">
                 <div className="text-[11px] font-semibold text-foreground">{source.label}</div>
                 <div className="mt-1 break-all text-[10px] text-muted-foreground">{source.detail}</div>
+                <div className="mt-1 text-[10px] text-muted-foreground">{displayStatus(source.status, locale)} · {age(source.checkedAt, locale)}</div>
               </div>
               <a href={source.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open Source", "Kaynağı Aç")}</a>
             </div>
@@ -177,7 +199,7 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
                 <div className="text-[11px] font-semibold text-foreground">{app.name}</div>
                 <div className="mt-1 truncate text-[10px] text-muted-foreground">{app.url}</div>
               </div>
-              <a href={app.url} target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Open", "Aç")}</a>
+              <a href={`/ecosystem/${app.url}`} target="_self" className="shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-medium text-foreground hover:bg-muted">{tr("Details", "Detay")}</a>
             </div>
           ))}
           {!apps.length ? <div className="text-[10px] text-muted-foreground">{tr("No observed applications are currently available.", "Şu anda gözlemlenen uygulama yok.")}</div> : null}
@@ -185,8 +207,18 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-card p-4">
-        <div className="text-xs font-semibold text-foreground">{tr("Explorer Boundary", "Explorer Sınırı")}</div>
-        <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">{tr("Explorer exposes only public sources and records already observed by ZAF TECH. It does not add unverified ecosystem claims or perform Pi-side integration.", "Explorer yalnızca ZAF TECH tarafından gözlemlenmiş herkese açık kaynakları ve kayıtları gösterir. Doğrulanmamış ekosistem iddiaları eklemez ve Pi tarafı entegrasyonu gerçekleştirmez.")}</p>
+        <div className="text-xs font-semibold text-foreground">{tr("Verification Boundary", "Doğrulama Sınırı")}</div>
+        <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">{tr("ZAF TECH separates observation from verification. A reachable URL, public source response, blockchain record, or local node signal is evidence that the signal was observed; it is not proof of ownership, safety, legitimacy, future behavior, or undisclosed backend activity.", "ZAF TECH gözlem ile doğrulamayı birbirinden ayırır. Erişilebilir URL, herkese açık kaynak yanıtı, blockchain kaydı veya yerel node sinyali sinyalin gözlemlendiğine kanıttır; sahiplik, güvenlik, meşruiyet, gelecekteki davranış veya açıklanmamış backend faaliyetlerinin kanıtı değildir.")}</p>
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="rounded-lg border border-border p-3">
+            <div className="text-[10px] font-semibold text-foreground">{tr("Observable", "Gözlemlenebilir")}</div>
+            <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{tr("Public URLs, HTTP responses, public Mainnet records, ecosystem metadata, source availability, and local Node Connector diagnostics.", "Herkese açık URL'ler, HTTP yanıtları, public Mainnet kayıtları, ekosistem metaverileri, kaynak erişilebilirliği ve yerel Node Connector tanılamaları.")}</div>
+          </div>
+          <div className="rounded-lg border border-border p-3">
+            <div className="text-[10px] font-semibold text-foreground">{tr("Not Verified", "Doğrulanmadı")}</div>
+            <div className="mt-1 text-[10px] leading-relaxed text-muted-foreground">{tr("Private user activity, ownership claims, undisclosed operations, application security, financial legitimacy, and future plans.", "Özel kullanıcı etkinliği, sahiplik iddiaları, açıklanmamış işlemler, uygulama güvenliği, finansal meşruiyet ve gelecekteki planlar.")}</div>
+          </div>
+        </div>
       </div>
     </section>
   );
