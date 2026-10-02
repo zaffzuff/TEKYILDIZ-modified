@@ -66,7 +66,31 @@ const copy = {
     publicText: "Les observations Network, ecosystem, Node et wallet proviennent de sources publiques ou clairement observables. ZAF TECH distingue les données observées des affirmations non vérifiées et ne prétend pas que ses observations représentent l’ensemble de Pi Network. Lorsqu’une source ne fournit pas directement une valeur, ZAF TECH ne l’infère pas comme un fait.",
     boundary: "Limite Importante",
     boundaryText: "ZAF TECH est un projet indépendant développé par la communauté et n’est pas un produit officiel de Pi Core Team."
-  },  tr: {
+  de: {
+    back: "← Zurück Zu ZAF TECH", title: "Datenschutz", subtitle: "ZAF TECH Pi Ökosystem Beobachtungszentrum",
+    scope: "Datenumfang", scopeText: "ZAF TECH ist eine unabhängige, schreibgeschützte Technologieebene. Sie liest öffentliche und beobachtbare Quellen zu Pi Ökosystem, Network, Mainnet/Testnet und Node und kann vom Benutzer angeforderte öffentliche URL-Prüfungen durchführen. Wallet Intelligence verwendet nur eine öffentliche Pi-Wallet-Adresse für beobachtbare Blockchain-Daten.",
+    wallet: "Kein Wallet-Zugriff", walletText: "Der Pi Address Inspector validiert nur lokal das Adressformat. Wallet Intelligence greift nicht auf private Schlüssel, Seed-Phrases oder Wallet-Anmeldedaten zu, verbindet sich nicht mit dem Wallet des Benutzers und signiert keine Blockchain-Transaktionen. Wallet-Abfragen basieren auf öffentlich beobachtbaren Blockchain-Daten.",
+    local: "Lokale Einstellungen", localText: "Sprach- und Designeinstellungen können lokal im Browser gespeichert werden, um die Benutzeroberfläche zu erhalten.",
+    public: "Öffentliche Quellen", publicText: "Beobachtungen zu Network, Ökosystem, Node und Wallet stammen aus öffentlichen oder eindeutig beobachtbaren Quellen. ZAF TECH trennt beobachtete Daten von nicht verifizierten Aussagen und behauptet nicht, dass seine Beobachtungen das gesamte Pi Network darstellen.",
+    boundary: "Wichtige Grenze", boundaryText: "ZAF TECH ist ein unabhängiges, von der Community entwickeltes Projekt und kein offizielles Produkt des Pi Core Team."
+  },
+  pt: {
+    back: "← Voltar Para ZAF TECH", title: "Privacidade", subtitle: "Observatório Do Ecossistema Pi Da ZAF TECH",
+    scope: "Escopo Dos Dados", scopeText: "A ZAF TECH é uma camada tecnológica independente e somente leitura. Ela consulta fontes públicas e observáveis do ecossistema Pi, Network, Mainnet/Testnet e Node e pode executar verificações de URLs públicas solicitadas pelo usuário. Wallet Intelligence usa apenas um endereço público de carteira Pi para dados observáveis da blockchain.",
+    wallet: "Sem Acesso À Carteira", walletText: "O Pi Address Inspector realiza apenas a validação local do formato. Wallet Intelligence não acessa chaves privadas, seed phrases ou credenciais da carteira, não se conecta à carteira do usuário e não assina transações de blockchain. As consultas da carteira usam dados públicos observáveis da blockchain.",
+    local: "Preferências Locais", localText: "As preferências de idioma e tema podem ser armazenadas localmente no navegador para manter as configurações da interface.",
+    public: "Fontes Públicas", publicText: "As observações de Network, ecossistema, Node e carteira vêm de fontes públicas ou claramente observáveis. A ZAF TECH separa dados observados de afirmações não verificadas e não afirma que suas observações representem toda a Pi Network.",
+    boundary: "Limite Importante", boundaryText: "A ZAF TECH é um projeto independente desenvolvido pela comunidade e não é um produto oficial da Pi Core Team."
+  },
+  ru: {
+    back: "← Назад В ZAF TECH", title: "Конфиденциальность", subtitle: "Наблюдательный Центр Экосистемы Pi ZAF TECH",
+    scope: "Охват Данных", scopeText: "ZAF TECH — независимый технологический слой только для чтения. Он получает данные из общедоступных и наблюдаемых источников экосистемы Pi, Network, Mainnet/Testnet и Node и может выполнять проверки общедоступных URL по запросу пользователя. Wallet Intelligence использует только публичный адрес Pi-кошелька для наблюдаемых данных блокчейна.",
+    wallet: "Нет Доступа К Кошельку", walletText: "Pi Address Inspector выполняет только локальную проверку формата. Wallet Intelligence не получает доступ к приватным ключам, seed-фразам или учетным данным кошелька, не подключается к кошельку пользователя и не подписывает транзакции блокчейна. Запросы кошелька основаны на общедоступных наблюдаемых данных блокчейна.",
+    local: "Локальные Настройки", localText: "Настройки языка и темы могут храниться локально в браузере для сохранения параметров интерфейса.",
+    public: "Публичные Источники", publicText: "Наблюдения Network, экосистемы, Node и кошелька получают из публичных или явно наблюдаемых источников. ZAF TECH отделяет наблюдаемые данные от непроверенных утверждений и не заявляет, что его наблюдения представляют всю Pi Network.",
+    boundary: "Важное Ограничение", boundaryText: "ZAF TECH — независимый проект, разработанный сообществом, а не официальный продукт Pi Core Team."
+  },
+  tr: {
     back: "← ZAF TECH'e Dön", title: "Gizlilik", subtitle: "ZAF TECH Pi Ekosistem Gözlem Merkezi",
     scope: "Veri Kapsamı", scopeText: "ZAF TECH bağımsız, salt-okunur bir teknoloji katmanıdır. Gözlemlenebilir herkese açık Pi ekosistemi, Network, Mainnet/Testnet ve Node kaynaklarını okur ve kullanıcı tarafından istenen herkese açık URL kontrollerini çalıştırabilir. Wallet Intelligence özelliği yalnızca herkese açık Pi cüzdan adresi üzerinden gözlemlenebilir blockchain verilerini kullanır.",
     wallet: "Cüzdan Erişimi Yok", walletText: "Developer Tools adres denetleyicisi yalnızca yerel format doğrulaması yapar. Wallet Intelligence özel anahtarlara, seed phrase'lere veya cüzdan kimlik bilgilerine erişmez; kullanıcı cüzdanına bağlanmaz ve blockchain işlemlerini imzalamaz. Cüzdan sorguları herkese açık olarak gözlemlenebilir blockchain verilerine dayanır.",
