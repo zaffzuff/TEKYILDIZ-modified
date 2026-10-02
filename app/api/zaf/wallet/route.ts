@@ -12,11 +12,18 @@ export async function GET(request: NextRequest) {
   if (!address) {
     return NextResponse.json(
       { error: "A Pi wallet address is required." },
-      { status: 502, headers: { "Cache-Control": "no-store" } },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
-  if (!/^G[A-Z2-7]{55}$/.test(address.toUpperCase())) {\n    return NextResponse.json(\n      { error: "Invalid Pi wallet address." },\n      { status: 400, headers: { "Cache-Control": "no-store" } },\n    );\n  }\n\n  try {
+  if (!/^G[A-Z2-7]{55}$/.test(address.toUpperCase())) {
+    return NextResponse.json(
+      { error: "Invalid Pi wallet address." },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  try {
     const snapshot = await getZafWallet(address, network);
     const status = snapshot.exists === false ? 404 : 200;
 
@@ -27,7 +34,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Pi wallet request failed" },
-      { status: 400, headers: { "Cache-Control": "no-store" } },
+      { status: 502, headers: { "Cache-Control": "no-store" } },
     );
   }
 }
