@@ -161,8 +161,8 @@ function ObservatoryExplorerView({ apps, sources, snapshot, locale, tr }: {
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Card title={tr("Transactions", "İşlemler")} value={number(snapshot?.metrics.recentTransactions, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
           <Card title={tr("Operations", "Operasyonlar")} value={number(snapshot?.metrics.recentOperations, 0, locale)} detail={tr("Current Sample", "Mevcut Örnek")} />
-          <Card title={tr("Tx / Hour", "İşlem / Saat")} value={number(snapshot?.metrics.observedTransactionsPerHour, 1, locale)} />
-          <Card title={tr("Ops / Hour", "Operasyon / Saat")} value={number(snapshot?.metrics.observedOperationsPerHour, 1, locale)} />
+          <Card title={tr("Daily Transactions", "Günlük İşlemler")} value={number(snapshot?.metrics.observedTransactionsPerDay, 0, locale)} detail={tr("Observed Daily Pace", "Gözlemlenen Günlük Tempo")} />
+          <Card title={tr("Daily Operations", "Günlük Operasyonlar")} value={number(snapshot?.metrics.observedOperationsPerDay, 0, locale)} detail={tr("Observed Daily Pace", "Gözlemlenen Günlük Tempo")} />
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-muted-foreground">
           <span>{tr("Activity State", "Aktivite Durumu")}: {displayStatus(snapshot?.intelligence.activityState, locale)}</span>
