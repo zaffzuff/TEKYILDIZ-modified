@@ -220,7 +220,7 @@ export function ZafNodeIntelligence({ locale, data }: { locale: Locale; data: Za
             <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-muted-foreground">
               {tr(
                 "Enter the public key shown in Pi Desktop. ZAF TECH keeps it only in this browser and uses it as the identity for future Node observation features.",
-                "Pi Desktop'ta gösterilen public key'i girin. ZAF TECH bunu yalnızca bu tarayıcıda saklar ve gelecekteki Node istihbaratı özellikleri için kimlik olarak kullanır."
+                "Pi Desktop'ta gösterilen public key'i girin. ZAF TECH bunu yalnızca bu tarayıcıda saklar ve gelecekteki Node gözlem özellikleri için kimlik olarak kullanır."
               )}
             </p>
           </div>
