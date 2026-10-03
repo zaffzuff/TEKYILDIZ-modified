@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/zaf/i18n";
-import { localeLabels } from "@/lib/zaf/i18n";
+import { localeLabels, translate } from "@/lib/zaf/i18n";
 
 const locales: Locale[] = ["en", "es", "tr", "zh", "it", "fr", "de", "pt", "ru"];
 const LOCALE_STORAGE_KEY = "zaf-tech-locale-v1";
@@ -56,7 +56,7 @@ export function LanguageSelector({
         onClick={() => setOpen(value => !value)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label="Language"
+        aria-label={translate(locale, "Language", "Dil")}
         className="flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium text-foreground"
       >
         <FlagIcon locale={locale} />
@@ -67,7 +67,7 @@ export function LanguageSelector({
       {open ? (
         <div
           role="listbox"
-          aria-label="Language"
+          aria-label={translate(locale, "Language", "Dil")}
           className="absolute right-0 z-50 mt-1 min-w-[118px] overflow-hidden rounded-lg border border-border bg-card p-1 shadow-lg"
         >
           {ordered.map(option => (
