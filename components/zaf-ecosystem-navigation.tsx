@@ -13,17 +13,31 @@ export const ZAF_SECTION_TABS: Record<ZafSection, readonly string[]> = {
   wallet: [],
 };
 
-const labels: Record<string, [string, string]> = {
-  Overview: ["Overview", "Genel Bakış"], Network: ["Network", "Ağ"], Ecosystem: ["Ecosystem", "Ekosistem"], Tools: ["Tools", "Araçlar"],
-  Apps: ["Apps", "Uygulamalar"], "App Directory": ["App Directory", "Uygulama Dizini"], "App Health": ["App Health", "Uygulama Sağlığı"],
-  "Node & Compute": ["Node & Compute", "Node & Compute"], Node: ["Node", "Node"], "Node History": ["Node History", "Node Geçmişi"],
-  SoloHost: ["SoloHost", "SoloHost"], Compute: ["Compute", "Hesaplama"], Infrastructure: ["Infrastructure", "Altyapı"],
-  Observatory: ["Observatory", "Gözlem Merkezi"], Radar: ["Radar", "Radar"], "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri"], Explorer: ["Explorer", "Explorer"], Wallet: ["Wallet", "Cüzdan"],
+const labels: Record<string, [string, string, string, string, string, string, string, string, string]> = {
+  Overview: ["Overview", "Genel Bakış", "Descripción General", "概览", "Panoramica", "Vue D’ensemble", "Übersicht", "Visão Geral", "Обзор"],
+  Network: ["Network", "Ağ", "Red", "网络", "Rete", "Réseau", "Netzwerk", "Rede", "Сеть"],
+  Ecosystem: ["Ecosystem", "Ekosistem", "Ecosistema", "生态系统", "Ecosistema", "Écosystème", "Ökosystem", "Ecossistema", "Экосистема"],
+  Tools: ["Tools", "Araçlar", "Herramientas", "工具", "Strumenti", "Outils", "Werkzeuge", "Ferramentas", "Инструменты"],
+  Apps: ["Apps", "Uygulamalar", "Aplicaciones", "应用", "App", "Applications", "Apps", "Aplicativos", "Приложения"],
+  "App Directory": ["App Directory", "Uygulama Dizini", "Directorio De Apps", "应用目录", "Elenco App", "Annuaire Des Apps", "App-Verzeichnis", "Diretório De Apps", "Каталог Приложений"],
+  "App Health": ["App Health", "Uygulama Sağlığı", "Salud De Apps", "应用健康", "Salute App", "Santé Des Apps", "App-Gesundheit", "Saúde Dos Apps", "Состояние Приложений"],
+  "Node & Compute": ["Node & Compute", "Node & Hesaplama", "Node Y Cómputo", "节点与计算", "Node E Calcolo", "Node Et Calcul", "Node & Computing", "Node E Computação", "Node И Вычисления"],
+  Node: ["Node", "Node", "Node", "节点", "Node", "Node", "Node", "Node", "Node"],
+  "Node History": ["Node History", "Node Geçmişi", "Historial Del Node", "节点历史", "Cronologia Node", "Historique Du Node", "Node-Verlauf", "Histórico Do Node", "История Node"],
+  SoloHost: ["SoloHost", "SoloHost", "SoloHost", "SoloHost", "SoloHost", "SoloHost", "SoloHost", "SoloHost", "SoloHost"],
+  Compute: ["Compute", "Hesaplama", "Cómputo", "计算", "Calcolo", "Calcul", "Berechnung", "Computação", "Вычисления"],
+  Infrastructure: ["Infrastructure", "Altyapı", "Infraestructura", "基础设施", "Infrastruttura", "Infrastructure", "Infrastruktur", "Infraestrutura", "Инфраструктура"],
+  Observatory: ["Observatory", "Gözlem Merkezi", "Observatorio", "观测中心", "Osservatorio", "Observatoire", "Beobachtungszentrum", "Observatório", "Наблюдательный Центр"],
+  Radar: ["Radar", "Radar", "Radar", "雷达", "Radar", "Radar", "Radar", "Radar", "Радар"],
+  "Activity Signals": ["Activity Signals", "Aktivite Sinyalleri", "Señales De Actividad", "活动信号", "Segnali Di Attività", "Signaux D’activité", "Aktivitätssignale", "Sinais De Atividade", "Сигналы Активности"],
+  Explorer: ["Explorer", "Explorer", "Explorador", "浏览器", "Esplora", "Explorateur", "Explorer", "Explorador", "Обозреватель"],
+  Wallet: ["Wallet", "Cüzdan", "Billetera", "钱包", "Wallet", "Portefeuille", "Wallet", "Carteira", "Кошелёк"],
 };
 
 function label(value: string, locale: Locale) {
-  const pair = labels[value] ?? [value, value];
-  return translate(locale, pair[0], pair[1]);
+  const pair = labels[value] ?? [value, value, value, value, value, value, value, value, value];
+  const index = locale === "tr" ? 1 : locale === "es" ? 2 : locale === "zh" ? 3 : locale === "it" ? 4 : locale === "fr" ? 5 : locale === "de" ? 6 : locale === "pt" ? 7 : locale === "ru" ? 8 : 0;
+  return pair[index];
 }
 
 export function ZafEcosystemNavigation({ locale, section, subtab, onSectionChange, onSubtabChange }: {
