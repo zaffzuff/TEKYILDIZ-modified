@@ -250,6 +250,7 @@ export function ZafTechApp() {
   const [radarChanges, setRadarChanges] = useState<EcosystemChangePayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const tr = (en: string, trText: string) => translate(locale, en, trText);
 
@@ -278,12 +279,19 @@ export function ZafTechApp() {
   const load = useCallback(async () => {
     setRefreshing(true);
     try {
-      const [network, apps] = await Promise.all([
-        fetch("/api/zaf", { cache: "no-store" }).then(r => r.json()),
-        fetch("/api/zaf/ecosystem", { cache: "no-store" }).then(r => r.json()),
+      const [networkResponse, ecosystemResponse] = await Promise.all([
+        fetch("/api/zaf", { cache: "no-store" }),
+        fetch("/api/zaf/ecosystem", { cache: "no-store" }),
       ]);
+      if (!networkResponse.ok || !ecosystemResponse.ok) {
+        throw new Error("ZAF TECH data request failed");
+      }
+      const [network, apps] = await Promise.all([networkResponse.json(), ecosystemResponse.json()]);
       setSnapshot(network);
       setEcosystem(apps);
+      setLoadError(null);
+    } catch {
+      setLoadError("DATA_REQUEST_FAILED");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -331,8 +339,15 @@ export function ZafTechApp() {
         </header>
 
         {loading ? <div className="py-12 text-center text-sm text-muted-foreground">{tr("Loading Ecosystem Observatory…", "Ekosistem Gözlemleri Yükleniyor…")}</div> : null}
+        {!loading && loadError ? (
+          <div className="mt-5 rounded-xl border border-border bg-card p-5 text-center sm:mt-7">
+            <div className="text-sm font-semibold text-foreground">{tr("Unable To Load Current Data", "Güncel Veriler Yüklenemedi")}</div>
+            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{tr("The public data sources did not return a usable response. Retry when the source is available.", "Herkese açık veri kaynakları kullanılabilir bir yanıt döndürmedi. Kaynak kullanılabilir olduğunda tekrar deneyin.")}</p>
+            <button type="button" onClick={() => void load()} disabled={refreshing} className="mt-3 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground disabled:opacity-50">{refreshing ? tr("Retrying…", "Tekrar Deneniyor…") : tr("Retry", "Tekrar Dene")}</button>
+          </div>
+        ) : null}
 
-        {!loading && section === "overview" && subtab === "Ecosystem" ? (
+        {!loading && !loadError && section === "overview" && subtab === "Ecosystem" ? (
           <section className="mt-5 sm:mt-7">
             <div className="mb-3"><h2 className="text-sm font-semibold text-foreground">{tr("Pi Ecosystem Observatory", "Pi Ekosistem Gözlem Merkezi")}</h2><p className="text-[11px] text-muted-foreground">{tr("A read-only technology layer for discovering observable Pi ecosystem data, applications and Node infrastructure.", "Gözlemlenebilir Pi ekosistem verilerini, uygulamaları ve Node altyapısını keşfetmek için salt-okunur teknoloji katmanı.")}</p></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
