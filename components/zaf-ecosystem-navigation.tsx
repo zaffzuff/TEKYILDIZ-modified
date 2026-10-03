@@ -1,7 +1,6 @@
 "use client";
 
 import type { Locale } from "@/lib/zaf/i18n";
-import { translate } from "@/lib/zaf/i18n";
 
 export type ZafSection = "overview" | "apps" | "node" | "intelligence" | "wallet";
 
