@@ -62,6 +62,23 @@ function age(value: string | null | undefined, locale: Locale) {
   if (locale === "ru") return min < 1 ? "Только что" : min < 60 ? `${min} мин назад` : `${Math.floor(min / 60)} ч назад`;
   return min < 1 ? "Just Now" : min < 60 ? `${min}m Ago` : `${Math.floor(min / 60)}h Ago`;
 }
+function categoryLabel(category: AppCategory, locale: Locale) {
+  const labels: Record<AppCategory, [string, string, string, string, string, string, string, string, string]> = {
+    AI: ["AI", "YZ", "IA", "AI", "IA", "IA", "KI", "IA", "ИИ"],
+    Business: ["Business", "İş", "Negocios", "商业", "Business", "Entreprise", "Business", "Negócios", "Бизнес"],
+    Commerce: ["Commerce", "Ticaret", "Comercio", "商业", "Commercio", "Commerce", "Handel", "Comércio", "Торговля"],
+    Community: ["Community", "Topluluk", "Comunidad", "社区", "Comunità", "Communauté", "Community", "Comunidade", "Сообщество"],
+    DeFi: ["DeFi", "DeFi", "DeFi", "DeFi", "DeFi", "DeFi", "DeFi", "DeFi", "DeFi"],
+    Education: ["Education", "Eğitim", "Educación", "教育", "Istruzione", "Éducation", "Bildung", "Educação", "Образование"],
+    Games: ["Games", "Oyunlar", "Juegos", "游戏", "Giochi", "Jeux", "Spiele", "Jogos", "Игры"],
+    Social: ["Social", "Sosyal", "Social", "社交", "Social", "Social", "Sozial", "Social", "Социальные"],
+    Tools: ["Tools", "Araçlar", "Herramientas", "工具", "Strumenti", "Outils", "Werkzeuge", "Ferramentas", "Инструменты"],
+    Other: ["Other", "Diğer", "Otros", "其他", "Altro", "Autre", "Sonstige", "Outros", "Другое"],
+  };
+  const index = locale === "tr" ? 1 : locale === "es" ? 2 : locale === "zh" ? 3 : locale === "it" ? 4 : locale === "fr" ? 5 : locale === "de" ? 6 : locale === "pt" ? 7 : locale === "ru" ? 8 : 0;
+  return labels[category][index];
+}
+
 function Card({ title, value, detail }: { title: string; value: string; detail?: string }) {
   return <div className="rounded-xl border border-border bg-card p-3 sm:p-4"><div className="text-xl font-bold ty-nums text-foreground sm:text-2xl">{value}</div><div className="mt-1 text-xs font-medium text-foreground">{title}</div>{detail ? <div className="mt-1 text-[11px] text-muted-foreground">{detail}</div> : null}</div>;
 }
@@ -98,7 +115,7 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
         <div className="mt-2 overflow-x-auto ty-no-scrollbar">
           <div className="flex min-w-max gap-1">
             <button type="button" onClick={() => setCategory("All")} className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${category === "All" ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground"}`}>{tr("All", "Tümü")}</button>
-            {APP_CATEGORIES.map(item => <button key={item} type="button" onClick={() => setCategory(item)} className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${category === item ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground"}`}>{item}</button>)}
+            {APP_CATEGORIES.map(item => <button key={item} type="button" onClick={() => setCategory(item)} className={`rounded-md border px-2.5 py-1.5 text-[10px] font-medium ${category === item ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground"}`}>{categoryLabel(item, locale)}</button>)}
           </div>
         </div>
       </div>
@@ -116,7 +133,7 @@ function AppDirectoryView({ apps, sourceOnline, generatedAt, note, locale, tr }:
               </div>
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{app.category}</span>
+              <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{categoryLabel(app.category, locale)}</span>
               <span className="rounded-full border border-border px-2 py-0.5 text-[9px] text-muted-foreground">{tr("Pi Features: Not Verified", "Pi Özellikleri: Doğrulanmadı")}</span>
             </div>
           </article>
